@@ -59,9 +59,9 @@ namespace Components {
         }
 
         public override string ToString() {
-            string debugString = Highlight ? "highlight\n" : "";
-            debugString += Terrain.ToString() + "\n";
-            debugString += BoardPiece != null ? this.BoardPiece.ToString() : "";
+            string debugString = Highlight ? "H\n" : "";
+            debugString += Terrain.Type == Terrain.Sprite.Puddle ? Terrain.ToString() + "\n" : "";
+            debugString += BoardPiece != null ? "Unit " + this.BoardPiece.ToString() : "";
             return debugString;
         }
     }

@@ -1,0 +1,19 @@
+#
+# Sprite sheet data for Unity.
+#
+# To import these sprites into your Unity project, download "TexturePackerImporter":
+# https://www.codeandweb.com/texturepacker/unity
+#
+# $TexturePacker:SmartUpdate:13a3befc60efca1767d76fda78ea5917:2a4c065487e184603437621424aac18e:63883872f162ad1040b2a8fa7bb00b64$
+#
+:format=40300
+:texture=terrain.png
+:size=128x128
+:pivotpoints=enabled
+:borders=disabled
+:alphahandling=ClearTransparentPixels
+
+DoorEW;1;95;32;32; 0.5;0.5; 0;0;0;0; 4;32;0;0;0;0;32;32;32; 2;1;2;3;0;1;3
+DoorNS;1;61;32;32; 0.5;0.5; 0;0;0;0; 4;32;0;0;0;0;32;32;32; 2;1;2;3;0;1;3
+Floor;1;27;32;32; 0.5;0.5; 0;0;0;0; 4;32;0;0;0;0;32;32;32; 2;1;2;3;0;1;3
+Wall;35;95;32;32; 0.5;0.5; 0;0;0;0; 4;32;0;0;0;0;32;32;32; 2;1;2;3;0;1;3

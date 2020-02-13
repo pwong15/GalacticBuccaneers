@@ -4,7 +4,7 @@
 
         public enum Sprite {
             None = 1,
-            Puddle = 2,
+            Puddle,
             Wall,
             ClosedDoor,
             OpenDoor
