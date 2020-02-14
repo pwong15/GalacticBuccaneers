@@ -18,7 +18,7 @@ public class Testing : MonoBehaviour {
 
     private void Start() {
         boardSystem = new BoardSystem();
-        board = boardSystem.CreateBoard(20, 10, 15f);
+        board = boardSystem.CreateBoard(30, 20, 30f);
         boardVisual.SetGrid(board);
         tileSystem = new TileSystem();
         boardPieceSystem = new BoardPieceSystem();
@@ -54,6 +54,9 @@ public class Testing : MonoBehaviour {
         }
         if (Input.GetKey(KeyCode.P)) {
             tile.SetTerrainSprite(Components.Terrain.Sprite.Puddle);
+        }
+        if (Input.GetKey(KeyCode.Space)) {
+            tile.SetTerrainSprite(Components.Terrain.Sprite.None);
         }
 
         // Select board piece

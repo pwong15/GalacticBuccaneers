@@ -29,6 +29,8 @@ namespace Components {
             GetComponent<MeshFilter>().mesh = mesh;
 
             Texture texture = GetComponent<MeshRenderer>().material.mainTexture;
+            //Material highlight = GetComponent<MeshRenderer>().materials[0];
+            //highlight;
             float textureWidth = texture.width;
             float textureHeight = texture.height;
             uvCoordsDictionary = new Dictionary<Terrain.Sprite, UVCoords>();
