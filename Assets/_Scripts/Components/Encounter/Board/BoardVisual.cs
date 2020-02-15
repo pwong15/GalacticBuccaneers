@@ -18,7 +18,7 @@ namespace Components {
         }
 
         [SerializeField] private TerrainSpriteUV[] terrainSpriteUVs;
-        private Grid<Tile> grid;
+        private Board board;
         private Mesh mesh;
         private bool updateMesh;
         private Dictionary<Terrain.Sprite, UVCoords> uvCoordsDictionary;
@@ -43,10 +43,10 @@ namespace Components {
             }
         }
 
-        public void SetGrid(Grid<Tile> grid) {
-            this.grid = grid;
+        public void SetGrid(Board board) {
+            this.board = board;
             UpdateBoardVisual();
-            grid.OnGridObjectChanged += Grid_OnGridValueChanged;
+            board.grid.OnGridObjectChanged += Grid_OnGridValueChanged;
         }
 
         private void Grid_OnGridValueChanged(object sender, Grid<Tile>.OnGridObjectChangedEventArgs e) {
@@ -69,13 +69,13 @@ namespace Components {
         }
 
         private void UpdateBoardVisual() {
-            MeshUtils.CreateEmptyMeshArrays(grid.width * grid.height, out Vector3[] vertices, out Vector2[] uv, out int[] triangles);
+            MeshUtils.CreateEmptyMeshArrays(board.width * board.height, out Vector3[] vertices, out Vector2[] uv, out int[] triangles);
 
-            for (int x = 0; x < grid.width; x++) {
-                for (int y = 0; y < grid.height; y++) {
-                    int index = x * grid.height + y;
-                    Vector3 quadSize = new Vector3(1, 1) * grid.cellSize;
-                    Tile tile = grid.GetGridObject(x, y);
+            for (int x = 0; x < board.width; x++) {
+                for (int y = 0; y < board.height; y++) {
+                    int index = x * board.height + y;
+                    Vector3 quadSize = new Vector3(1, 1) * board.cellSize;
+                    Tile tile = board.GetTile(x, y);
                     Terrain.Sprite sprite = tile.Terrain.Type;
                     Vector2 uv1 = Vector2.one;
                     Vector2 uv2 = Vector2.one;
@@ -93,7 +93,7 @@ namespace Components {
                         uv1 = Vector2.zero;
                         uv2 = Vector2.zero;
                     }*/
-                    MeshUtils.AddToMeshArrays(vertices, uv, triangles, index, grid.GetWorldPosition(x, y) + quadSize * .5f, 0f, quadSize, uv1, uv2);
+                    MeshUtils.AddToMeshArrays(vertices, uv, triangles, index, board.GetWorldPosition(x, y) + quadSize * .5f, 0f, quadSize, uv1, uv2);
                 }
             }
             mesh.vertices = vertices;

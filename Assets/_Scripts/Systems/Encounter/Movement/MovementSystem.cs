@@ -8,9 +8,9 @@ public class MovementSystem {
     }
 
     // This a combination of CreateMoveCommand and Move functions commented below just for testing purposes.
-    public void Move(BoardPiece boardPiece, Tile destination) {
+    public void Move(Board board, BoardPiece boardPiece, Tile destination) {
         if (boardPiece != null && IsValidSpace(destination)) {
-            List<Tile> validMoves = boardPiece.Tile.grid.FindTilesInRange(boardPiece.Tile, boardPiece.MoveSpeed, (tile) => tile.Terrain.Cost);
+            List<Tile> validMoves = board.FindTilesInRange(boardPiece.Tile, boardPiece.MoveSpeed, (tile) => tile.Terrain.Cost);
             if (validMoves != null && validMoves.Contains(destination)) {
                 boardPiece.Tile.BoardPiece = null;
                 boardPiece.Tile = destination;

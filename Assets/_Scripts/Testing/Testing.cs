@@ -3,7 +3,7 @@ using UnityEngine;
 using Utilitys;
 
 public class Testing : MonoBehaviour {
-    private Grid<Tile> board;
+    private Board board;
 
     // Wasn't sure how nesting of systems is suppose to work and just initialized them to test
     private TileSystem tileSystem;
@@ -31,8 +31,8 @@ public class Testing : MonoBehaviour {
     // Update is called once per frame
     private void Update() {
         Vector3 mouseWorldPosition = UtilsClass.GetMouseWorldPosition();
-        Tile tile = board.GetGridObject(mouseWorldPosition);
-
+        Tile tile = board.GetTile(mouseWorldPosition);
+        if (tile == default(Tile)) { return; }
         // Spawn a unit on the board if the mouse is hovered over valid space
         if (Input.GetKeyDown(KeyCode.S)) {
             Character character = characterSystem.RetrieveCharacter();
@@ -68,7 +68,7 @@ public class Testing : MonoBehaviour {
         // Making a unit attack another unit
         if (board.selectedPiece != null && Input.GetKey(KeyCode.A)) {
             if (board.selectedPiece is Unit && tile.BoardPiece is Unit) {
-                combatSystem.Attack((Unit)board.selectedPiece, (Unit)tile.BoardPiece);
+                combatSystem.Attack(board, (Unit)board.selectedPiece, (Unit)tile.BoardPiece);
                 board.selectedPiece = null;
             }
         }
@@ -77,7 +77,7 @@ public class Testing : MonoBehaviour {
         if (board.selectedPiece != null && Input.GetMouseButtonDown(0)) {
             Debug.Log(board.selectedPiece);
             Tile selectedTile = board.selectedPiece.Tile;
-            movementSystem.Move(board.selectedPiece, tile);
+            movementSystem.Move(board, board.selectedPiece, tile);
             tileSystem.updateTile(selectedTile);
             tileSystem.updateTile(tile);
             board.selectedPiece = null;

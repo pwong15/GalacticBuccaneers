@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Utilitys;
 
@@ -18,15 +17,15 @@ namespace Components {
             public int y;
         }
 
-        private BoardPiece _selectedPiece;
-        private List<Tile> _selectedPieceRange;
+        /*private BoardPiece _selectedPiece;
+        private List<Tile> _selectedPieceRange;*/
         public int width { get; }
         public int height { get; }
         public float cellSize { get; }
         public Vector3 originPosition;
         private TGridObject[,] gridArray;
 
-        public BoardPiece selectedPiece {
+        /*public BoardPiece selectedPiece {
             get {
                 return _selectedPiece;
             }
@@ -56,7 +55,7 @@ namespace Components {
                 Action<Tile> Highlight = (Tile) => ToggleHighlightEffect(Tile, true);
                 ApplyTileEffects(_selectedPieceRange, Highlight);
             }
-        }
+        }*/
 
         public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid<TGridObject>, int, int, TGridObject> createGridObject) {
             this.width = width;
@@ -97,7 +96,7 @@ namespace Components {
         }
 
         // Used to find tiles that a board piece can reach with their movespeed. So far uses manhatten distance but must change in order to account for obstacles such as walls.
-        public List<Tile> FindTilesInRange(Tile tile, int range, Func<Tile, int> getTileCost) {
+        /*public List<Tile> FindTilesInRange(Tile tile, int range, Func<Tile, int> getTileCost) {
             List<Tile> tilesInRange = new List<Tile>();
             Queue<Tile> queue = new Queue<Tile>();
             List<Tile> visitedList = new List<Tile>();
@@ -135,7 +134,7 @@ namespace Components {
         // Used to highlight a list of tiles (Tile Zone). As of now used to highlight/unhighlight the tiles in range of the selected board piece
         private void ToggleHighlightEffect(Tile tile, bool toggle) {
             tile.Highlight = toggle;
-        }
+        }*/
 
         public Vector3 GetWorldPosition(int x, int y) {
             return new Vector3(x, y) * cellSize + originPosition;
@@ -166,8 +165,7 @@ namespace Components {
         public TGridObject GetGridObject(int x, int y) {
             if (x >= 0 && y >= 0 && x < width && y < height) {
                 return gridArray[x, y];
-            }
-            else {
+            } else {
                 return default(TGridObject);
             }
         }
