@@ -4,7 +4,7 @@ public class MainMenu : MonoBehaviour
 {
     public void PlayGame()
     {
-        SceneController.LoadScene(AvailableScenes.Encounter);
+        SceneController.LoadScene(AvailableScenes.GalaxyMap);
     }
 
     public void QuitGame()
