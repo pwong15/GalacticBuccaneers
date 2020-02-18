@@ -6,20 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-<<<<<<< HEAD
     path: Assets/_Scenes/GalaxyMap.unity
     guid: 7414031dcd4c987438f7ada662f6239a
-=======
-    path: Assets/_Scenes/MainMenu.unity
-    guid: 31f5540eb7762b14785e51973de47577
->>>>>>> 38944f30ec4d512fbba2db91a3125c43be648d3b
   - enabled: 1
     path: Assets/_Scenes/Encounter.unity
     guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 1
-    path: Assets/_Scenes/GalaxyMap.unity
-    guid: 7414031dcd4c987438f7ada662f6239a
-  - enabled: 1
-    path: Assets/_Scenes/PauseMenu.unity
-    guid: 2da7e3d7bff280041a6503203feffff6
   m_configObjects: {}
