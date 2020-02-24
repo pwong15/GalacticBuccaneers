@@ -14,12 +14,12 @@ public class MoveUnitCommand : Command {
         this.tile = tile;
     }
 
-    public override void execute() {
+    public override void Execute() {
         tileBefore = unit.Tile;
         unit.MoveTo(tile);
     }
 
-    public void undo() {
+    public override void Undo() {
         unit.MoveTo(tileBefore);
     }
 }

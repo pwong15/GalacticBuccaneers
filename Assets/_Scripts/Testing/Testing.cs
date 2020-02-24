@@ -3,7 +3,7 @@ using UnityEngine;
 using Utilitys;
 
 public class Testing : MonoBehaviour {
-    private Board board;
+    private Components.Board board;
 
     // Wasn't sure how nesting of systems is suppose to work and just initialized them to test
     private TileSystem tileSystem;
