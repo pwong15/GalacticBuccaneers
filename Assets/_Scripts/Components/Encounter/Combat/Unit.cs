@@ -4,6 +4,10 @@
         public Character Character { get; }
         public Tile Tile { get; set; }
 
+        public bool HasMoved { get; set; }
+
+        public bool HasActed { get; set; }
+
         public int Team { get { return Character.Name % 2; } set {; } }
 
         public int MoveSpeed { get; set; }

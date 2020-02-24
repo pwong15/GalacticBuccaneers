@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+namespace Components { 
 public class CameraController : MonoBehaviour {
     [SerializeField] private int x;
     [SerializeField] private int y;
@@ -31,4 +32,5 @@ public class CameraController : MonoBehaviour {
             boardCamera.transform.position += Vector3.up * arrowSensitivity;
         }
     }
+}
 }

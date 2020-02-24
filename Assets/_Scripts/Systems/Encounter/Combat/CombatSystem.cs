@@ -6,7 +6,7 @@ public class CombatSystem {
     // Right now unit and the character they reference have the same attack but I will probably augment unit with field that keeps
     // tracks of statuseffects(buffs/debuffs) that could make the unit attack different from the character it references
 
-    public void Attack(Board board, Unit attacker, Unit target) {
+    public void Attack(Components.Board board, Unit attacker, Unit target) {
         Debug.Log("Checking if can Attack");
         if (CanAttack(board, attacker, target)) {
             int damageAmount = DamageCalculation(attacker, target);
@@ -38,7 +38,7 @@ public class CombatSystem {
         return damageAmount;
     }
 
-    public bool CanAttack(Board board, Unit attacker, Unit target) {
+    public bool CanAttack(Components.Board board, Unit attacker, Unit target) {
         if (attacker == null || target == null) {
             return false;
         }
