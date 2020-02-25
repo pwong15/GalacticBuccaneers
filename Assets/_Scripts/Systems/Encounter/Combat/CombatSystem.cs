@@ -18,6 +18,7 @@ public class CombatSystem {
                 Debug.Log(target + " has died");
                 TerminateUnit(target);
             }
+            attacker.HasActed = true;
         }
     }
 
@@ -39,7 +40,7 @@ public class CombatSystem {
     }
 
     public bool CanAttack(Components.Board board, Unit attacker, Unit target) {
-        if (attacker == null || target == null) {
+        if (attacker.HasActed || attacker == null || target == null) {
             return false;
         }
         bool notSameTeam = attacker.Team != target.Team;

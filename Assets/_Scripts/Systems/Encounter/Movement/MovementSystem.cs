@@ -1,5 +1,6 @@
 ﻿using Components;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class MovementSystem {
 
@@ -8,15 +9,29 @@ public class MovementSystem {
     }
 
     // This a combination of CreateMoveCommand and Move functions commented below just for testing purposes.
-    public void Move(Components.Board board, BoardPiece boardPiece, Tile destination) {
+    public bool Move(Components.Board board, BoardPiece boardPiece, Tile destination) {
         if (boardPiece != null && IsValidSpace(destination)) {
             List<Tile> validMoves = board.FindTilesInRange(boardPiece.Tile, boardPiece.MoveSpeed, (tile) => tile.Terrain.Cost);
             if (validMoves != null && validMoves.Contains(destination)) {
                 boardPiece.Tile.BoardPiece = null;
                 boardPiece.Tile = destination;
                 destination.BoardPiece = boardPiece;
+                return true;
             }
         }
+        return false;
+    }
+
+    public void MoveUnit(Components.Board board, Unit unit, Tile destination) {
+        if (!unit.HasMoved) {
+            if (Move(board, unit, destination)) {
+                unit.HasMoved = true;   
+            }
+
+        } else {
+            Debug.Log(unit.Character.Name + " has already moved");
+        }
+        
     }
 
     //public void Move(BoardPiece boardPiece, Tile destination) {

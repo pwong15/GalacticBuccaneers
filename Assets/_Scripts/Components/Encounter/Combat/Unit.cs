@@ -6,7 +6,15 @@
 
         public bool HasMoved { get; set; }
 
-        public bool HasActed { get; set; }
+        private bool _hasActed;
+
+        public bool HasActed {
+            get { return _hasActed; }
+            set {
+                HasMoved = value;
+                _hasActed = value;
+            }
+        }
 
         public int Team { get { return Character.Name % 2; } set {; } }
 
@@ -17,6 +25,8 @@
             this.MoveSpeed = character.MoveSpeed;
             tile.BoardPiece = this;
             this.Tile = tile;
+            _hasActed = true;
+            HasMoved = true;
         }
 
         public void MoveTo(Tile targetLocation) {

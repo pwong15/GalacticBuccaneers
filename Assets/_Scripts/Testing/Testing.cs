@@ -37,7 +37,7 @@ public class Testing : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.S)) {
             Character character = characterSystem.RetrieveCharacter();
             if (movementSystem.IsValidSpace(tile)) {
-                unitSystem.createUnit(character, tile);
+                board.createUnit(character, tile);
                 tileSystem.updateTile(tile);
             }
         }
@@ -73,14 +73,22 @@ public class Testing : MonoBehaviour {
             }
         }
 
+        if (Input.GetKeyDown("enter")) {
+            board.EndTurn();
+            board.StartTurn();
+        }
+
         // Move the selected board piece
         if (board.selectedPiece != null && Input.GetMouseButtonDown(0)) {
             Debug.Log(board.selectedPiece);
             Tile selectedTile = board.selectedPiece.Tile;
-            movementSystem.Move(board, board.selectedPiece, tile);
-            tileSystem.updateTile(selectedTile);
-            tileSystem.updateTile(tile);
-            board.selectedPiece = null;
+            if (board.selectedPiece is Unit) {
+                movementSystem.MoveUnit(board, (Unit) board.selectedPiece, tile);
+                tileSystem.updateTile(selectedTile);
+                tileSystem.updateTile(tile);
+                board.selectedPiece = null;
+            }
         }
+
     }
 }

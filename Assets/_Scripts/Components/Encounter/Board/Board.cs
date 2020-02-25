@@ -36,7 +36,42 @@ namespace Components {
 
         public Board(Grid<Tile> grid) {
             this._grid = grid;
-            this.TurnCounter = 1;
+            this.TurnCounter = 0;
+            numOfTeam = 2;
+            Teams = new Dictionary<int, List<Unit>>();
+            for (int i = 0; i < numOfTeam; i++) {
+                Teams[i] = new List<Unit>();
+            }
+        }
+
+        public Unit createUnit(Character character, Tile tile) {
+            if (character != null && tile != null && tile.BoardPiece == null) {
+                Unit newUnit = new Unit(character, tile);
+                Teams[character.Name % numOfTeam].Add(newUnit);
+                return newUnit;
+            }
+            else {
+                return null;
+            }
+        }
+
+        public void EndTurn() {
+            foreach(Unit unit in Teams[TurnCounter % numOfTeam]) {
+                unit.HasActed = true;
+            }
+            Debug.Log("Ending Turn " + TurnCounter);
+            TurnCounter += 1;
+        }
+
+        public void StartTurn() {
+            foreach(Unit unit in Teams[TurnCounter % numOfTeam]) {
+                unit.HasActed = false;
+            }
+            Debug.Log("Starting Turn " + TurnCounter);
+        }
+
+        public List<Unit> GetTeam() {
+            return Teams[TurnCounter % numOfTeam];
         }
 
         public List<Tile> selectedPieceRange {
