@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using UnityEngine;
 using Utilitys;
 
@@ -8,14 +9,16 @@ namespace Components {
      * contains some board component fields and board and movement system methods.
      */
 
-    public class Grid<TGridObject> {
-
-        public event EventHandler<OnGridObjectChangedEventArgs> OnGridObjectChanged;
+    public class Grid : MonoBehaviour {
+        private readonly int GRID_HEIGHT = 32;
+        private readonly int GRID_WIDTH = 24;
+        private readonly string MAP_NAME = "Layout2";
+        /*public event EventHandler<OnGridObjectChangedEventArgs> OnGridObjectChanged;
 
         public class OnGridObjectChangedEventArgs : EventArgs {
             public int x;
             public int y;
-        }
+        }*/
 
         /*private BoardPiece _selectedPiece;
         private List<Tile> _selectedPieceRange;*/
@@ -23,8 +26,47 @@ namespace Components {
         public int height { get; }
         public float cellSize { get; }
         public Vector3 originPosition;
-        private TGridObject[,] gridArray;
+        private Tile[,] gridArray;
 
+        
+        //private readonly string MAP_NAME = "LatestMap";
+        
+        string[,] wallLayoutArray;
+        //private List<Tile> _neighbors;
+        //public Gridgrid { get; }
+        public Tile[,] tiles;
+        //public int xCoord { get; }
+        //public int yCoord { get; }
+
+
+        void Start() {
+            int GRID_HEIGHT = 32;
+            Debug.Log(GRID_HEIGHT);
+            CreateGrid();
+        }
+
+
+        private void CreateGrid() {
+            wallLayoutArray = new string[GRID_WIDTH, GRID_HEIGHT];
+            tiles = new Tile[GRID_WIDTH, GRID_HEIGHT];
+            string MAP_NAME = "Layout2";
+            Debug.Log(MAP_NAME);
+            Debug.Log(GRID_HEIGHT);
+            string wallLayoutFile = Directory.GetCurrentDirectory() + "\\Assets\\Utilities\\BoardCreationUtility\\output\\" + MAP_NAME + ".txt";
+            string wallLayout = string.Join("", File.ReadAllLines(wallLayoutFile));
+            int wallIndex = 0;
+
+            for (int row = 0; row < GRID_HEIGHT; row++) {
+                for (int column = 0; column < GRID_WIDTH; column++) {
+                    Debug.Log(row);
+                    GameObject gridSquare = Instantiate(Resources.Load("Prefabs/target") as GameObject);
+                    Tile tile = gridSquare.AddComponent<Tile>();
+                    tile.Initialize(this, column, -row, -1, wallLayout[wallIndex++]);
+                    tiles[column, row] = tile;
+                    wallLayoutArray[column, row] = ".";
+                }
+            }
+        }
         /*public BoardPiece selectedPiece {
             get {
                 return _selectedPiece;
@@ -57,13 +99,13 @@ namespace Components {
             }
         }*/
 
-        public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid<TGridObject>, int, int, TGridObject> createGridObject) {
+        public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid, int, int, Tile> createGridObject) {
             this.width = width;
             this.height = height;
             this.cellSize = cellSize;
             this.originPosition = originPosition;
 
-            gridArray = new TGridObject[width, height];
+            gridArray = new Tile[width, height];
 
             for (int x = 0; x < gridArray.GetLength(0); x++) {
                 for (int y = 0; y < gridArray.GetLength(1); y++) {
@@ -85,9 +127,9 @@ namespace Components {
                 Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.black, 100f);
                 Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.black, 100f);
 
-                OnGridObjectChanged += (object sender, OnGridObjectChangedEventArgs eventArgs) => {
+                /*OnGridObjectChanged += (object sender, OnGridObjectChangedEventArgs eventArgs) => {
                     debugTextArray[eventArgs.x, eventArgs.y].text = gridArray[eventArgs.x, eventArgs.y]?.ToString();
-                };
+                };*/
             }
         }
 
@@ -145,32 +187,33 @@ namespace Components {
             y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
         }
 
-        public void SetGridObject(int x, int y, TGridObject value) {
+        public void SetGridObject(int x, int y, Tile value) {
             if (x >= 0 && y >= 0 && x < width && y < height) {
                 gridArray[x, y] = value;
-                OnGridObjectChanged?.Invoke(this, new OnGridObjectChangedEventArgs { x = x, y = y });
+                //OnGridObjectChanged?.Invoke(this, new OnGridObjectChangedEventArgs { x = x, y = y });
             }
         }
 
         public void TriggerGridObjectChanged(int x, int y) {
-            OnGridObjectChanged?.Invoke(this, new OnGridObjectChangedEventArgs { x = x, y = y });
+            //OnGridObjectChanged?.Invoke(this, new OnGridObjectChangedEventArgs { x = x, y = y });
         }
 
-        public void SetGridObject(Vector3 worldPosition, TGridObject value) {
+        public void SetGridObject(Vector3 worldPosition, Tile value) {
             int x, y;
             GetXY(worldPosition, out x, out y);
             SetGridObject(x, y, value);
         }
 
-        public TGridObject GetGridObject(int x, int y) {
+        public Tile GetGridObject(int x, int y) {
             if (x >= 0 && y >= 0 && x < width && y < height) {
                 return gridArray[x, y];
-            } else {
-                return default(TGridObject);
+            }
+            else {
+                return default(Tile);
             }
         }
 
-        public TGridObject GetGridObject(Vector3 worldPosition) {
+        public Tile GetGridObject(Vector3 worldPosition) {
             int x, y;
             GetXY(worldPosition, out x, out y);
             return GetGridObject(x, y);

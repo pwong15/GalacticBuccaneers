@@ -32,7 +32,7 @@
         public void MoveTo(Tile targetLocation) {
             Tile.BoardPiece = null;
             targetLocation.BoardPiece = this;
-            Grid<Tile> grid = Tile.grid;
+            Components.Grid grid = Tile.grid;
             grid.TriggerGridObjectChanged(Tile.xCoord, Tile.yCoord);
             Tile = targetLocation;
             grid.TriggerGridObjectChanged(targetLocation.xCoord, targetLocation.yCoord);

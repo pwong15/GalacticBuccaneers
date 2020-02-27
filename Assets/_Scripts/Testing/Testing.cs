@@ -2,13 +2,13 @@
 using UnityEngine;
 using Utilitys;
 
-public class Testing : MonoBehaviour {
+/*public class Testing : MonoBehaviour {
     private Components.Board board;
 
     // Wasn't sure how nesting of systems is suppose to work and just initialized them to test
     private TileSystem tileSystem;
 
-    [SerializeField] private BoardVisual boardVisual;
+    //[SerializeField] private BoardVisual boardVisual;
     private BoardSystem boardSystem;
     private BoardPieceSystem boardPieceSystem;
     private UnitSystem unitSystem;
@@ -91,4 +91,4 @@ public class Testing : MonoBehaviour {
         }
 
     }
-}
+}*/

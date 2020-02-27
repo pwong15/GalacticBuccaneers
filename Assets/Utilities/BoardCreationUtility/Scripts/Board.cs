@@ -11,7 +11,7 @@ public class Board : MonoBehaviour
     private readonly string MAP_NAME = "Layout2";
     string[,] wallLayoutArray;
     //private List<Tile> _neighbors;
-    //public Grid<Tile> grid { get; }
+    //public Grid grid { get; }
     public GridSquare[,] tiles;
     //public int xCoord { get; }
     //public int yCoord { get; }
@@ -74,7 +74,7 @@ public class Board : MonoBehaviour
 }
     //public class Tile
     //{
-    //    public Tile(Grid<Tile> g, int x, int y)
+    //    public Tile(Gridg, int x, int y)
     //    {
     //        xCoord = x;
     //        yCoord = y;

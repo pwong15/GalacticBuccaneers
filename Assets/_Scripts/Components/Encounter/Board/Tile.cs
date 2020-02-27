@@ -1,14 +1,139 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Components {
 
-    public class Tile {
+    public class Tile : MonoBehaviour {
+
+        private float xCoordf, yCoordf, zCoordf;
+        private int column, row, zCoord;
+        Renderer rend;
+        Grid gameBoard;
+        bool canMoveUp = true, canMoveDown = true, canMoveRght = true, canMoveLft = true, isWall = false;
         public int xCoord { get; }
         public int yCoord { get; }
         public BoardPiece BoardPiece { get; set; }
 
-        public Grid<Tile> grid { get; }
+        void Start() {
+            rend = GetComponent<Renderer>();
+        }
+
+        void Update() {
+            CheckForCursorHover();
+        }
+
+
+
+        public void OnMouseDown() {
+            List<Tile> adjacencies = GetNeighbors();
+            Debug.Log("Clicked: " + this.ToString());
+            foreach (Tile g in adjacencies) {
+                Debug.Log("adjacency: " + g.ToString());
+            }
+        }
+
+        public void Initialize(Grid gameBoard, int xLocation, int yLocation, int zLocation, char layoutSymbol) {
+            this.xCoordf = xLocation;
+            this.yCoordf = yLocation;
+            this.zCoordf = zLocation;
+
+            this.column = xLocation;
+            this.row = -yLocation;
+
+            this.gameBoard = gameBoard;
+            this.gameObject.AddComponent(typeof(BoxCollider));
+            this.transform.position = new Vector3(xCoordf, yCoordf, zCoordf);
+            GetComponent<Renderer>().enabled = !GetComponent<Renderer>().enabled;
+            LocateWalls(layoutSymbol);
+        }
+
+        // Checks if the cursor is hovering on this tile
+        private void CheckForCursorHover() {
+            Vector3 cursorLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            bool cursorIsOnTile = CursorIsOnTile(cursorLocation.x - xCoordf, cursorLocation.y - yCoordf);
+
+            // If cursor is inside the tile: highlight the tile
+            if (cursorIsOnTile && !isWall) {
+                GetComponent<Renderer>().enabled = true;
+            }
+            else {
+                GetComponent<Renderer>().enabled = false;
+            }
+        }
+
+
+
+        // Returns a bool indicating if the cursor is hover on tile
+        private bool CursorIsOnTile(float mouseXLocation, float mouseYLocation) {
+            if ((-0.5f < mouseXLocation && mouseXLocation < 0.5) && (-0.5 < mouseYLocation && mouseYLocation < 0.5)) {
+                return true;
+            }
+            return false;
+        }
+
+        private void LocateWalls(char layoutChar) {
+            switch (layoutChar) {
+                case 'w':
+                    isWall = true;
+                    canMoveDown = false;
+                    canMoveLft = false;
+                    canMoveUp = false;
+                    canMoveRght = false;
+                    break;
+                case '-':   // - means half wall is at top of square
+                    canMoveUp = false;
+                    break;
+                case '|':   // | means half wall on left side of a square
+                    canMoveLft = false;
+                    break;
+                case '/':
+                    canMoveLft = false;
+                    canMoveUp = false;
+                    break;
+                case '\\':
+                    canMoveUp = false;
+                    canMoveRght = false;
+                    break;
+                case 'L':
+                    canMoveLft = false;
+                    canMoveDown = false;
+                    break;
+                case '_':
+                    canMoveRght = false;
+                    canMoveDown = false;
+                    break;
+                default:
+                    return;
+            }
+        }
+
+        public List<Tile> GetNeighbors() {
+            if (_neighbors != null)
+                return _neighbors;
+
+            _neighbors = new List<Tile>();
+            //@TODO need to catch outof bounds exception
+            Tile rightNeighb = gameBoard.GetGridObject(column + 1, row);  // column, row
+            Tile leftNeighb = gameBoard.GetGridObject(column - 1, row);
+            Tile aboveNeighb = gameBoard.GetGridObject(column, row - 1);
+            Tile belowNeighb = gameBoard.GetGridObject(column, row + 1);
+
+            if (this.canMoveRght && rightNeighb.canMoveLft)
+                _neighbors.Add(rightNeighb);
+
+            if (this.canMoveLft && leftNeighb.canMoveRght)
+                _neighbors.Add(leftNeighb);
+
+            if (this.canMoveDown && belowNeighb.canMoveUp)
+                _neighbors.Add(belowNeighb);
+
+            if (this.canMoveUp && aboveNeighb.canMoveDown)
+                _neighbors.Add(aboveNeighb);
+
+            return _neighbors;
+        }
+        public Grid grid { get; }
 
         private List<Tile> _neighbors;
 
@@ -37,7 +162,7 @@ namespace Components {
             };
                 for (int i = 0; i < 4; i++) {
                     Tuple<int, int> move = possibleMoves[i];
-                    tile = grid.GetGridObject(grid.GetWorldPosition(xCoord + move.Item1, yCoord + move.Item2));
+                    tile = grid.GetGridObject(xCoord + move.Item1, yCoord + move.Item2);
                     if (tile != default(Tile)) {
                         _neighbors.Add(tile);
                     }
@@ -46,7 +171,7 @@ namespace Components {
             }
         }
 
-        public Tile(Grid<Tile> g, int x, int y) {
+        public Tile(Grid g, int x, int y) {
             xCoord = x;
             yCoord = y;
             grid = g;
@@ -59,9 +184,10 @@ namespace Components {
         }
 
         public override string ToString() {
-            string debugString = Highlight ? "H\n" : "";
+            string debugString = xCoord + " " + yCoord;
+            /*string debugString = Highlight ? "H\n" : "";
             debugString += Terrain.Type == Terrain.Sprite.Puddle ? Terrain.ToString() + "\n" : "";
-            debugString += BoardPiece != null ? "Unit " + this.BoardPiece.ToString() : "";
+            debugString += BoardPiece != null ? "Unit " + this.BoardPiece.ToString() : "";*/
             return debugString;
         }
     }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Components {
 
-    public class BoardVisual : MonoBehaviour {
+    /*public class BoardVisual : MonoBehaviour {
 
         [System.Serializable]
         public struct TerrainSpriteUV {
@@ -49,7 +49,7 @@ namespace Components {
             board.grid.OnGridObjectChanged += Grid_OnGridValueChanged;
         }
 
-        private void Grid_OnGridValueChanged(object sender, Grid<Tile>.OnGridObjectChangedEventArgs e) {
+        private void Grid_OnGridValueChanged(object sender, Grid.OnGridObjectChangedEventArgs e) {
             updateMesh = true;
         }
 
@@ -92,7 +92,7 @@ namespace Components {
                     else if (sprite == Terrain.Sprite.Wall) {
                         uv1 = Vector2.zero;
                         uv2 = Vector2.zero;
-                    }*/
+                    }
                     MeshUtils.AddToMeshArrays(vertices, uv, triangles, index, board.GetWorldPosition(x, y) + quadSize * .5f, 0f, quadSize, uv1, uv2);
                 }
             }
@@ -100,5 +100,5 @@ namespace Components {
             mesh.uv = uv;
             mesh.triangles = triangles;
         }
-    }
+    }*/
 }

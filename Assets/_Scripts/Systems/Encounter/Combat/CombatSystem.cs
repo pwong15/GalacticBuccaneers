@@ -44,7 +44,7 @@ public class CombatSystem {
             return false;
         }
         bool notSameTeam = attacker.Team != target.Team;
-        Grid<Tile> boardSystem = attacker.Tile.grid;
+        Components.Grid boardSystem = attacker.Tile.grid;
         List<Tile> attackRange = board.FindTilesInRange(attacker.Tile, attacker.Character.AttackRange, (tile) => 1);
         return notSameTeam && attackRange.Contains(target.Tile);
     }

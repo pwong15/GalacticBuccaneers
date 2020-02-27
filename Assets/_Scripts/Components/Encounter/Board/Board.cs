@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Components {
     public class Board {
-        private readonly Grid<Tile> _grid;
+        private readonly Grid _grid;
         private BoardPiece _selectedPiece;
         private List<Tile> _selectedPieceRange;
         public int TurnCounter { get; set; }
@@ -14,7 +14,7 @@ namespace Components {
         public int numOfTeam { get; }
         public Dictionary<int, List<Unit>> Teams { get; }
 
-        public Grid<Tile> grid { get { return _grid; } }
+        public Grid grid { get { return _grid; } }
         public int width { get { return _grid.width; } }
         public int height { get { return _grid.height; } }
         public float cellSize { get { return _grid.cellSize; } }
@@ -34,7 +34,7 @@ namespace Components {
             }
         }
 
-        public Board(Grid<Tile> grid) {
+        public Board(Grid grid) {
             this._grid = grid;
             this.TurnCounter = 0;
             numOfTeam = 2;
