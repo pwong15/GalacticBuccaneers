@@ -10,6 +10,7 @@ namespace Components {
         private int column, row, zCoord;
         Renderer rend;
         Grid gameBoard;
+        List<Tile> _neighbors;
         bool canMoveUp = true, canMoveDown = true, canMoveRght = true, canMoveLft = true, isWall = false;
         public int xCoord { get; }
         public int yCoord { get; }
@@ -135,8 +136,6 @@ namespace Components {
         }
         public Grid grid { get; }
 
-        private List<Tile> _neighbors;
-
         public int Cost { get; set; }
 
         public Tile Parent { get; set; }
@@ -147,7 +146,7 @@ namespace Components {
 
         // Checks above, below, left, and right of the tile and checks the grid if those correspond to actual tile objects.
         // Does not account for walls or obstacles yet.
-        public List<Tile> Neighbors {
+        /*public List<Tile> Neighbors {
             get {
                 if (_neighbors != null) {
                     return _neighbors;
@@ -171,12 +170,12 @@ namespace Components {
             }
         }
 
-        public Tile(Grid g, int x, int y) {
+        /*public Tile(Grid g, int x, int y) {
             xCoord = x;
             yCoord = y;
             grid = g;
             this.Terrain = new Terrain(Terrain.Sprite.None);
-        }
+        }*/
 
         public void SetTerrainSprite(Terrain.Sprite sprite) {
             Terrain.Type = sprite;
@@ -184,7 +183,7 @@ namespace Components {
         }
 
         public override string ToString() {
-            string debugString = xCoord + " " + yCoord;
+            string debugString = column + " " + row;
             /*string debugString = Highlight ? "H\n" : "";
             debugString += Terrain.Type == Terrain.Sprite.Puddle ? Terrain.ToString() + "\n" : "";
             debugString += BoardPiece != null ? "Unit " + this.BoardPiece.ToString() : "";*/

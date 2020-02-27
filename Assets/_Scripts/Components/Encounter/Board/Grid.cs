@@ -40,8 +40,7 @@ namespace Components {
 
 
         void Start() {
-            int GRID_HEIGHT = 32;
-            Debug.Log(GRID_HEIGHT);
+         
             CreateGrid();
         }
 
@@ -50,15 +49,14 @@ namespace Components {
             wallLayoutArray = new string[GRID_WIDTH, GRID_HEIGHT];
             tiles = new Tile[GRID_WIDTH, GRID_HEIGHT];
             string MAP_NAME = "Layout2";
-            Debug.Log(MAP_NAME);
-            Debug.Log(GRID_HEIGHT);
+            
             string wallLayoutFile = Directory.GetCurrentDirectory() + "\\Assets\\Utilities\\BoardCreationUtility\\output\\" + MAP_NAME + ".txt";
             string wallLayout = string.Join("", File.ReadAllLines(wallLayoutFile));
             int wallIndex = 0;
 
             for (int row = 0; row < GRID_HEIGHT; row++) {
                 for (int column = 0; column < GRID_WIDTH; column++) {
-                    Debug.Log(row);
+                    
                     GameObject gridSquare = Instantiate(Resources.Load("Prefabs/target") as GameObject);
                     Tile tile = gridSquare.AddComponent<Tile>();
                     tile.Initialize(this, column, -row, -1, wallLayout[wallIndex++]);
@@ -99,7 +97,7 @@ namespace Components {
             }
         }*/
 
-        public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid, int, int, Tile> createGridObject) {
+        /*public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid, int, int, Tile> createGridObject) {
             this.width = width;
             this.height = height;
             this.cellSize = cellSize;
@@ -129,9 +127,9 @@ namespace Components {
 
                 /*OnGridObjectChanged += (object sender, OnGridObjectChangedEventArgs eventArgs) => {
                     debugTextArray[eventArgs.x, eventArgs.y].text = gridArray[eventArgs.x, eventArgs.y]?.ToString();
-                };*/
+                };
             }
-        }
+        }*/
 
         public void SetTileCost(Tile tile, int cost) {
             tile.Cost = cost;
@@ -205,8 +203,8 @@ namespace Components {
         }
 
         public Tile GetGridObject(int x, int y) {
-            if (x >= 0 && y >= 0 && x < width && y < height) {
-                return gridArray[x, y];
+            if (x >= 0 && y >= 0 && x < GRID_WIDTH && y < GRID_HEIGHT) {
+                return tiles[x, y];
             }
             else {
                 return default(Tile);

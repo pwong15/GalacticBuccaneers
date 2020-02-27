@@ -104,7 +104,7 @@ namespace Components {
             queue.Enqueue(tile);
             while (queue.Count > 0) {
                 currentTile = queue.Dequeue();
-                foreach (Tile neighbor in currentTile.Neighbors) {
+                foreach (Tile neighbor in currentTile.GetNeighbors()) {
                     if (!visitedList.Contains(neighbor)) {
                         visitedList.Add(neighbor);
                         neighborCost = getTileCost(neighbor) + currentTile.Cost;
