@@ -15,7 +15,7 @@ public class MovementSystem {
             if (validMoves != null && validMoves.Contains(destination)) {
                 boardPiece.Tile.BoardPiece = null;
                 boardPiece.Tile = destination;
-                destination.BoardPiece = boardPiece;
+                //destination.BoardPiece = boardPiece;
                 return true;
             }
         }
@@ -24,9 +24,9 @@ public class MovementSystem {
 
     public void MoveUnit(Components.Board board, Unit unit, Tile destination) {
         if (!unit.HasMoved) {
-            if (Move(board, unit, destination)) {
+           /* if (Move(board, unit, destination)) {
                 unit.HasMoved = true;   
-            }
+            }*/
 
         } else {
             Debug.Log(unit.Character.Name + " has already moved");

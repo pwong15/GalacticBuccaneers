@@ -1,7 +1,9 @@
-﻿namespace Components {
+﻿using UnityEngine;
 
-    public class Unit : BoardPiece {
-        public Character Character { get; }
+namespace Components {
+
+    public class Unit : MonoBehaviour {
+        public Character Character { get; set; }
         public Tile Tile { get; set; }
 
         public bool HasMoved { get; set; }
@@ -20,10 +22,15 @@
 
         public int MoveSpeed { get; set; }
 
+        public void Initialize(Character character, Tile tile) {
+            this.Character = character;
+            tile.BoardPiece = this.gameObject;
+
+        }
         public Unit(Character character, Tile tile) {
             this.Character = character;
             this.MoveSpeed = character.MoveSpeed;
-            tile.BoardPiece = this;
+            tile.BoardPiece = this.gameObject;
             this.Tile = tile;
             _hasActed = true;
             HasMoved = true;
@@ -31,7 +38,7 @@
 
         public void MoveTo(Tile targetLocation) {
             Tile.BoardPiece = null;
-            targetLocation.BoardPiece = this;
+            targetLocation.BoardPiece = this.gameObject;
             Components.Grid grid = Tile.grid;
             grid.TriggerGridObjectChanged(Tile.xCoord, Tile.yCoord);
             Tile = targetLocation;

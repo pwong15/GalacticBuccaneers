@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using Utilitys;
@@ -20,8 +21,8 @@ namespace Components {
             public int y;
         }*/
 
-        /*private BoardPiece _selectedPiece;
-        private List<Tile> _selectedPieceRange;*/
+        private GameObject _selectedPiece;
+        private List<Tile> _selectedPieceRange;
         public int width { get; }
         public int height { get; }
         public float cellSize { get; }
@@ -44,6 +45,18 @@ namespace Components {
             CreateGrid();
         }
 
+        private int id = 0;
+        private Character RetrieveCharacter() {
+            return new Character(id++, 100, 100, 10, 5, 2, 3);
+        }
+
+        public void SpawnUnit(int x, int y) {
+            GameObject unitObject = Instantiate(Resources.Load("Prefabs/target") as GameObject);
+            Unit unit = unitObject.AddComponent<Unit>();
+            unit.Initialize(RetrieveCharacter(), tiles[x, y]);
+        }
+
+
 
         private void CreateGrid() {
             wallLayoutArray = new string[GRID_WIDTH, GRID_HEIGHT];
@@ -65,14 +78,17 @@ namespace Components {
                 }
             }
         }
-        /*public BoardPiece selectedPiece {
+        public GameObject selectedPiece {
             get {
                 return _selectedPiece;
             }
             set {
                 _selectedPiece = value;
                 if (_selectedPiece != null) {
-                    selectedPieceRange = FindTilesInRange(selectedPiece.Tile, selectedPiece.MoveSpeed, (Tile) => Tile.Terrain.Cost);
+                    selectedPieceRange = FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, selectedPiece.GetComponent<Unit>().MoveSpeed, (Tile) => Tile.Terrain.Cost);
+                    foreach (Tile tile in selectedPieceRange) {
+                        Debug.Log(tile);
+                    }
                 }
                 else {
                     selectedPieceRange = default(List<Tile>);
@@ -95,7 +111,7 @@ namespace Components {
                 Action<Tile> Highlight = (Tile) => ToggleHighlightEffect(Tile, true);
                 ApplyTileEffects(_selectedPieceRange, Highlight);
             }
-        }*/
+        }
 
         /*public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid, int, int, Tile> createGridObject) {
             this.width = width;
@@ -136,7 +152,7 @@ namespace Components {
         }
 
         // Used to find tiles that a board piece can reach with their movespeed. So far uses manhatten distance but must change in order to account for obstacles such as walls.
-        /*public List<Tile> FindTilesInRange(Tile tile, int range, Func<Tile, int> getTileCost) {
+        public List<Tile> FindTilesInRange(Tile tile, int range, Func<Tile, int> getTileCost) {
             List<Tile> tilesInRange = new List<Tile>();
             Queue<Tile> queue = new Queue<Tile>();
             List<Tile> visitedList = new List<Tile>();
@@ -146,7 +162,7 @@ namespace Components {
             queue.Enqueue(tile);
             while (queue.Count > 0) {
                 currentTile = queue.Dequeue();
-                foreach (Tile neighbor in currentTile.Neighbors) {
+                foreach (Tile neighbor in currentTile.GetNeighbors()) {
                     if (!visitedList.Contains(neighbor)) {
                         visitedList.Add(neighbor);
                         neighborCost = getTileCost(neighbor) + currentTile.Cost;
@@ -167,14 +183,13 @@ namespace Components {
             }
             foreach (Tile tile in tileZone) {
                 applyEffect(tile);
-                TriggerGridObjectChanged(tile.xCoord, tile.yCoord);
             }
         }
 
         // Used to highlight a list of tiles (Tile Zone). As of now used to highlight/unhighlight the tiles in range of the selected board piece
         private void ToggleHighlightEffect(Tile tile, bool toggle) {
-            tile.Highlight = toggle;
-        }*/
+            tile.GetComponent<Renderer>().enabled = toggle;
+        }
 
         public Vector3 GetWorldPosition(int x, int y) {
             return new Vector3(x, y) * cellSize + originPosition;
@@ -187,7 +202,7 @@ namespace Components {
 
         public void SetGridObject(int x, int y, Tile value) {
             if (x >= 0 && y >= 0 && x < width && y < height) {
-                gridArray[x, y] = value;
+                tiles[x, y] = value;
                 //OnGridObjectChanged?.Invoke(this, new OnGridObjectChangedEventArgs { x = x, y = y });
             }
         }

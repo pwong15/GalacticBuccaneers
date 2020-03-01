@@ -14,7 +14,7 @@ namespace Components {
         bool canMoveUp = true, canMoveDown = true, canMoveRght = true, canMoveLft = true, isWall = false;
         public int xCoord { get; }
         public int yCoord { get; }
-        public BoardPiece BoardPiece { get; set; }
+        public GameObject BoardPiece { get; set; }
 
         void Start() {
             rend = GetComponent<Renderer>();
@@ -22,6 +22,12 @@ namespace Components {
 
         void Update() {
             CheckForCursorHover();
+            Vector3 cursorLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            bool cursorIsOnTile = CursorIsOnTile(cursorLocation.x - xCoordf, cursorLocation.y - yCoordf);
+            if (cursorIsOnTile && Input.GetKeyDown(KeyCode.S)) {
+                Unit boardPiece = new Unit(new Character(0, 10, 10, 10, 10, 2, 3), this);
+                Debug.Log("Spawned unit on " + column + " " + row);
+            }
         }
 
 
@@ -32,6 +38,8 @@ namespace Components {
             foreach (Tile g in adjacencies) {
                 Debug.Log("adjacency: " + g.ToString());
             }
+            gameBoard.selectedPiece = this.BoardPiece;
+            Debug.Log(gameBoard.selectedPiece);
         }
 
         public void Initialize(Grid gameBoard, int xLocation, int yLocation, int zLocation, char layoutSymbol) {
@@ -41,7 +49,7 @@ namespace Components {
 
             this.column = xLocation;
             this.row = -yLocation;
-
+            this.Terrain = new Terrain(Terrain.Sprite.None);
             this.gameBoard = gameBoard;
             this.gameObject.AddComponent(typeof(BoxCollider));
             this.transform.position = new Vector3(xCoordf, yCoordf, zCoordf);
