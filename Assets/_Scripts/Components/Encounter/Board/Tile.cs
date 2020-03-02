@@ -48,8 +48,17 @@ namespace Components {
             foreach (Tile g in adjacencies) {
                 Debug.Log("adjacency: " + g.ToString());
             }
-            gameBoard.selectedPiece = this.BoardPiece;
-            Debug.Log(gameBoard.selectedPiece.name);
+            if (gameBoard.selectedPiece == null) {
+                Debug.Log("Wtf");
+                gameBoard.selectedPiece = this.BoardPiece;
+                Debug.Log(gameBoard.selectedPiece.name);
+            } else {
+                Debug.Log("?");
+                if (gameBoard.selectedPieceRange.Contains(this)) {
+                    gameBoard.selectedPiece.GetComponent<Unit>().MoveTo(this);
+                }
+                gameBoard.selectedPiece = null;
+            }
         }
 
         public void Initialize(Grid gameBoard, int xLocation, int yLocation, int zLocation, char layoutSymbol) {

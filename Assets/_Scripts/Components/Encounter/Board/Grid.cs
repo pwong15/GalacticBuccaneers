@@ -66,7 +66,7 @@ namespace Components {
             string wallLayoutFile = Directory.GetCurrentDirectory() + "\\Assets\\Utilities\\BoardCreationUtility\\output\\" + MAP_NAME + ".txt";
             string wallLayout = string.Join("", File.ReadAllLines(wallLayoutFile));
             int wallIndex = 0;
-
+            selectedPiece = null;
             for (int row = 0; row < GRID_HEIGHT; row++) {
                 for (int column = 0; column < GRID_WIDTH; column++) {
                     

@@ -4,7 +4,18 @@ namespace Components {
 
     public class Unit : MonoBehaviour {
         public Character Character { get; set; }
-        public Tile Tile { get; set; }
+
+        private Tile _tile;
+        public Tile Tile {
+            get {
+                return _tile;
+            }
+            set {
+                _tile = value;
+                Vector3 tileLocation = value.transform.position;
+                this.transform.position = new Vector3(tileLocation.x, tileLocation.y, tileLocation.z + 1);
+            }
+        }
 
         public bool HasMoved { get; set; }
 
@@ -25,8 +36,6 @@ namespace Components {
         public void Initialize(Character character, Tile tile) {
             this.Character = character;
             tile.BoardPiece = this.gameObject;
-            Vector3 tileLocation = tile.transform.position;
-            this.transform.position = new Vector3(tileLocation.x, tileLocation.y, tileLocation.z + 1);
             this.MoveSpeed = character.MoveSpeed;
             this.Tile = tile;
             _hasActed = true;
@@ -39,10 +48,7 @@ namespace Components {
         public void MoveTo(Tile targetLocation) {
             Tile.BoardPiece = null;
             targetLocation.BoardPiece = this.gameObject;
-            Components.Grid grid = Tile.grid;
-            grid.TriggerGridObjectChanged(Tile.xCoord, Tile.yCoord);
             Tile = targetLocation;
-            grid.TriggerGridObjectChanged(targetLocation.xCoord, targetLocation.yCoord);
         }
 
         // Method will be moved to combat system
