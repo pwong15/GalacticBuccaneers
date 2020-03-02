@@ -18,22 +18,22 @@ namespace Components {
             }
         }
 
-        public int Team { get { return Character.Name % 2; } set {; } }
+        public int Team { get { return 0; } set {; } }
 
         public int MoveSpeed { get; set; }
 
         public void Initialize(Character character, Tile tile) {
             this.Character = character;
             tile.BoardPiece = this.gameObject;
-
-        }
-        public Unit(Character character, Tile tile) {
-            this.Character = character;
+            Vector3 tileLocation = tile.transform.position;
+            this.transform.position = new Vector3(tileLocation.x, tileLocation.y, tileLocation.z + 1);
             this.MoveSpeed = character.MoveSpeed;
-            tile.BoardPiece = this.gameObject;
             this.Tile = tile;
             _hasActed = true;
             HasMoved = true;
+            GetComponent<Renderer>().enabled = true;
+
+
         }
 
         public void MoveTo(Tile targetLocation) {

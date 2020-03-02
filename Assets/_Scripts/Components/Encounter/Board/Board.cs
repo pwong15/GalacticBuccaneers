@@ -44,7 +44,7 @@ namespace Components {
             }
         }
 
-        public Unit createUnit(Character character, Tile tile) {
+        /*public Unit createUnit(Character character, Tile tile) {
             if (character != null && tile != null && tile.BoardPiece == null) {
                 Unit newUnit = new Unit(character, tile);
                 Teams[character.Name % numOfTeam].Add(newUnit);
@@ -53,7 +53,7 @@ namespace Components {
             else {
                 return null;
             }
-        }
+        }*/
 
         public void EndTurn() {
             foreach(Unit unit in Teams[TurnCounter % numOfTeam]) {

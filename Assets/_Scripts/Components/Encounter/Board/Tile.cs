@@ -8,7 +8,7 @@ namespace Components {
 
         private float xCoordf, yCoordf, zCoordf;
         private int column, row, zCoord;
-        Renderer rend;
+        public Renderer rend;
         Grid gameBoard;
         List<Tile> _neighbors;
         bool canMoveUp = true, canMoveDown = true, canMoveRght = true, canMoveLft = true, isWall = false;
@@ -20,13 +20,23 @@ namespace Components {
             rend = GetComponent<Renderer>();
         }
 
+        private static int id = 0;
+        private Character RetrieveCharacter() {
+            return new Character("Unit " + id++, 100, 100, 10, 5, 2, 3);
+        }
         void Update() {
             CheckForCursorHover();
             Vector3 cursorLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             bool cursorIsOnTile = CursorIsOnTile(cursorLocation.x - xCoordf, cursorLocation.y - yCoordf);
-            if (cursorIsOnTile && Input.GetKeyDown(KeyCode.S)) {
-                Unit boardPiece = new Unit(new Character(0, 10, 10, 10, 10, 2, 3), this);
+            if (!isWall && cursorIsOnTile && Input.GetKeyDown(KeyCode.S) && BoardPiece == null) {
+                BoardPiece = Instantiate(Resources.Load("Prefabs/opaqueSquare") as GameObject);
+                Unit unit = BoardPiece.AddComponent<Unit>();
+                Character character = RetrieveCharacter();
+                unit.Initialize(character, this);
+                BoardPiece.GetComponent<SpriteRenderer>().color = Color.blue;
+                BoardPiece.name = character.Name;
                 Debug.Log("Spawned unit on " + column + " " + row);
+                Debug.Log(BoardPiece.name);
             }
         }
 
@@ -39,7 +49,7 @@ namespace Components {
                 Debug.Log("adjacency: " + g.ToString());
             }
             gameBoard.selectedPiece = this.BoardPiece;
-            Debug.Log(gameBoard.selectedPiece);
+            Debug.Log(gameBoard.selectedPiece.name);
         }
 
         public void Initialize(Grid gameBoard, int xLocation, int yLocation, int zLocation, char layoutSymbol) {
@@ -51,9 +61,16 @@ namespace Components {
             this.row = -yLocation;
             this.Terrain = new Terrain(Terrain.Sprite.None);
             this.gameBoard = gameBoard;
+            GameObject highlight = Instantiate(Resources.Load("Prefabs/opaqueSquare") as GameObject);
+            highlight.transform.position = new Vector3(xCoordf, yCoordf, 1);
+            highlight.GetComponent<Renderer>().enabled = false;
+            highlight.GetComponent<SpriteRenderer>().color = Color.red;
+            highlight.name = "highlight: " + gameObject.name;
             this.gameObject.AddComponent(typeof(BoxCollider));
             this.transform.position = new Vector3(xCoordf, yCoordf, zCoordf);
             GetComponent<Renderer>().enabled = !GetComponent<Renderer>().enabled;
+            highlight.transform.parent = this.transform;
+            Debug.Log(this.gameObject.transform.GetChild(0).gameObject.name);
             LocateWalls(layoutSymbol);
         }
 

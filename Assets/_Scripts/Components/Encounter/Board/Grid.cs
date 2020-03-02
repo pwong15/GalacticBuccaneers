@@ -47,7 +47,7 @@ namespace Components {
 
         private int id = 0;
         private Character RetrieveCharacter() {
-            return new Character(id++, 100, 100, 10, 5, 2, 3);
+            return new Character("Unit " + id++, 100, 100, 10, 5, 2, 3);
         }
 
         public void SpawnUnit(int x, int y) {
@@ -72,6 +72,7 @@ namespace Components {
                     
                     GameObject gridSquare = Instantiate(Resources.Load("Prefabs/target") as GameObject);
                     Tile tile = gridSquare.AddComponent<Tile>();
+                    gridSquare.name = "Tile[" + column + "," + row + "]";
                     tile.Initialize(this, column, -row, -1, wallLayout[wallIndex++]);
                     tiles[column, row] = tile;
                     wallLayoutArray[column, row] = ".";
@@ -86,9 +87,6 @@ namespace Components {
                 _selectedPiece = value;
                 if (_selectedPiece != null) {
                     selectedPieceRange = FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, selectedPiece.GetComponent<Unit>().MoveSpeed, (Tile) => Tile.Terrain.Cost);
-                    foreach (Tile tile in selectedPieceRange) {
-                        Debug.Log(tile);
-                    }
                 }
                 else {
                     selectedPieceRange = default(List<Tile>);
@@ -112,6 +110,7 @@ namespace Components {
                 ApplyTileEffects(_selectedPieceRange, Highlight);
             }
         }
+
 
         /*public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid, int, int, Tile> createGridObject) {
             this.width = width;
@@ -188,7 +187,8 @@ namespace Components {
 
         // Used to highlight a list of tiles (Tile Zone). As of now used to highlight/unhighlight the tiles in range of the selected board piece
         private void ToggleHighlightEffect(Tile tile, bool toggle) {
-            tile.GetComponent<Renderer>().enabled = toggle;
+            Debug.Log("Highlighting" + tile);
+            tile.gameObject.transform.GetChild(0).gameObject.GetComponent<Renderer>().enabled = toggle;
         }
 
         public Vector3 GetWorldPosition(int x, int y) {
