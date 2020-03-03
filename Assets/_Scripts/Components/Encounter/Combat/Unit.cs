@@ -12,8 +12,10 @@ namespace Components {
             }
             set {
                 _tile = value;
-                Vector3 tileLocation = value.transform.position;
-                this.transform.position = new Vector3(tileLocation.x, tileLocation.y, tileLocation.z + 1);
+                if (_tile != null) {
+                    Vector3 tileLocation = value.transform.position;
+                    this.transform.position = new Vector3(tileLocation.x, tileLocation.y, tileLocation.z + 1);
+                }
             }
         }
 
@@ -46,19 +48,32 @@ namespace Components {
         }
 
         public void MoveTo(Tile targetLocation) {
-            Tile.BoardPiece = null;
-            targetLocation.BoardPiece = this.gameObject;
-            Tile = targetLocation;
+            if (targetLocation.BoardPiece == null) {
+                Tile.BoardPiece = null;
+                targetLocation.BoardPiece = this.gameObject;
+                Tile = targetLocation;
+            }
         }
 
         // Method will be moved to combat system
         public void AttackUnit(Unit otherUnit) {
-            otherUnit.TakeDamage(Character.Attack - otherUnit.Character.Defense);
+            otherUnit.TakeDamage(2 * Character.Attack - otherUnit.Character.Defense);
         }
 
         // Method will be moved to combat system
         public void TakeDamage(int damageAmount) {
             Character.Health -= damageAmount;
+            Debug.Log(Character.Name + " took " + damageAmount + " dmg");
+            if (Character.Health <= 0) {
+                Debug.Log(Character.Name + " has Died");
+                Die();
+            }
+        }
+
+        private void Die() {
+            Tile.BoardPiece = null;
+            this.Tile = null;
+            GetComponent<Renderer>().enabled = false;
         }
 
         public override string ToString() {

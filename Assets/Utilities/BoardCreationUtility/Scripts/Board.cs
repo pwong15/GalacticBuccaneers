@@ -58,7 +58,7 @@ public class Board : MonoBehaviour
     //    }
 
     //    string fileLocation = Directory.GetCurrentDirectory() + "\\Assets\\Utilities\\BoardCreationUtility\\output\\" + MAP_NAME + ".txt";
-    //    Debug.Log(fileLocation);
+    //    (fileLocation);
     //    File.WriteAllText(fileLocation, boardAsAString);
     //}
 

@@ -10,6 +10,12 @@ namespace Components {
      * contains some board component fields and board and movement system methods.
      */
 
+    public enum SelectedPieceState {
+        None,
+        Attacking,
+        Moving,
+    }
+
     public class Grid : MonoBehaviour {
         private readonly int GRID_HEIGHT = 32;
         private readonly int GRID_WIDTH = 24;
@@ -22,11 +28,15 @@ namespace Components {
         }*/
 
         private GameObject _selectedPiece;
-        private List<Tile> _selectedPieceRange;
+        private List<Tile> _selectedPieceMoveRange;
+        private List<Tile> _selectedPieceAttackRange;
         public int width { get; }
         public int height { get; }
         public float cellSize { get; }
         public Vector3 originPosition;
+        public bool highlighting { get; set; }
+
+        public SelectedPieceState SelectedPieceState { get; set; }
         private Tile[,] gridArray;
 
         
@@ -66,7 +76,6 @@ namespace Components {
             string wallLayoutFile = Directory.GetCurrentDirectory() + "\\Assets\\Utilities\\BoardCreationUtility\\output\\" + MAP_NAME + ".txt";
             string wallLayout = string.Join("", File.ReadAllLines(wallLayoutFile));
             int wallIndex = 0;
-            selectedPiece = null;
             for (int row = 0; row < GRID_HEIGHT; row++) {
                 for (int column = 0; column < GRID_WIDTH; column++) {
                     
@@ -85,30 +94,47 @@ namespace Components {
             }
             set {
                 _selectedPiece = value;
+                unHighlight(selectedPieceAttackRange);
+                unHighlight(selectedPieceMoveRange);
                 if (_selectedPiece != null) {
-                    selectedPieceRange = FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, selectedPiece.GetComponent<Unit>().MoveSpeed, (Tile) => Tile.Terrain.Cost);
+                    selectedPieceMoveRange = FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, selectedPiece.GetComponent<Unit>().MoveSpeed, (Tile) => Tile.Terrain.Cost);
+                    selectedPieceAttackRange = FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, 1, (Tile) => 1);
                 }
                 else {
-                    selectedPieceRange = default(List<Tile>);
+                    selectedPieceMoveRange = default(List<Tile>);
+                    selectedPieceAttackRange = default(List<Tile>);
+                    SelectedPieceState = SelectedPieceState.None;
                 }
                 ;
             }
         }
 
-        public List<Tile> selectedPieceRange {
+        public List<Tile> selectedPieceMoveRange {
             get {
-                return _selectedPieceRange;
+                return _selectedPieceMoveRange;
             }
             set {
-                if (_selectedPieceRange != null) {
-                    Action<Tile> unHighlight = (Tile) => ToggleHighlightEffect(Tile, false);
-                    Action<Tile> clearPathFindingCost = (Tile) => SetTileCost(Tile, 0);
-                    ApplyTileEffects(_selectedPieceRange, unHighlight);
-                }
-                _selectedPieceRange = value;
-                Action<Tile> Highlight = (Tile) => ToggleHighlightEffect(Tile, true);
-                ApplyTileEffects(_selectedPieceRange, Highlight);
+                _selectedPieceMoveRange = value;
             }
+        }
+
+        public List<Tile> selectedPieceAttackRange {
+            get {
+                return _selectedPieceAttackRange;
+            }
+            set {
+                _selectedPieceAttackRange = value;
+            }
+        }
+
+        public void Highlight(List<Tile> tiles, Color color) {
+            ApplyTileEffects(tiles, (Tile) => ToggleHighlightEffect(Tile, true, color));
+            highlighting = true;
+        }
+
+        public void unHighlight(List<Tile> tiles) {
+            ApplyTileEffects(tiles, (Tile) => ToggleHighlightEffect(Tile, false, Color.white));
+            highlighting = false;
         }
 
 
@@ -173,6 +199,9 @@ namespace Components {
                     }
                 }
             }
+            foreach (Tile inRangeTile in tilesInRange) {
+                inRangeTile.Cost = 0;
+            }
             return tilesInRange;
         }
 
@@ -186,9 +215,12 @@ namespace Components {
         }
 
         // Used to highlight a list of tiles (Tile Zone). As of now used to highlight/unhighlight the tiles in range of the selected board piece
-        private void ToggleHighlightEffect(Tile tile, bool toggle) {
-            Debug.Log("Highlighting" + tile);
-            tile.gameObject.transform.GetChild(0).gameObject.GetComponent<Renderer>().enabled = toggle;
+        private void ToggleHighlightEffect(Tile tile, bool toggle, Color color) {
+            GameObject tileObject = tile.gameObject.transform.GetChild(0).gameObject;
+            if (toggle) {
+                tileObject.GetComponent<SpriteRenderer>().color = color;
+            }
+            tileObject.GetComponent<Renderer>().enabled = toggle;
         }
 
         public Vector3 GetWorldPosition(int x, int y) {

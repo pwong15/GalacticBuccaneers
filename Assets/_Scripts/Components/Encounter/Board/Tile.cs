@@ -9,6 +9,7 @@ namespace Components {
         private float xCoordf, yCoordf, zCoordf;
         private int column, row, zCoord;
         public Renderer rend;
+        bool highlight;
         Grid gameBoard;
         List<Tile> _neighbors;
         bool canMoveUp = true, canMoveDown = true, canMoveRght = true, canMoveLft = true, isWall = false;
@@ -25,6 +26,7 @@ namespace Components {
             return new Character("Unit " + id++, 100, 100, 10, 5, 2, 3);
         }
         void Update() {
+
             CheckForCursorHover();
             Vector3 cursorLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             bool cursorIsOnTile = CursorIsOnTile(cursorLocation.x - xCoordf, cursorLocation.y - yCoordf);
@@ -38,6 +40,14 @@ namespace Components {
                 Debug.Log("Spawned unit on " + column + " " + row);
                 Debug.Log(BoardPiece.name);
             }
+            if (gameBoard!=null && !gameBoard.highlighting && cursorIsOnTile && gameBoard.selectedPiece != null && Input.GetKeyDown(KeyCode.M)) {
+                gameBoard.Highlight(gameBoard.selectedPieceMoveRange, Color.blue);
+                gameBoard.SelectedPieceState = SelectedPieceState.Moving;
+            }
+            if (gameBoard!=null && !gameBoard.highlighting && cursorIsOnTile && gameBoard.selectedPiece != null && Input.GetKeyDown(KeyCode.A)) {
+                gameBoard.Highlight(gameBoard.selectedPieceAttackRange, Color.red);
+                gameBoard.SelectedPieceState = SelectedPieceState.Attacking;
+            }
         }
 
 
@@ -45,21 +55,35 @@ namespace Components {
         public void OnMouseDown() {
             List<Tile> adjacencies = GetNeighbors();
             Debug.Log("Clicked: " + this.ToString());
-            foreach (Tile g in adjacencies) {
+            /*foreach (Tile g in adjacencies) {
                 Debug.Log("adjacency: " + g.ToString());
-            }
-            if (gameBoard.selectedPiece == null) {
-                Debug.Log("Wtf");
-                gameBoard.selectedPiece = this.BoardPiece;
-                Debug.Log(gameBoard.selectedPiece.name);
-            } else {
-                Debug.Log("?");
-                if (gameBoard.selectedPieceRange.Contains(this)) {
-                    gameBoard.selectedPiece.GetComponent<Unit>().MoveTo(this);
+            }*/
+            switch(gameBoard.SelectedPieceState) {
+                case SelectedPieceState.None : {
+                        gameBoard.selectedPiece = this.BoardPiece;
+                        break;
                 }
-                gameBoard.selectedPiece = null;
+                case SelectedPieceState.Attacking : {
+                        
+                        if (gameBoard.selectedPieceAttackRange.Contains(this) && this.BoardPiece!=null) {
+                            Unit unit = this.BoardPiece.GetComponent<Unit>();
+                            gameBoard.selectedPiece.GetComponent<Unit>().AttackUnit(unit);
+                        }
+                        gameBoard.selectedPiece = null;
+                        gameBoard.SelectedPieceState = SelectedPieceState.None;
+                        break;
+                }
+                case SelectedPieceState.Moving : {
+                        if (gameBoard.selectedPieceMoveRange.Contains(this)) {
+                            gameBoard.selectedPiece.GetComponent<Unit>().MoveTo(this);
+                        }
+                        gameBoard.selectedPiece = null;
+                        gameBoard.SelectedPieceState = SelectedPieceState.None;
+                        break;
+                    }
             }
         }
+
 
         public void Initialize(Grid gameBoard, int xLocation, int yLocation, int zLocation, char layoutSymbol) {
             this.xCoordf = xLocation;
@@ -79,7 +103,6 @@ namespace Components {
             this.transform.position = new Vector3(xCoordf, yCoordf, zCoordf);
             GetComponent<Renderer>().enabled = !GetComponent<Renderer>().enabled;
             highlight.transform.parent = this.transform;
-            Debug.Log(this.gameObject.transform.GetChild(0).gameObject.name);
             LocateWalls(layoutSymbol);
         }
 
