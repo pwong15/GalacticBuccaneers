@@ -53,11 +53,13 @@ namespace Components {
                 targetLocation.BoardPiece = this.gameObject;
                 Tile = targetLocation;
             }
+            HasMoved = true;
         }
 
         // Method will be moved to combat system
         public void AttackUnit(Unit otherUnit) {
             otherUnit.TakeDamage(2 * Character.Attack - otherUnit.Character.Defense);
+            HasActed = true;
         }
 
         // Method will be moved to combat system

@@ -34,6 +34,11 @@ namespace Components {
         public int height { get; }
         public float cellSize { get; }
         public Vector3 originPosition;
+
+        public int TurnCounter { get; set; }
+
+        public int numOfTeam { get; set; }
+        public Dictionary<int, List<Unit>> Teams { get; set;  }
         public bool highlighting { get; set; }
 
         public SelectedPieceState SelectedPieceState { get; set; }
@@ -55,6 +60,13 @@ namespace Components {
             CreateGrid();
         }
 
+        void Update() {
+            if (Input.GetKeyDown("enter")) {
+                EndTurn();
+                StartTurn();
+            }
+        }
+
         private int id = 0;
         private Character RetrieveCharacter() {
             return new Character("Unit " + id++, 100, 100, 10, 5, 2, 3);
@@ -64,8 +76,29 @@ namespace Components {
             GameObject unitObject = Instantiate(Resources.Load("Prefabs/target") as GameObject);
             Unit unit = unitObject.AddComponent<Unit>();
             unit.Initialize(RetrieveCharacter(), tiles[x, y]);
+            Teams[unit.Team].Add(unit);
+
         }
 
+        private void StartTurn() {
+            int team = TurnCounter % 2;
+            Debug.Log("Team " + team + " Turn " + TurnCounter / 2);
+            foreach (Unit unit in Teams[0]) {
+                Debug.Log("can act");
+                unit.HasMoved = false;
+                unit.HasActed = false;
+            }
+        }
+
+        private void EndTurn() {
+            int team = TurnCounter % 2;
+            foreach (Unit unit in Teams[0]) {
+                Debug.Log("Can't Act");
+                unit.HasActed = true;
+            }
+            Debug.Log("Ending Turn");
+            TurnCounter += 1;
+        }
 
 
         private void CreateGrid() {
@@ -76,6 +109,13 @@ namespace Components {
             string wallLayoutFile = Directory.GetCurrentDirectory() + "\\Assets\\Utilities\\BoardCreationUtility\\output\\" + MAP_NAME + ".txt";
             string wallLayout = string.Join("", File.ReadAllLines(wallLayoutFile));
             int wallIndex = 0;
+            numOfTeam = 2;
+            Teams = new Dictionary<int, List<Unit>>();
+            for (int i = 0; i < numOfTeam; i++) {
+                Teams[i] = new List<Unit>();
+            }
+            Debug.Log("Made teams");
+            TurnCounter = 0;
             for (int row = 0; row < GRID_HEIGHT; row++) {
                 for (int column = 0; column < GRID_WIDTH; column++) {
                     
@@ -87,6 +127,8 @@ namespace Components {
                     wallLayoutArray[column, row] = ".";
                 }
             }
+            
+
         }
         public GameObject selectedPiece {
             get {

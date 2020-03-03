@@ -31,7 +31,9 @@ namespace Components {
             Vector3 cursorLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             bool cursorIsOnTile = CursorIsOnTile(cursorLocation.x - xCoordf, cursorLocation.y - yCoordf);
             if (!isWall && cursorIsOnTile && Input.GetKeyDown(KeyCode.S) && BoardPiece == null) {
-                BoardPiece = Instantiate(Resources.Load("Prefabs/opaqueSquare") as GameObject);
+                BoardPiece = Instantiate(Resources.Load("Prefabs/cyborgman") as GameObject);
+                Vector3 scaleChange = new Vector3(-0.9f, -0.9f, -0.9f);
+                BoardPiece.transform.localScale += scaleChange;
                 Unit unit = BoardPiece.AddComponent<Unit>();
                 Character character = RetrieveCharacter();
                 unit.Initialize(character, this);
