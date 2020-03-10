@@ -4,7 +4,27 @@ namespace Components {
 
     public class Unit : MonoBehaviour {
         public Character Character { get; set; }
+        private Vector3 destination;
+        bool moving = false;
+        Tile destinationTile;
 
+        private void Update()
+        {
+            if (moving)
+            {
+                float delta = MoveSpeed * Time.deltaTime;
+                Vector3 currentPosition = this.transform.position;
+                Vector3 nextPosition = Vector3.MoveTowards(currentPosition, destination, delta);
+
+                this.transform.position = nextPosition;
+            }
+
+            if (destination == this.transform.position)
+            {
+                moving = false;
+                Tile = destinationTile;
+            }
+        }
         private Tile _tile;
         public Tile Tile {
             get {
@@ -49,9 +69,11 @@ namespace Components {
 
         public void MoveTo(Tile targetLocation) {
             if (targetLocation.BoardPiece == null) {
+                destination = targetLocation.transform.position;
+                moving = true;
                 Tile.BoardPiece = null;
                 targetLocation.BoardPiece = this.gameObject;
-                Tile = targetLocation;
+                destinationTile = targetLocation;
             }
             HasMoved = true;
         }

@@ -17,6 +17,7 @@ namespace Components {
         public int yCoord { get; }
         public GameObject BoardPiece { get; set; }
 
+
         void Start() {
             rend = GetComponent<Renderer>();
         }
@@ -76,9 +77,9 @@ namespace Components {
                         break;
                 }
                 case SelectedPieceState.Moving : {
-                        if (gameBoard.selectedPieceMoveRange.Contains(this)) {
+                        if (gameBoard.selectedPieceMoveRange.Contains(this)) 
                             gameBoard.selectedPiece.GetComponent<Unit>().MoveTo(this);
-                        }
+
                         gameBoard.selectedPiece = null;
                         gameBoard.SelectedPieceState = SelectedPieceState.None;
                         break;
