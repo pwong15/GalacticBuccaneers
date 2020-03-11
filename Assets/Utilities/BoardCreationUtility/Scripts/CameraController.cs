@@ -16,25 +16,25 @@ public class CameraController : MonoBehaviour
     // Move camera right, left, up, down with wasd
     private void listenForCameraPan()
     {
-        if (Input.GetKeyDown("w"))
+        if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             Vector3 currentPosition = this.transform.position;
             this.transform.position = new Vector3(currentPosition.x, currentPosition.y + 5, currentPosition.z);
         }
 
-        if (Input.GetKeyDown("a"))
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             Vector3 currentPosition = this.transform.position;
             this.transform.position = new Vector3(currentPosition.x - 5, currentPosition.y, currentPosition.z);
         }
 
-        if (Input.GetKeyDown("s"))
+        if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             Vector3 currentPosition = this.transform.position;
             this.transform.position = new Vector3(currentPosition.x, currentPosition.y - 5, currentPosition.z);
         }
 
-        if (Input.GetKeyDown("d"))
+        if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             Vector3 currentPosition = this.transform.position;
             this.transform.position = new Vector3(currentPosition.x + 5, currentPosition.y, currentPosition.z);

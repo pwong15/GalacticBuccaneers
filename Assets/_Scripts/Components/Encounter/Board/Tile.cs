@@ -33,8 +33,10 @@ namespace Components {
             bool cursorIsOnTile = CursorIsOnTile(cursorLocation.x - xCoordf, cursorLocation.y - yCoordf);
             if (!isWall && cursorIsOnTile && Input.GetKeyDown(KeyCode.S) && BoardPiece == null) {
                 BoardPiece = Instantiate(Resources.Load("Prefabs/cyborgman") as GameObject);
-                Vector3 scaleChange = new Vector3(-0.9f, -0.9f, -0.9f);
+                Vector3 scaleChange = new Vector3(-0.94f, -0.94f, -0.94f);
                 BoardPiece.transform.localScale += scaleChange;
+                //Vector3 center = this.transform.position = new Vector3(xCoordf, yCoordf - .7f, zCoordf);
+
                 Unit unit = BoardPiece.AddComponent<Unit>();
                 Character character = RetrieveCharacter();
                 unit.Initialize(character, this);
