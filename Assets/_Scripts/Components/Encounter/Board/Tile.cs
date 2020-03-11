@@ -89,7 +89,6 @@ namespace Components {
             }
         }
 
-
         public void Initialize(Grid gameBoard, int xLocation, int yLocation, int zLocation, char layoutSymbol) {
             this.xCoordf = xLocation;
             this.yCoordf = yLocation;
@@ -99,11 +98,13 @@ namespace Components {
             this.row = -yLocation;
             this.Terrain = new Terrain(Terrain.Sprite.None);
             this.gameBoard = gameBoard;
+
             GameObject highlight = Instantiate(Resources.Load("Prefabs/opaqueSquare") as GameObject);
             highlight.transform.position = new Vector3(xCoordf, yCoordf, 1);
             highlight.GetComponent<Renderer>().enabled = false;
             highlight.GetComponent<SpriteRenderer>().color = Color.red;
             highlight.name = "highlight: " + gameObject.name;
+
             this.gameObject.AddComponent(typeof(BoxCollider));
             this.transform.position = new Vector3(xCoordf, yCoordf, zCoordf);
             GetComponent<Renderer>().enabled = !GetComponent<Renderer>().enabled;

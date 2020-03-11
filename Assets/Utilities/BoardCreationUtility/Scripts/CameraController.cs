@@ -19,25 +19,25 @@ public class CameraController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             Vector3 currentPosition = this.transform.position;
-            this.transform.position = new Vector3(currentPosition.x, currentPosition.y + 5, currentPosition.z);
+            this.transform.position = new Vector3(currentPosition.x, currentPosition.y + 1, currentPosition.z);
         }
 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             Vector3 currentPosition = this.transform.position;
-            this.transform.position = new Vector3(currentPosition.x - 5, currentPosition.y, currentPosition.z);
+            this.transform.position = new Vector3(currentPosition.x - 1, currentPosition.y, currentPosition.z);
         }
 
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             Vector3 currentPosition = this.transform.position;
-            this.transform.position = new Vector3(currentPosition.x, currentPosition.y - 5, currentPosition.z);
+            this.transform.position = new Vector3(currentPosition.x, currentPosition.y - 1, currentPosition.z);
         }
 
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             Vector3 currentPosition = this.transform.position;
-            this.transform.position = new Vector3(currentPosition.x + 5, currentPosition.y, currentPosition.z);
+            this.transform.position = new Vector3(currentPosition.x + 1, currentPosition.y, currentPosition.z);
         }
     }
 

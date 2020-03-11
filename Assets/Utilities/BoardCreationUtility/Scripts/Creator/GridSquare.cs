@@ -3,29 +3,25 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GridSquare : MonoBehaviour
+public class GridSquare : DefaultGridSquare
 {
-    private float xCoordf, yCoordf, zCoordf;
-    private int column, row, zCoord;
-    Renderer rend;
-    Board board;
     int highlightIndex = 0;
-
+    CreationBoard grid;
     private List<Color> colors = new List<Color> {Color.blue, Color.green, Color.red, Color.white};
 
     // The symbol each color writes to file
-    private Dictionary<Color, string> colorToStrTable= new Dictionary<Color, string>{
+    private Dictionary<Color, string> colorToString= new Dictionary<Color, string>{
         {Color.blue, "w"},
         {Color.green, "_" },
         {Color.red,"|"},
-        {Color.white, "*"} };
+        {Color.white, "."} };
 
-
-    void Start()
+    private void Start()
     {
+        grid = (CreationBoard)board;
         rend = GetComponent<Renderer>();
     }
-
+  
     void OnMouseOver()
     {
         // Left click
@@ -34,9 +30,10 @@ public class GridSquare : MonoBehaviour
             // Wrap to other side if at end of list
             if (highlightIndex == this.colors.Count)
                 highlightIndex = 0;
+
             Color currColor = colors[highlightIndex++];
             rend.material.color = currColor;
-            board.MarkSquare(column, row, this.colorToStrTable[currColor]);
+            grid.MarkSquare(column, row, this.colorToString[currColor]);
         }
 
         // Right click
@@ -44,31 +41,11 @@ public class GridSquare : MonoBehaviour
             // Wrap to other side if at end of list
             if (highlightIndex == 0)
                 highlightIndex = this.colors.Count;
+
             Color currColor = colors[--highlightIndex];
             rend.material.color = currColor;
-            board.MarkSquare(column, row, this.colorToStrTable[currColor]);
+            grid.MarkSquare(column, row, this.colorToString[currColor]);
         }
-    }
-
-    // Creates an empty tile, sets its location, adds a box collider
-    public void Initialize(Board gameBoard, int xLocation, int yLocation, int zLocation)
-    {
-        this.xCoordf = xLocation;
-        this.yCoordf = yLocation;
-        this.zCoordf = zLocation;
-
-        this.column = xLocation;
-        this.row = -yLocation;
-
-        this.board = gameBoard;
-        this.gameObject.AddComponent(typeof(BoxCollider));
-        this.transform.position = new Vector3(xCoordf, yCoordf, zCoordf);
-
-    }
-
-    public override string ToString()
-    {
-        return column + "," + row;
     }
 }
 
