@@ -57,7 +57,7 @@ namespace Components {
 
         private int id = 0;
         private Character RetrieveCharacter() {
-            return new Character("Unit " + id, id++, 100, 100, 10, 5, 2, 3);
+            return new Character("Unit " + id, id++ % numOfTeam, 100, 100, 10, 5, 2, 3);
         }
 
         public void SpawnUnit(int x, int y) {

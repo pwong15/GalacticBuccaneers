@@ -57,14 +57,16 @@ namespace Components {
         public void Initialize(Character character, Tile tile) {
             this.Character = character;
             tile.BoardPiece = this.gameObject;
+            this.gameObject.name = this.ToString();
             this.MoveSpeed = character.MoveSpeed;
             this.Tile = tile;
+            this.Team = Character.Team;
             _hasActed = true;
             HasMoved = true;
         }
 
         public void MoveTo(Tile targetLocation) {
-            if (targetLocation.BoardPiece == null) {
+            if (!HasMoved && targetLocation.BoardPiece == null) {
                 destination = targetLocation.transform.position;
                 moving = true;
                 Tile.BoardPiece = null;
@@ -88,6 +90,19 @@ namespace Components {
             }
         }
 
+        public void StartOfTurnEffects(object sender, Grid.TurnEventArgs turnEvent) {
+            if (turnEvent.Team == Team) {
+                HasActed = false;
+            }
+        }
+
+        public void EndOfTurnEffects(object sender, Grid.TurnEventArgs turnEvent) {
+            if (turnEvent.Team == Team) {
+                HasActed = true;
+            }
+        }
+
+        // Clears tile and unit references and hides unit below the board (z -axis)
         private void Die() {
             Tile.BoardPiece = null;
             this.Tile = null;
@@ -95,7 +110,7 @@ namespace Components {
         }
 
         public override string ToString() {
-            return Character.Name.ToString();
+            return Character.Name.ToString() + " on Team" + Team;
         }
     }
 }
