@@ -5,10 +5,6 @@ using UnityEngine;
 using Utilitys;
 
 namespace Components {
-    /*
-     * This class was made by following the code monkey tutorial and it doesn't exactly follow the ecs architecture since it
-     * contains some board component fields and board and movement system methods.
-     */
 
     public enum SelectedPieceState {
         None,
@@ -20,12 +16,12 @@ namespace Components {
         private readonly int GRID_HEIGHT = 32;
         private readonly int GRID_WIDTH = 24;
         private readonly string MAP_NAME = "Layout2";
-        /*public event EventHandler<OnGridObjectChangedEventArgs> OnGridObjectChanged;
+        public event EventHandler<TurnEventArgs> OnTurnStart;
+        public event EventHandler<TurnEventArgs> OnTurnEnd;
 
-        public class OnGridObjectChangedEventArgs : EventArgs {
-            public int x;
-            public int y;
-        }*/
+        public class TurnEventArgs : EventArgs {
+            public int Team;
+        }
 
         private GameObject _selectedPiece;
         private List<Tile> _selectedPieceMoveRange;
@@ -34,29 +30,21 @@ namespace Components {
         public int height { get; }
         public float cellSize { get; }
         public Vector3 originPosition;
-
         public int TurnCounter { get; set; }
-
         public int numOfTeam { get; set; }
-        public Dictionary<int, List<Unit>> Teams { get; set;  }
         public bool highlighting { get; set; }
 
         public SelectedPieceState SelectedPieceState { get; set; }
         private Tile[,] gridArray;
-
-        
-        //private readonly string MAP_NAME = "LatestMap";
+       
         
         string[,] wallLayoutArray;
-        //private List<Tile> _neighbors;
-        //public Gridgrid { get; }
+        
         public Tile[,] tiles;
-        //public int xCoord { get; }
-        //public int yCoord { get; }
+        
 
 
         void Start() {
-         
             CreateGrid();
         }
 
@@ -69,37 +57,31 @@ namespace Components {
 
         private int id = 0;
         private Character RetrieveCharacter() {
-            return new Character("Unit " + id++, 100, 100, 10, 5, 2, 3);
+            return new Character("Unit " + id, id++, 100, 100, 10, 5, 2, 3);
         }
 
         public void SpawnUnit(int x, int y) {
             GameObject unitObject = Instantiate(Resources.Load("Prefabs/target") as GameObject);
             Unit unit = unitObject.AddComponent<Unit>();
             unit.Initialize(RetrieveCharacter(), tiles[x, y]);
-            Teams[unit.Team].Add(unit);
+        }
 
+        public void SpawnUnit(Tile tile) {
+            SpawnUnit(tile.xCoord, tile.yCoord);
         }
 
         private void StartTurn() {
             int team = TurnCounter % 2;
             Debug.Log("Team " + team + " Turn " + TurnCounter / 2);
-            foreach (Unit unit in Teams[0]) {
-                Debug.Log("can act");
-                unit.HasMoved = false;
-                unit.HasActed = false;
-            }
+            OnTurnStart?.Invoke(this, new TurnEventArgs { Team = team });
         }
 
         private void EndTurn() {
             int team = TurnCounter % 2;
-            foreach (Unit unit in Teams[0]) {
-                Debug.Log("Can't Act");
-                unit.HasActed = true;
-            }
             Debug.Log("Ending Turn");
             TurnCounter += 1;
+            OnTurnEnd?.Invoke(this, new TurnEventArgs { Team = team });
         }
-
 
         private void CreateGrid() {
             wallLayoutArray = new string[GRID_WIDTH, GRID_HEIGHT];
@@ -110,10 +92,6 @@ namespace Components {
             string wallLayout = string.Join("", File.ReadAllLines(wallLayoutFile));
             int wallIndex = 0;
             numOfTeam = 2;
-            Teams = new Dictionary<int, List<Unit>>();
-            for (int i = 0; i < numOfTeam; i++) {
-                Teams[i] = new List<Unit>();
-            }
             Debug.Log("Made teams");
             TurnCounter = 0;
             for (int row = 0; row < GRID_HEIGHT; row++) {

@@ -10,7 +10,6 @@ namespace Components {
         private BoardPiece _selectedPiece;
         private List<Tile> _selectedPieceRange;
         public int TurnCounter { get; set; }
-
         public int numOfTeam { get; }
         public Dictionary<int, List<Unit>> Teams { get; }
 

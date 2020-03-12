@@ -5,6 +5,7 @@ namespace Components {
     public class Unit : MonoBehaviour {
         public Character Character { get; set; }
         private Vector3 destination;
+        public int Team { get; set; }
         bool moving = false;
         Tile destinationTile;
 
@@ -51,8 +52,6 @@ namespace Components {
             }
         }
 
-        public int Team { get { return 0; } set {; } }
-
         public int MoveSpeed { get; set; }
 
         public void Initialize(Character character, Tile tile) {
@@ -62,9 +61,6 @@ namespace Components {
             this.Tile = tile;
             _hasActed = true;
             HasMoved = true;
-            GetComponent<Renderer>().enabled = true;
-
-
         }
 
         public void MoveTo(Tile targetLocation) {
@@ -78,13 +74,11 @@ namespace Components {
             HasMoved = true;
         }
 
-        // Method will be moved to combat system
         public void AttackUnit(Unit otherUnit) {
             otherUnit.TakeDamage(2 * Character.Attack - otherUnit.Character.Defense);
             HasActed = true;
         }
 
-        // Method will be moved to combat system
         public void TakeDamage(int damageAmount) {
             Character.Health -= damageAmount;
             Debug.Log(Character.Name + " took " + damageAmount + " dmg");
@@ -97,7 +91,7 @@ namespace Components {
         private void Die() {
             Tile.BoardPiece = null;
             this.Tile = null;
-            GetComponent<Renderer>().enabled = false;
+            this.gameObject.transform.position -= new Vector3(0, 0, 10);
         }
 
         public override string ToString() {
