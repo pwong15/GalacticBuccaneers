@@ -77,7 +77,9 @@ namespace Components {
         }
 
         public void AttackUnit(Unit otherUnit) {
-            otherUnit.TakeDamage(2 * Character.Attack - otherUnit.Character.Defense);
+            if (otherUnit.Team != Team) {
+                otherUnit.TakeDamage(10 * Character.Attack - otherUnit.Character.Defense);
+            }
             HasActed = true;
         }
 

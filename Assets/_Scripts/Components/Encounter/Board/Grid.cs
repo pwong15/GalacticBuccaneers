@@ -53,6 +53,17 @@ namespace Components {
                 EndTurn();
                 StartTurn();
             }
+            if (selectedPiece != null) {
+                Unit unit = selectedPiece.GetComponent<Unit>();
+                if (Input.GetKeyDown(KeyCode.M) && !unit.HasMoved) {
+                    Highlight(selectedPieceMoveRange, Color.blue);
+                    SelectedPieceState = SelectedPieceState.Moving;
+                }
+                if (Input.GetKeyDown(KeyCode.A) && !unit.HasActed) {
+                    Highlight(selectedPieceAttackRange, Color.red);
+                    SelectedPieceState = SelectedPieceState.Attacking;
+                }
+            }
         }
 
         private int id = 0;
@@ -178,6 +189,7 @@ namespace Components {
                         neighborCost = getTileCost(neighbor) + currentTile.Cost;
                         if (neighbor.Terrain.IsWalkable && neighborCost <= range) {
                             neighbor.Cost = neighborCost;
+                            neighbor.Parent = currentTile;
                             tilesInRange.Add(neighbor);
                             queue.Enqueue(neighbor);
                         }
@@ -196,6 +208,7 @@ namespace Components {
             }
             foreach (Tile tile in tileZone) {
                 applyEffect(tile);
+                tile.Parent = null;
             }
         }
 
