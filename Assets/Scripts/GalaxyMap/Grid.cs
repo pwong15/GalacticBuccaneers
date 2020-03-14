@@ -28,7 +28,6 @@ namespace GalaxyMap
             {
                 GameObject gridVisual;
                 char gridValue = gridValues[gridIndex];
-
                 // Load the appropriate prefab based on the .txt file
                 switch (gridValue)
                 {
