@@ -24,7 +24,9 @@ namespace Components {
 
         private static int id = 0;
         private Character RetrieveCharacter() {
-            return new Character("Unit " + id++, 100, 100, 10, 5, 2, 3);
+            id++;
+            int team = id % 2;
+            return new Character("Unit " + id, team, 100, 100, 10, 5, 2, 3);
         }
         void Update() {
 
@@ -32,30 +34,34 @@ namespace Components {
             Vector3 cursorLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             bool cursorIsOnTile = CursorIsOnTile(cursorLocation.x - xCoordf, cursorLocation.y - yCoordf);
             if (!isWall && cursorIsOnTile && Input.GetKeyDown(KeyCode.S) && BoardPiece == null) {
-                BoardPiece = Instantiate(Resources.Load("Prefabs/cyborgman") as GameObject);
-                Vector3 scaleChange = new Vector3(-0.94f, -0.94f, -0.94f);
-                BoardPiece.transform.localScale += scaleChange;
-                //Vector3 center = this.transform.position = new Vector3(xCoordf, yCoordf - .7f, zCoordf);
-
-                Unit unit = BoardPiece.AddComponent<Unit>();
-                Character character = RetrieveCharacter();
-                unit.Initialize(character, this);
-                BoardPiece.GetComponent<SpriteRenderer>().color = Color.blue;
-                BoardPiece.name = character.Name;
-                Debug.Log("Spawned unit on " + column + " " + row);
-                Debug.Log(BoardPiece.name);
+                SpawnUnit();
             }
-            if (gameBoard!=null && !gameBoard.highlighting && cursorIsOnTile && gameBoard.selectedPiece != null && Input.GetKeyDown(KeyCode.M)) {
+
+            /*if (gameBoard!=null && !gameBoard.highlighting && cursorIsOnTile && gameBoard.selectedPiece != null && !gameBoard.selectedPiece.GetComponent<Unit>().HasMoved && Input.GetKeyDown(KeyCode.M)) {
                 gameBoard.Highlight(gameBoard.selectedPieceMoveRange, Color.blue);
                 gameBoard.SelectedPieceState = SelectedPieceState.Moving;
             }
-            if (gameBoard!=null && !gameBoard.highlighting && cursorIsOnTile && gameBoard.selectedPiece != null && Input.GetKeyDown(KeyCode.A)) {
+            if (gameBoard!=null && !gameBoard.highlighting && cursorIsOnTile && gameBoard.selectedPiece != null && !gameBoard.selectedPiece.GetComponent<Unit>().HasActed && Input.GetKeyDown(KeyCode.A)) {
                 gameBoard.Highlight(gameBoard.selectedPieceAttackRange, Color.red);
                 gameBoard.SelectedPieceState = SelectedPieceState.Attacking;
-            }
+            }*/
         }
 
+        private void SpawnUnit() {
+            BoardPiece = Instantiate(Resources.Load("Prefabs/cyborgman") as GameObject);
+            Vector3 scaleChange = new Vector3(-0.94f, -0.94f, -0.94f);
+            BoardPiece.transform.localScale += scaleChange;
+            //Vector3 center = this.transform.position = new Vector3(xCoordf, yCoordf - .7f, zCoordf);
 
+            Unit unit = BoardPiece.AddComponent<Unit>();
+            Character character = RetrieveCharacter();
+            unit.Initialize(character, this);
+            BoardPiece.name = unit.ToString();
+            gameBoard.OnTurnStart += unit.StartOfTurnEffects;
+            gameBoard.OnTurnEnd += unit.EndOfTurnEffects;
+            Debug.Log("Spawned unit on " + column + " " + row);
+            Debug.Log(BoardPiece.name);
+        }
 
         public void OnMouseDown() {
             List<Tile> adjacencies = GetNeighbors();
