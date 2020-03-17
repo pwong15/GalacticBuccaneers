@@ -111,11 +111,16 @@ namespace Components {
                     GameObject gridSquare = Instantiate(Resources.Load("Prefabs/target") as GameObject);
                     Tile tile = gridSquare.AddComponent<Tile>();
                     gridSquare.name = "Tile[" + column + "," + row + "]";
-                    tile.Initialize(this, column, -row, -1, wallLayout[wallIndex++]);
+                    tile.Initialize(this, column, -row, -1, wallLayout[wallIndex]);
+                    if (wallIndex < wallLayout.Length - 1) {
+                        wallIndex++;
+                    }
                     tiles[column, row] = tile;
                     wallLayoutArray[column, row] = ".";
                 }
             }
+            Debug.Log("Press NumberPad Enter to change turns");
+            Debug.Log("All initially spawned units can't move at first and units can only move on their turn");
             
 
         }
