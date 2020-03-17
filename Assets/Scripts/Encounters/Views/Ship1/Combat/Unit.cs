@@ -1,14 +1,18 @@
 ﻿using UnityEngine;
+using Encounter;
+using Models;
+using System.Collections.Generic;
 
-namespace Components {
+namespace Views {
 
-    public class Unit : MonoBehaviour {
+    public class Unit : MonoBehaviour, Effectable {
         public Character Character { get; set; }
         private Vector3 destination;
         public int Team { get; set; }
         bool moving = false;
         Tile destinationTile;
-
+        List<Effect> TurnStartEffects;
+        List<Effect> TurnEndEffects;
         private void Update()
         {
             if (moving)
@@ -63,6 +67,8 @@ namespace Components {
             this.Team = Character.Team;
             _hasActed = true;
             HasMoved = true;
+            TurnStartEffects = new List<Effect>();
+            TurnEndEffects = new List<Effect>();
         }
 
         public void MoveTo(Tile targetLocation) {
@@ -96,16 +102,37 @@ namespace Components {
             if (turnEvent.Team == Team) {
                 HasActed = false;
             }
+            foreach (Effect effect in TurnStartEffects) {
+                effect.Execute(this);
+            }
         }
 
         public void EndOfTurnEffects(object sender, Grid.TurnEventArgs turnEvent) {
             if (turnEvent.Team == Team) {
                 HasActed = true;
             }
+            foreach (Effect effect in TurnEndEffects) {
+                effect.Execute(this);
+            }
+        }
+
+        public void CastAbility(Effect effect, Unit unit) {
+            unit.AddEffect(effect);
+        }
+
+        public void AddEffect(Effect effect) {
+            if (effect.PointOfAction == Effect.Frequency.Immediate) {
+                effect.Execute(this);
+                TurnStartEffects.Add(effect);
+            } else if (effect.PointOfAction == Effect.Frequency.StartOfTurn) {
+                TurnStartEffects.Add(effect);
+            } else {
+                TurnEndEffects.Add(effect);
+            }
         }
 
         // Clears tile and unit references and hides unit below the board (z -axis)
-        private void Die() {
+        public void Die() {
             Tile.BoardPiece = null;
             this.Tile = null;
             this.gameObject.transform.position -= new Vector3(0, 0, 10);

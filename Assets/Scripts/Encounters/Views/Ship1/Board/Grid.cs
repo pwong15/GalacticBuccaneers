@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using Utilitys;
+using Models;
+using Encounter;
 
-namespace Components {
+namespace Views {
 
     public enum SelectedPieceState {
         None,
         Attacking,
         Moving,
+        SelectingAbility,
+        Casting,
     }
 
     public class Grid : MonoBehaviour {
@@ -18,14 +22,20 @@ namespace Components {
         private readonly string MAP_NAME = "Layout2";
         public event EventHandler<TurnEventArgs> OnTurnStart;
         public event EventHandler<TurnEventArgs> OnTurnEnd;
-
+        public event EventHandler<MapEventArgs> OnMapOver;
         public class TurnEventArgs : EventArgs {
             public int Team;
         }
 
+        public class MapEventArgs : EventArgs {
+            public bool gameOver;
+
+        }
+
         private GameObject _selectedPiece;
-        private List<Tile> _selectedPieceMoveRange;
-        private List<Tile> _selectedPieceAttackRange;
+        private List<Tile> _selectedPieceAbilityRange;
+        private List<Tile> _selectedAbilityZone;
+
         public int width { get; }
         public int height { get; }
         public float cellSize { get; }
@@ -43,9 +53,9 @@ namespace Components {
         public Tile[,] tiles;
         
 
-
         void Start() {
             CreateGrid();
+
         }
 
         void Update() {
@@ -56,15 +66,26 @@ namespace Components {
             if (selectedPiece != null) {
                 Unit unit = selectedPiece.GetComponent<Unit>();
                 if (Input.GetKeyDown(KeyCode.M) && !unit.HasMoved) {
-                    Highlight(selectedPieceMoveRange, Color.blue);
+                    Highlight(SelectedPieceMoveRange, Color.blue);
                     SelectedPieceState = SelectedPieceState.Moving;
                 }
                 if (Input.GetKeyDown(KeyCode.A) && !unit.HasActed) {
-                    Highlight(selectedPieceAttackRange, Color.red);
+                    Highlight(SelectedPieceAttackRange, Color.red);
                     SelectedPieceState = SelectedPieceState.Attacking;
+                }
+                if (Input.GetKeyDown(KeyCode.K) && !unit.HasActed) {
+                    DeathEffect dE = new DeathEffect();
+                    SelectedAbility = dE;
+
+                    SelectedAbilityRange = FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
+
+                    Highlight(SelectedAbilityRange, Color.green);
+                    SelectedPieceState = SelectedPieceState.Casting;
                 }
             }
         }
+
+        public Effect SelectedAbility { get; set; }
 
         private int id = 0;
         private Character RetrieveCharacter() {
@@ -120,7 +141,7 @@ namespace Components {
                 }
             }
             Debug.Log("Press NumberPad Enter to change turns");
-            Debug.Log("All initially spawned units can't move at first and units can only move on their turn");
+            Debug.Log("All initially spawned units can't move at first and units can only move on their turn and can only move and act once");
             
 
         }
@@ -130,38 +151,30 @@ namespace Components {
             }
             set {
                 _selectedPiece = value;
-                unHighlight(selectedPieceAttackRange);
-                unHighlight(selectedPieceMoveRange);
+                unHighlight(SelectedPieceAttackRange);
+                unHighlight(SelectedPieceMoveRange);
+                unHighlight(SelectedAbilityRange);
                 if (_selectedPiece != null) {
-                    selectedPieceMoveRange = FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, selectedPiece.GetComponent<Unit>().MoveSpeed, (Tile) => Tile.Terrain.Cost);
-                    selectedPieceAttackRange = FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, 1, (Tile) => 1);
+                    SelectedPieceMoveRange = FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, selectedPiece.GetComponent<Unit>().MoveSpeed, (Tile) => Tile.Terrain.Cost);
+                    SelectedPieceAttackRange = FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, 1, (Tile) => 1);
                 }
                 else {
-                    selectedPieceMoveRange = default(List<Tile>);
-                    selectedPieceAttackRange = default(List<Tile>);
+                    SelectedPieceMoveRange = default(List<Tile>);
+                    SelectedPieceAttackRange = default(List<Tile>);
+                    SelectedAbilityRange = default(List<Tile>);
                     SelectedPieceState = SelectedPieceState.None;
                 }
                 ;
             }
         }
 
-        public List<Tile> selectedPieceMoveRange {
-            get {
-                return _selectedPieceMoveRange;
-            }
-            set {
-                _selectedPieceMoveRange = value;
-            }
-        }
+        public List<Tile> SelectedPieceMoveRange { get; set; }
 
-        public List<Tile> selectedPieceAttackRange {
-            get {
-                return _selectedPieceAttackRange;
-            }
-            set {
-                _selectedPieceAttackRange = value;
-            }
-        }
+        public List<Tile> SelectedPieceAttackRange { get; set; }
+
+        public List<Tile> SelectedAbilityRange { get; set; }
+
+        public List<Tile> SelectedAbilityZone { get; set; }
 
         public void Highlight(List<Tile> tiles, Color color) {
             ApplyTileEffects(tiles, (Tile) => ToggleHighlightEffect(Tile, true, color));

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Components {
+namespace Views {
 
     public class Tile : MonoBehaviour {
 
@@ -76,7 +76,7 @@ namespace Components {
                 }
                 case SelectedPieceState.Attacking : {
                         
-                        if (gameBoard.selectedPieceAttackRange.Contains(this) && this.BoardPiece!=null) {
+                        if (gameBoard.SelectedPieceAttackRange.Contains(this) && this.BoardPiece!=null) {
                             Unit unit = this.BoardPiece.GetComponent<Unit>();
                             gameBoard.selectedPiece.GetComponent<Unit>().AttackUnit(unit);
                         }
@@ -85,7 +85,7 @@ namespace Components {
                         break;
                 }
                 case SelectedPieceState.Moving : {
-                        if (gameBoard.selectedPieceMoveRange.Contains(this)) 
+                        if (gameBoard.SelectedPieceMoveRange.Contains(this)) 
                             gameBoard.selectedPiece.GetComponent<Unit>().MoveTo(this);
 
                         gameBoard.selectedPiece = null;
@@ -126,6 +126,11 @@ namespace Components {
             // If cursor is inside the tile: highlight the tile
             if (cursorIsOnTile && !isWall) {
                 GetComponent<Renderer>().enabled = true;
+                if (gameBoard.SelectedPieceState == SelectedPieceState.Casting) {
+                    //gameBoard.unHighlight(gameBoard.SelectedAbilityZone);
+                    gameBoard.SelectedAbilityZone = gameBoard.FindTilesInRange(this, gameBoard.SelectedAbility.Range, (Tile t) => { return 1; });
+                    gameBoard.Highlight(gameBoard.SelectedAbilityZone, Color.red);
+                }
             }
             else {
                 GetComponent<Renderer>().enabled = false;

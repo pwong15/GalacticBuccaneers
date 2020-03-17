@@ -1,4 +1,4 @@
-﻿using Components;
+﻿using Views;
 
 public class CharacterSystem {
     private static int name = 1;
