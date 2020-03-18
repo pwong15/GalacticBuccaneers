@@ -95,19 +95,19 @@ namespace Views {
                     }
                 case SelectedPieceState.Casting : {
                         if (gameBoard.SelectedAbilityRange.Contains(this)) {
-                            Debug.Log("Test12213");
+                            
                             gameBoard.ApplyTileEffects(gameBoard.SelectedAbilityZone, (Tile tile) => {
-                                Debug.Log("Before if condition");
+                                
                                 Unit unit = null;
                                 if (tile.BoardPiece != null) {
                                     unit = tile.BoardPiece.GetComponent<Unit>();
                                 }
                                 if (unit != null) {
                                     unit.AddEffect(gameBoard.SelectedAbility);
-                                    Debug.Log("Added one death effect");
                                 }
                             }
                             );
+                            gameBoard.selectedPiece.GetComponent<Unit>().HasActed = true;
                         }
                         gameBoard.SelectedAbility = null;
                         gameBoard.selectedPiece = null;
@@ -152,7 +152,7 @@ namespace Views {
                     
                     gameBoard.SelectedAbilityZone = gameBoard.FindTilesInRange(this, gameBoard.SelectedAbility.ZoneRange, (Tile t) => { return 1; });
                     Debug.Log(gameBoard.SelectedAbility.ZoneRange);
-                    Debug.Log("Highiliasdf");
+                    
                     gameBoard.Highlight(gameBoard.SelectedAbilityZone, Color.red);
                 }
             }

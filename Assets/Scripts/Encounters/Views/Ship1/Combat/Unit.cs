@@ -101,21 +101,23 @@ namespace Views {
         public void StartOfTurnEffects(object sender, Grid.TurnEventArgs turnEvent) {
             if (turnEvent.Team == Team) {
                 HasActed = false;
-            }
-            foreach (Effect effect in TurnStartEffects) {
-                if (effect.Duration > 0) {
-                    effect.Execute(this);
+                foreach (Effect effect in TurnStartEffects) {
+                    if (effect.Duration > 0) {
+                        effect.Execute(this);
+                    }
                 }
             }
+           
         }
 
         public void EndOfTurnEffects(object sender, Grid.TurnEventArgs turnEvent) {
             if (turnEvent.Team == Team) {
                 HasActed = true;
+                foreach (Effect effect in TurnEndEffects) {
+                    effect.Execute(this);
+                }
             }
-            foreach (Effect effect in TurnEndEffects) {
-                effect.Execute(this);
-            }
+            
         }
 
         public void CastAbility(Effect effect, Unit unit) {
@@ -124,6 +126,7 @@ namespace Views {
 
         public void AddEffect(Effect effect) {
             if (effect.PointOfAction == Effect.Frequency.Immediate) {
+                Debug.Log("Added Immediate");
                 effect.Execute(this);
                 TurnStartEffects.Add(effect);
             } else if (effect.PointOfAction == Effect.Frequency.StartOfTurn) {

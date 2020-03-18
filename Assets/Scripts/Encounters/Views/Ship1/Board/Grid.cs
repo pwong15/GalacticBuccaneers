@@ -82,6 +82,15 @@ namespace Views {
                     Highlight(SelectedAbilityRange, Color.green);
                     SelectedPieceState = SelectedPieceState.Casting;
                 }
+                if (Input.GetKeyDown(KeyCode.P) && !unit.HasActed) {
+                    PoisonEffect pE = new PoisonEffect(3);
+                    SelectedAbility = pE;
+                    Debug.Log(pE.Range);
+                    SelectedAbilityRange = FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
+
+                    Highlight(SelectedAbilityRange, Color.green);
+                    SelectedPieceState = SelectedPieceState.Casting;
+                }
             }
         }
 

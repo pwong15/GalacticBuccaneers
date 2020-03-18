@@ -13,6 +13,7 @@ namespace Models {
 
         public override int Duration { get; set; }
         public override void Execute(Effectable actor) {
+            Debug.Log(actor + " was killed");
             (actor as Unit).Die();
         }
 
@@ -22,17 +23,18 @@ namespace Models {
     }
 
     public class PoisonEffect : Effect {
-        public override int Range { get { return 5; } }
+        public override int Range { get { return 3; } }
 
-        public override int ZoneRange { get { return 3; } }
+        public override int ZoneRange { get { return 2; } }
 
         public override int Duration { get; set; }
-        public const Frequency pointOfAction = Frequency.StartOfTurn;
+        public override Frequency PointOfAction { get { return Frequency.StartOfTurn; } }
 
         public PoisonEffect(int duration) {
             Duration = duration;
         }
         public override void Execute(Effectable actor) {
+            Debug.Log(actor + " is poisoned");
             (actor as Unit).TakeDamage(25);
         }
 

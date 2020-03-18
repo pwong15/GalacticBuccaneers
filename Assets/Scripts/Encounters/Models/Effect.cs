@@ -12,10 +12,10 @@ namespace Models {
         }
 
         public abstract int Range { get; }
-        public abstract int Duration { get; set; }
+        public virtual int Duration { get; set; }
         public abstract int ZoneRange { get; }
 
-        public Frequency PointOfAction { get; set; }
+        public virtual Frequency PointOfAction { get; }
 
         public abstract void Execute(Effectable actor);
         public abstract void Remove(Effectable actor);
