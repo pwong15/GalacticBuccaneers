@@ -109,6 +109,7 @@ namespace Views {
                             }
                             );
                         }
+                        gameBoard.SelectedAbility = null;
                         gameBoard.selectedPiece = null;
                         gameBoard.SelectedPieceState = SelectedPieceState.None;
                         break;
@@ -149,7 +150,9 @@ namespace Views {
                 GetComponent<Renderer>().enabled = true;
                 if (gameBoard.SelectedPieceState == SelectedPieceState.Casting && gameBoard.SelectedAbilityRange.Contains(this)) {
                     
-                    gameBoard.SelectedAbilityZone = gameBoard.FindTilesInRange(this, gameBoard.SelectedAbility.Range, (Tile t) => { return 1; });
+                    gameBoard.SelectedAbilityZone = gameBoard.FindTilesInRange(this, gameBoard.SelectedAbility.ZoneRange, (Tile t) => { return 1; });
+                    Debug.Log(gameBoard.SelectedAbility.ZoneRange);
+                    Debug.Log("Highiliasdf");
                     gameBoard.Highlight(gameBoard.SelectedAbilityZone, Color.red);
                 }
             }

@@ -11,9 +11,9 @@ namespace Models {
             StartOfTurn
         }
 
-        public int Range { get; set; }
-
-        public int ZoneRange { get; set; }
+        public abstract int Range { get; }
+        public abstract int Duration { get; set; }
+        public abstract int ZoneRange { get; }
 
         public Frequency PointOfAction { get; set; }
 

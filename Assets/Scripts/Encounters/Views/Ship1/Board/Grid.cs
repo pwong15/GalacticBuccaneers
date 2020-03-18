@@ -75,9 +75,8 @@ namespace Views {
                 }
                 if (Input.GetKeyDown(KeyCode.K) && !unit.HasActed) {
                     DeathEffect dE = new DeathEffect();
-                    dE.Range = 2;
                     SelectedAbility = dE;
-
+                    Debug.Log(dE.Range);
                     SelectedAbilityRange = FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
 
                     Highlight(SelectedAbilityRange, Color.green);

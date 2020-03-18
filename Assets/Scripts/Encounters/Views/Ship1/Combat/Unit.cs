@@ -103,7 +103,9 @@ namespace Views {
                 HasActed = false;
             }
             foreach (Effect effect in TurnStartEffects) {
-                effect.Execute(this);
+                if (effect.Duration > 0) {
+                    effect.Execute(this);
+                }
             }
         }
 
