@@ -155,6 +155,7 @@ namespace Views {
                 unHighlight(SelectedPieceAttackRange);
                 unHighlight(SelectedPieceMoveRange);
                 unHighlight(SelectedAbilityRange);
+                unHighlight(_selectedAbilityZone);
                 if (_selectedPiece != null) {
                     SelectedPieceMoveRange = FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, selectedPiece.GetComponent<Unit>().MoveSpeed, (Tile) => Tile.Terrain.Cost);
                     SelectedPieceAttackRange = FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, 1, (Tile) => 1);
@@ -233,7 +234,7 @@ namespace Views {
             return tilesInRange;
         }
 
-        private void ApplyTileEffects(List<Tile> tileZone, Action<Tile> applyEffect) {
+        public void ApplyTileEffects(List<Tile> tileZone, Action<Tile> applyEffect) {
             if (tileZone == null) {
                 return;
             }

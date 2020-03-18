@@ -85,9 +85,30 @@ namespace Views {
                         break;
                 }
                 case SelectedPieceState.Moving : {
-                        if (gameBoard.SelectedPieceMoveRange.Contains(this)) 
+                        if (gameBoard.SelectedPieceMoveRange.Contains(this)) {
                             gameBoard.selectedPiece.GetComponent<Unit>().MoveTo(this);
+                        }
 
+                        gameBoard.selectedPiece = null;
+                        gameBoard.SelectedPieceState = SelectedPieceState.None;
+                        break;
+                    }
+                case SelectedPieceState.Casting : {
+                        if (gameBoard.SelectedAbilityRange.Contains(this)) {
+                            Debug.Log("Test12213");
+                            gameBoard.ApplyTileEffects(gameBoard.SelectedAbilityZone, (Tile tile) => {
+                                Debug.Log("Before if condition");
+                                Unit unit = null;
+                                if (tile.BoardPiece != null) {
+                                    unit = tile.BoardPiece.GetComponent<Unit>();
+                                }
+                                if (unit != null) {
+                                    unit.AddEffect(gameBoard.SelectedAbility);
+                                    Debug.Log("Added one death effect");
+                                }
+                            }
+                            );
+                        }
                         gameBoard.selectedPiece = null;
                         gameBoard.SelectedPieceState = SelectedPieceState.None;
                         break;
