@@ -126,8 +126,8 @@ namespace Views {
             // If cursor is inside the tile: highlight the tile
             if (cursorIsOnTile && !isWall) {
                 GetComponent<Renderer>().enabled = true;
-                if (gameBoard.SelectedPieceState == SelectedPieceState.Casting) {
-                    //gameBoard.unHighlight(gameBoard.SelectedAbilityZone);
+                if (gameBoard.SelectedPieceState == SelectedPieceState.Casting && gameBoard.SelectedAbilityRange.Contains(this)) {
+                    
                     gameBoard.SelectedAbilityZone = gameBoard.FindTilesInRange(this, gameBoard.SelectedAbility.Range, (Tile t) => { return 1; });
                     gameBoard.Highlight(gameBoard.SelectedAbilityZone, Color.red);
                 }

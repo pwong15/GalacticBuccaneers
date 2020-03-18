@@ -63,7 +63,7 @@ namespace Views {
                 EndTurn();
                 StartTurn();
             }
-            if (selectedPiece != null) {
+            if (selectedPiece != null && SelectedPieceState == SelectedPieceState.None) {
                 Unit unit = selectedPiece.GetComponent<Unit>();
                 if (Input.GetKeyDown(KeyCode.M) && !unit.HasMoved) {
                     Highlight(SelectedPieceMoveRange, Color.blue);
@@ -75,6 +75,7 @@ namespace Views {
                 }
                 if (Input.GetKeyDown(KeyCode.K) && !unit.HasActed) {
                     DeathEffect dE = new DeathEffect();
+                    dE.Range = 2;
                     SelectedAbility = dE;
 
                     SelectedAbilityRange = FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
@@ -174,7 +175,19 @@ namespace Views {
 
         public List<Tile> SelectedAbilityRange { get; set; }
 
-        public List<Tile> SelectedAbilityZone { get; set; }
+        public List<Tile> SelectedAbilityZone { 
+            get {
+                return _selectedAbilityZone; 
+            } 
+            set {
+                if (_selectedAbilityZone != null) {
+                    unHighlight(_selectedAbilityZone);
+                    Highlight(SelectedAbilityRange, Color.green);
+                }
+                
+                _selectedAbilityZone = value;
+            } 
+        }
 
         public void Highlight(List<Tile> tiles, Color color) {
             ApplyTileEffects(tiles, (Tile) => ToggleHighlightEffect(Tile, true, color));
