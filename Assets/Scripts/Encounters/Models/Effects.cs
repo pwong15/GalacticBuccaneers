@@ -42,4 +42,24 @@ namespace Models {
         }
     }
 
+    public class HealthEffect: Effect {
+        public override int Range { get { return 3; } }
+
+        public override int ZoneRange { get { return 2; } }
+
+        public override int Duration { get; set; }
+        public override Frequency PointOfAction { get { return Frequency.StartOfTurn; } }
+
+        public HealthEffect(int duration) {
+            Duration = duration;
+        }
+        public override void Execute(Effectable actor) {
+            Debug.Log(actor + " is being healed");
+            (actor as Unit).Heal(10);
+        }
+
+        public override void Remove(Effectable actor) {
+        }
+    }
+
 }

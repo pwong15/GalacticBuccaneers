@@ -98,6 +98,13 @@ namespace Views {
             }
         }
 
+        public void Heal(int healAmount) {
+            Character.Health += healAmount;
+            if (Character.Health > Character.MaxHealth) {
+                Character.Health = Character.MaxHealth;
+            }
+        }
+
         public void StartOfTurnEffects(object sender, Grid.TurnEventArgs turnEvent) {
             if (turnEvent.Team == Team) {
                 HasActed = false;
