@@ -77,7 +77,7 @@ namespace GalaxyMap
                         gridVisual = Instantiate(Resources.Load("Prefabs/ship10") as GameObject);
                         sceneLink = "Ship1";
                         break;
-                        default:
+                    default:
                     gridVisual = Instantiate(Resources.Load("Prefabs/blankSquare") as GameObject);
                     break;
 
