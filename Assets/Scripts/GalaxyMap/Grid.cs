@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using UnityEngine;
 
+
 namespace GalaxyMap
 {
     public class Grid : global::Grid
@@ -26,6 +27,7 @@ namespace GalaxyMap
             for (int row = 0; row < GRID_HEIGHT; row++){
             for (int column = 0; column < GRID_WIDTH; column++)
             {
+                sceneLink = "";
                 GameObject gridVisual;
                 char gridValue = gridValues[gridIndex];
                 // Load the appropriate prefab based on the .txt file
@@ -50,7 +52,7 @@ namespace GalaxyMap
 
                 // Initialize and save each GridSquare
                 GridSquare gridSquare = gridVisual.AddComponent<GridSquare>();
-                gridSquare.Initialize(this, column, -row, -1);
+                gridSquare.Initialize(this, column, -row, -3);
                 gridSquare.LinkedScene = sceneLink;
                 gridSquares[column, row] = gridSquare;
                 gridIndex++;
