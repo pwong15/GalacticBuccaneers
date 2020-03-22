@@ -8,7 +8,7 @@ namespace GalaxyMap
     {
         private string linkedScene = "";
         public Texture2D skull;
-
+        public GameObject target;
         public string LinkedScene { set {linkedScene = value; } }
 
         public void Start()
@@ -26,7 +26,13 @@ namespace GalaxyMap
                 rend.material.color = Color.white;
 
             if (linkedScene == "" && cursorIsOnTile)
+            {
                 Cursor.SetCursor(null, cursorLocation, CursorMode.Auto);
+            }
+            if(linkedScene != "" && !cursorIsOnTile && target!= null)
+            {
+                target.SetActive(false);
+            }
         }
 
         private void OnMouseOver()
@@ -38,6 +44,18 @@ namespace GalaxyMap
                 cursorLocation.x += 25;
                 cursorLocation.y += 25;
                 Cursor.SetCursor(skull, cursorLocation, CursorMode.ForceSoftware);
+
+                if (target is null)
+                {
+                    target = Instantiate(Resources.Load("Prefabs/targetRed") as GameObject);
+                    target.transform.position = this.transform.position;
+                }
+                else
+                {
+                    target.SetActive(true);
+                }
+                
+
             }
 
             rend.material.color = Color.gray;

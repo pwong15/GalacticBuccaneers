@@ -48,9 +48,9 @@ namespace Views {
         }
 
         private void SpawnUnit() {
-            BoardPiece = Instantiate(Resources.Load("Prefabs/cyborgman") as GameObject);
-            Vector3 scaleChange = new Vector3(-0.94f, -0.94f, -0.94f);
-            BoardPiece.transform.localScale += scaleChange;
+            BoardPiece = Instantiate(Resources.Load("Prefabs/cyborgman2") as GameObject);
+            //Vector3 scaleChange = new Vector3(-0.94f, -0.94f, -0.94f);
+            //BoardPiece.transform.localScale += scaleChange;
             //Vector3 center = this.transform.position = new Vector3(xCoordf, yCoordf - .7f, zCoordf);
 
             Unit unit = BoardPiece.AddComponent<Unit>();
