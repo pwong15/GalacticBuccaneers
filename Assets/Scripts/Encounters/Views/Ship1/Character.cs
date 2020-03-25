@@ -1,4 +1,4 @@
-﻿namespace Components {
+﻿namespace Views {
 
     public class Character {
         public string Name { get; }

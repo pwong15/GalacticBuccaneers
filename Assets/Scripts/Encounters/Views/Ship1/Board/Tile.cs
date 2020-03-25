@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Components {
+namespace Views {
 
     public class Tile : MonoBehaviour {
 
@@ -48,9 +48,9 @@ namespace Components {
         }
 
         private void SpawnUnit() {
-            BoardPiece = Instantiate(Resources.Load("Prefabs/cyborgman") as GameObject);
-            Vector3 scaleChange = new Vector3(-0.94f, -0.94f, -0.94f);
-            BoardPiece.transform.localScale += scaleChange;
+            BoardPiece = Instantiate(Resources.Load("Prefabs/cyborgman2") as GameObject);
+            //Vector3 scaleChange = new Vector3(-0.94f, -0.94f, -0.94f);
+            //BoardPiece.transform.localScale += scaleChange;
             //Vector3 center = this.transform.position = new Vector3(xCoordf, yCoordf - .7f, zCoordf);
 
             Unit unit = BoardPiece.AddComponent<Unit>();
@@ -76,7 +76,7 @@ namespace Components {
                 }
                 case SelectedPieceState.Attacking : {
                         
-                        if (gameBoard.selectedPieceAttackRange.Contains(this) && this.BoardPiece!=null) {
+                        if (gameBoard.SelectedPieceAttackRange.Contains(this) && this.BoardPiece!=null) {
                             Unit unit = this.BoardPiece.GetComponent<Unit>();
                             gameBoard.selectedPiece.GetComponent<Unit>().AttackUnit(unit);
                         }
@@ -85,9 +85,31 @@ namespace Components {
                         break;
                 }
                 case SelectedPieceState.Moving : {
-                        if (gameBoard.selectedPieceMoveRange.Contains(this)) 
+                        if (gameBoard.SelectedPieceMoveRange.Contains(this)) {
                             gameBoard.selectedPiece.GetComponent<Unit>().MoveTo(this);
+                        }
 
+                        gameBoard.selectedPiece = null;
+                        gameBoard.SelectedPieceState = SelectedPieceState.None;
+                        break;
+                    }
+                case SelectedPieceState.Casting : {
+                        if (gameBoard.SelectedAbilityRange.Contains(this)) {
+                            
+                            gameBoard.ApplyTileEffects(gameBoard.SelectedAbilityZone, (Tile tile) => {
+                                
+                                Unit unit = null;
+                                if (tile.BoardPiece != null) {
+                                    unit = tile.BoardPiece.GetComponent<Unit>();
+                                }
+                                if (unit != null) {
+                                    unit.AddEffect(gameBoard.SelectedAbility);
+                                }
+                            }
+                            );
+                            gameBoard.selectedPiece.GetComponent<Unit>().HasActed = true;
+                        }
+                        gameBoard.SelectedAbility = null;
                         gameBoard.selectedPiece = null;
                         gameBoard.SelectedPieceState = SelectedPieceState.None;
                         break;
@@ -126,6 +148,13 @@ namespace Components {
             // If cursor is inside the tile: highlight the tile
             if (cursorIsOnTile && !isWall) {
                 GetComponent<Renderer>().enabled = true;
+                if (gameBoard.SelectedPieceState == SelectedPieceState.Casting && gameBoard.SelectedAbilityRange.Contains(this)) {
+                    
+                    gameBoard.SelectedAbilityZone = gameBoard.FindTilesInRange(this, gameBoard.SelectedAbility.ZoneRange, (Tile t) => { return 1; });
+                    Debug.Log(gameBoard.SelectedAbility.ZoneRange);
+                    
+                    gameBoard.Highlight(gameBoard.SelectedAbilityZone, Color.red);
+                }
             }
             else {
                 GetComponent<Renderer>().enabled = false;

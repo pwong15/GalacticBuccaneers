@@ -1,4 +1,4 @@
-﻿namespace Components {
+﻿namespace Views {
 
     public interface BoardPiece {
         Tile Tile { get; set; }
