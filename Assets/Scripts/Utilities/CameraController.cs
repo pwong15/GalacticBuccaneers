@@ -20,10 +20,10 @@ public class CameraController : MonoBehaviour
         var cameraSize = GetComponent<Camera>().orthographicSize;
         Vector3 panAmnt = (mouseLoc - transform.position);
 
-        if (Input.GetMouseButtonDown(1))
-        {
-            transform.position += panAmnt;
-        }
+        //if (Input.GetMouseButtonDown(1))
+        //{
+        //    transform.position += panAmnt;
+        //}
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
