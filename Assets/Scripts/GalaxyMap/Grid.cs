@@ -35,7 +35,7 @@ namespace GalaxyMap
                 {
                     case '1':
                         gridVisual = Instantiate(Resources.Load("Prefabs/ship1") as GameObject);
-                        sceneLink = "Ship1";
+                        //sceneLink = "Ship1";
                         break;
                     case '2':
                         gridVisual = Instantiate(Resources.Load("Prefabs/ship2") as GameObject);
