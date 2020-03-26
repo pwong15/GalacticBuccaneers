@@ -5,9 +5,16 @@ namespace GalaxyMap
     {
         public void ChangeVisibility(string objectName)
         {
-            GameObject popout = GameObject.Find(objectName);
-            var group = popout.GetComponent<CanvasGroup>();
+            CanvasGroup crewGroup = GameObject.Find("CrewPopout").GetComponent<CanvasGroup>();
+            CanvasGroup invGroup = GameObject.Find("InventoryPopout").GetComponent<CanvasGroup>();
+
+            CanvasGroup group = GameObject.Find(objectName).GetComponent<CanvasGroup>();
             group.alpha = group.alpha == 0 ? group.alpha = 1 : group.alpha = 0;
+
+            if (objectName == "InventoryPopout")
+                crewGroup.alpha = 0;
+            else if (objectName == "CrewPopout")
+                invGroup.alpha = 0;
         }
     }
 }
