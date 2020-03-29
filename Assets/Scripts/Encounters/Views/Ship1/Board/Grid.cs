@@ -66,29 +66,29 @@ namespace Views {
             if (selectedPiece != null && SelectedPieceState == SelectedPieceState.None) {
                 Unit unit = selectedPiece.GetComponent<Unit>();
                 if (Input.GetKeyDown(KeyCode.M) && !unit.HasMoved) {
-                    Highlight(SelectedPieceMoveRange, Color.blue);
+                    EncounterUtils.Highlight(SelectedPieceMoveRange, Color.blue);
                     SelectedPieceState = SelectedPieceState.Moving;
                 }
                 if (Input.GetKeyDown(KeyCode.A) && !unit.HasActed) {
-                    Highlight(SelectedPieceAttackRange, Color.red);
+                    EncounterUtils.Highlight(SelectedPieceAttackRange, Color.red);
                     SelectedPieceState = SelectedPieceState.Attacking;
                 }
                 if (Input.GetKeyDown(KeyCode.K) && !unit.HasActed) {
                     DeathEffect dE = new DeathEffect();
                     SelectedAbility = dE;
                     Debug.Log(dE.Range);
-                    SelectedAbilityRange = FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
+                    SelectedAbilityRange = EncounterUtils.FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
 
-                    Highlight(SelectedAbilityRange, Color.green);
+                    EncounterUtils.Highlight(SelectedAbilityRange, Color.green);
                     SelectedPieceState = SelectedPieceState.Casting;
                 }
                 if (Input.GetKeyDown(KeyCode.P) && !unit.HasActed) {
                     PoisonEffect pE = new PoisonEffect(3);
                     SelectedAbility = pE;
                     Debug.Log(pE.Range);
-                    SelectedAbilityRange = FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
+                    SelectedAbilityRange = EncounterUtils.FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
 
-                    Highlight(SelectedAbilityRange, Color.green);
+                    EncounterUtils.Highlight(SelectedAbilityRange, Color.green);
                     SelectedPieceState = SelectedPieceState.Casting;
                 }
             }
@@ -160,13 +160,12 @@ namespace Views {
             }
             set {
                 _selectedPiece = value;
-                unHighlight(SelectedPieceAttackRange);
-                unHighlight(SelectedPieceMoveRange);
-                unHighlight(SelectedAbilityRange);
-                unHighlight(_selectedAbilityZone);
+                EncounterUtils.unHighlight(SelectedPieceMoveRange);
+                EncounterUtils.unHighlight(SelectedAbilityRange);
+                EncounterUtils.unHighlight(_selectedAbilityZone);
                 if (_selectedPiece != null) {
-                    SelectedPieceMoveRange = FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, selectedPiece.GetComponent<Unit>().MoveSpeed, (Tile) => Tile.Terrain.Cost);
-                    SelectedPieceAttackRange = FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, 1, (Tile) => 1);
+                    SelectedPieceMoveRange = EncounterUtils.FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, selectedPiece.GetComponent<Unit>().MoveSpeed, (Tile) => Tile.Terrain.Cost);
+                    SelectedPieceAttackRange = EncounterUtils.FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, 1, (Tile) => 1);
                 }
                 else {
                     SelectedPieceMoveRange = default(List<Tile>);
@@ -190,16 +189,16 @@ namespace Views {
             } 
             set {
                 if (_selectedAbilityZone != null) {
-                    unHighlight(_selectedAbilityZone);
-                    Highlight(SelectedAbilityRange, Color.green);
+                    EncounterUtils.unHighlight(_selectedAbilityZone);
+                    EncounterUtils.Highlight(SelectedAbilityRange, Color.green);
                 }
                 
                 _selectedAbilityZone = value;
             } 
         }
 
-        public void Highlight(List<Tile> tiles, Color color) {
-            ApplyTileEffects(tiles, (Tile) => ToggleHighlightEffect(Tile, true, color));
+        /*public void Highlight(List<Tile> tiles, Color color) {
+            EncounterUtils.ApplyTileEffects(tiles, (Tile) => ToggleHighlightEffect(Tile, true, color));
             highlighting = true;
         }
 
@@ -259,7 +258,7 @@ namespace Views {
                 tileObject.GetComponent<SpriteRenderer>().color = color;
             }
             tileObject.GetComponent<Renderer>().enabled = toggle;
-        }
+        }*/
 
         public Vector3 GetWorldPosition(int x, int y) {
             return new Vector3(x, y) * cellSize + originPosition;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Utilitys;
 
 namespace Views {
 
@@ -96,7 +97,7 @@ namespace Views {
                 case SelectedPieceState.Casting : {
                         if (gameBoard.SelectedAbilityRange.Contains(this)) {
                             
-                            gameBoard.ApplyTileEffects(gameBoard.SelectedAbilityZone, (Tile tile) => {
+                            EncounterUtils.ApplyTileEffects(gameBoard.SelectedAbilityZone, (Tile tile) => {
                                 
                                 Unit unit = null;
                                 if (tile.BoardPiece != null) {
@@ -150,10 +151,10 @@ namespace Views {
                 GetComponent<Renderer>().enabled = true;
                 if (gameBoard.SelectedPieceState == SelectedPieceState.Casting && gameBoard.SelectedAbilityRange.Contains(this)) {
                     
-                    gameBoard.SelectedAbilityZone = gameBoard.FindTilesInRange(this, gameBoard.SelectedAbility.ZoneRange, (Tile t) => { return 1; });
+                    gameBoard.SelectedAbilityZone = EncounterUtils.FindTilesInRange(this, gameBoard.SelectedAbility.ZoneRange, (Tile t) => { return 1; });
                     Debug.Log(gameBoard.SelectedAbility.ZoneRange);
                     
-                    gameBoard.Highlight(gameBoard.SelectedAbilityZone, Color.red);
+                    EncounterUtils.Highlight(gameBoard.SelectedAbilityZone, Color.red);
                 }
             }
             else {

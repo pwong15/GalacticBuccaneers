@@ -8,6 +8,7 @@ namespace Views {
     public class Unit : MonoBehaviour, Effectable {
         public Character Character { get; set; }
         private Vector3 destination;
+        //private BarController healthBar;
         public int Team { get; set; }
         bool moving = false;
         Tile destinationTile;
@@ -69,6 +70,8 @@ namespace Views {
             HasMoved = true;
             TurnStartEffects = new List<Effect>();
             TurnEndEffects = new List<Effect>();
+            /*healthBar = gameObject.AddComponent<BarController>();
+            healthBar.SetMaxValue(character.MaxHealth);*/
         }
 
         public void MoveTo(Tile targetLocation) {
