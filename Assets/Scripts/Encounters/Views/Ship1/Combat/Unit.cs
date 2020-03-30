@@ -149,8 +149,10 @@ namespace Views {
         // Clears tile and unit references and hides unit below the board (z -axis)
         public void Die() {
             Tile.BoardPiece = null;
+            this.Tile.gameBoard.Teams[Team].Remove(this);
             this.Tile = null;
             this.gameObject.transform.position -= new Vector3(0, 0, 10);
+            
         }
 
         public override string ToString() {

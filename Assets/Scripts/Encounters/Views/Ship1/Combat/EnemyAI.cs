@@ -100,6 +100,9 @@ public class EnemyAI : MonoBehaviour {
     public void Move() {
         List<Tile> path = PathToClosestPlayerUnit();
         Tile dest = null;
+        if (path == null) {
+            return;
+        }
         path = path.Count < moveRange ? path : path.GetRange(0, moveRange); 
         foreach (Tile tile in path) {
             if (tile.BoardPiece == null) {
