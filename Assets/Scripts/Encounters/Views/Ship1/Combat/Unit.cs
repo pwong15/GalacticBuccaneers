@@ -81,8 +81,8 @@ namespace Views {
                 Tile.BoardPiece = null;
                 targetLocation.BoardPiece = this.gameObject;
                 destinationTile = targetLocation;
+                HasMoved = true;
             }
-            HasMoved = true;
         }
 
         public void AttackUnit(Unit otherUnit) {

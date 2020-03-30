@@ -50,13 +50,50 @@ namespace Utilitys {
             return tilesInRange;
         }
 
+        public static List<Tile> PathFinding(Tile start, Tile dest) {
+            List<Tile> path = new List<Tile>();
+            List<Tile> visited = new List<Tile>();
+            Tile currentTile = start;
+            Queue<Tile> queue = new Queue<Tile>();
+            visited.Add(start);
+            queue.Enqueue(start);
+            while (queue.Count > 0) {
+                currentTile = queue.Dequeue();
+                if (currentTile == dest) {
+                    Debug.Log("Current Tiel" + currentTile);
+                    break;
+                }
+                foreach (Tile neighbor in currentTile.GetNeighbors()) {
+                    if (!visited.Contains(neighbor)) {       
+                        neighbor.Parent = currentTile;
+                        visited.Add(neighbor);
+                        queue.Enqueue(neighbor);
+                    }
+                }
+            }
+            /*if (!visited.Contains(dest)) {
+                foreach (Tile tile in visited) {
+                    tile.Parent = null;
+                }
+                return null;
+            }*/
+            while (currentTile != start) {
+                Debug.Log("Building path");
+                path.Insert(0, currentTile);
+                currentTile = currentTile.Parent;
+            }
+            foreach (Tile tile in visited) {
+                tile.Parent = null;
+            }
+            return path;
+        }
+
         public static void ApplyTileEffects(List<Tile> tileZone, Action<Tile> applyEffect) {
             if (tileZone == null) {
                 return;
             }
             foreach (Tile tile in tileZone) {
                 applyEffect(tile);
-                tile.Parent = null;
             }
         }
 

@@ -11,7 +11,8 @@ namespace Views {
         private int column, row, zCoord;
         public Renderer rend;
         bool highlight;
-        Grid gameBoard;
+        public Grid gameBoard;
+        public Grid grid { get; set; }
         List<Tile> _neighbors;
         bool canMoveUp = true, canMoveDown = true, canMoveRght = true, canMoveLft = true, isWall = false;
         public int xCoord { get; }
@@ -60,6 +61,14 @@ namespace Views {
             BoardPiece.name = unit.ToString();
             gameBoard.OnTurnStart += unit.StartOfTurnEffects;
             gameBoard.OnTurnEnd += unit.EndOfTurnEffects;
+            if (!gameBoard.Teams.ContainsKey(unit.Team)) {
+                gameBoard.Teams[unit.Team] = new List<Unit>();
+            }
+            gameBoard.Teams[unit.Team].Add(unit);
+            if (unit.Team != 0) {
+                unit.gameObject.AddComponent<EnemyAI>();
+                Debug.Log("Added AI");
+            }
             Debug.Log("Spawned unit on " + column + " " + row);
             Debug.Log(BoardPiece.name);
         }
@@ -152,7 +161,7 @@ namespace Views {
                 if (gameBoard.SelectedPieceState == SelectedPieceState.Casting && gameBoard.SelectedAbilityRange.Contains(this)) {
                     
                     gameBoard.SelectedAbilityZone = EncounterUtils.FindTilesInRange(this, gameBoard.SelectedAbility.ZoneRange, (Tile t) => { return 1; });
-                    Debug.Log(gameBoard.SelectedAbility.ZoneRange);
+                   
                     
                     EncounterUtils.Highlight(gameBoard.SelectedAbilityZone, Color.red);
                 }
@@ -233,7 +242,6 @@ namespace Views {
 
             return _neighbors;
         }
-        public Grid grid { get; }
 
         public int Cost { get; set; }
 

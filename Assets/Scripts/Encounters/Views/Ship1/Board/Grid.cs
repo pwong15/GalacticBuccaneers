@@ -23,6 +23,7 @@ namespace Views {
         public event EventHandler<TurnEventArgs> OnTurnStart;
         public event EventHandler<TurnEventArgs> OnTurnEnd;
         public event EventHandler<MapEventArgs> OnMapOver;
+        public Dictionary<int, List<Unit>> Teams;
         public class TurnEventArgs : EventArgs {
             public int Team;
         }
@@ -114,6 +115,9 @@ namespace Views {
         private void StartTurn() {
             int team = TurnCounter % 2;
             Debug.Log("Team " + team + " Turn " + TurnCounter / 2);
+            if (TurnCounter > 0) {
+                OnTurnStart += ExecuteAI;
+            }
             OnTurnStart?.Invoke(this, new TurnEventArgs { Team = team });
         }
 
@@ -135,6 +139,7 @@ namespace Views {
             numOfTeam = 2;
             Debug.Log("Made teams");
             TurnCounter = 0;
+            Teams = new Dictionary<int, List<Unit>>();
             for (int row = 0; row < GRID_HEIGHT; row++) {
                 for (int column = 0; column < GRID_WIDTH; column++) {
                     
@@ -148,6 +153,9 @@ namespace Views {
                     tiles[column, row] = tile;
                     wallLayoutArray[column, row] = ".";
                 }
+            }
+            foreach (Tile tile in EncounterUtils.PathFinding(tiles[11, 15], tiles[15,15])) {
+                Debug.Log(tile);
             }
             Debug.Log("Press NumberPad Enter to change turns");
             Debug.Log("All initially spawned units can't move at first and units can only move on their turn and can only move and act once");
@@ -195,6 +203,15 @@ namespace Views {
                 
                 _selectedAbilityZone = value;
             } 
+        }
+
+        public void ExecuteAI(object sender, Grid.TurnEventArgs turnEvent) {
+            if (turnEvent.Team == 1) {
+                foreach (Unit enemy in Teams[1]) {
+                    Debug.Log("Executing AI");
+                    enemy.gameObject.GetComponent<EnemyAI>().Act();
+                }
+            }
         }
 
         /*public void Highlight(List<Tile> tiles, Color color) {

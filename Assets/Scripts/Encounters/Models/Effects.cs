@@ -13,8 +13,11 @@ namespace Models {
 
         public override int Duration { get; set; }
         public override void Execute(Effectable actor) {
-            Debug.Log(actor + " was killed");
-            (actor as Unit).Die();
+            Unit unit = (actor as Unit);
+            if (unit != null) {
+                Debug.Log(actor + " was killed");
+                unit.Die();
+            }
         }
 
         public override void Remove(Effectable actor) {
