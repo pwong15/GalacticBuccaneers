@@ -77,7 +77,7 @@ namespace Views {
                 if (Input.GetKeyDown(KeyCode.K) && !unit.HasActed) {
                     DeathEffect dE = new DeathEffect();
                     SelectedAbility = dE;
-                    Debug.Log(dE.Range);
+                    //Debug.Log(dE.Range);
                     SelectedAbilityRange = EncounterUtils.FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
 
                     EncounterUtils.Highlight(SelectedAbilityRange, Color.green);
@@ -86,7 +86,7 @@ namespace Views {
                 if (Input.GetKeyDown(KeyCode.P) && !unit.HasActed) {
                     PoisonEffect pE = new PoisonEffect(3);
                     SelectedAbility = pE;
-                    Debug.Log(pE.Range);
+                    //Debug.Log(pE.Range);
                     SelectedAbilityRange = EncounterUtils.FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
 
                     EncounterUtils.Highlight(SelectedAbilityRange, Color.green);
@@ -154,9 +154,7 @@ namespace Views {
                     wallLayoutArray[column, row] = ".";
                 }
             }
-            foreach (Tile tile in EncounterUtils.PathFinding(tiles[11, 15], tiles[15,15])) {
-                Debug.Log(tile);
-            }
+            
             Debug.Log("Press NumberPad Enter to change turns");
             Debug.Log("All initially spawned units can't move at first and units can only move on their turn and can only move and act once");
             

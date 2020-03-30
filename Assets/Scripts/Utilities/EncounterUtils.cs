@@ -60,7 +60,6 @@ namespace Utilitys {
             while (queue.Count > 0) {
                 currentTile = queue.Dequeue();
                 if (currentTile == dest) {
-                    Debug.Log("Current Tiel" + currentTile);
                     break;
                 }
                 foreach (Tile neighbor in currentTile.GetNeighbors()) {
@@ -71,14 +70,8 @@ namespace Utilitys {
                     }
                 }
             }
-            /*if (!visited.Contains(dest)) {
-                foreach (Tile tile in visited) {
-                    tile.Parent = null;
-                }
-                return null;
-            }*/
+          
             while (currentTile != start) {
-                Debug.Log("Building path");
                 path.Insert(0, currentTile);
                 currentTile = currentTile.Parent;
             }
