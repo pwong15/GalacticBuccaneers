@@ -8,7 +8,7 @@ namespace Views {
     public class Unit : MonoBehaviour, Effectable {
         public Character Character { get; set; }
         private Vector3 destination;
-        //private BarController healthBar;
+        private BarController healthBar;
         public int Team { get; set; }
         bool moving = false;
         Tile destinationTile;
@@ -70,8 +70,10 @@ namespace Views {
             HasMoved = true;
             TurnStartEffects = new List<Effect>();
             TurnEndEffects = new List<Effect>();
-            /*healthBar = gameObject.AddComponent<BarController>();
-            healthBar.SetMaxValue(character.MaxHealth);*/
+            healthBar = gameObject.GetComponentInChildren<BarController>();
+            healthBar.SetMaxValue(character.MaxHealth);
+            healthBar.SetValue(100);
+            healthBar.SetMinValue(0);
         }
 
         public void MoveTo(Tile targetLocation) {
@@ -99,6 +101,8 @@ namespace Views {
                 Debug.Log(Character.Name + " has Died");
                 Die();
             }
+            healthBar.SetValue(Character.Health);
+
         }
 
         public void Heal(int healAmount) {
@@ -106,6 +110,7 @@ namespace Views {
             if (Character.Health > Character.MaxHealth) {
                 Character.Health = Character.MaxHealth;
             }
+            healthBar.SetValue(Character.Health);
         }
 
         public void StartOfTurnEffects(object sender, Grid.TurnEventArgs turnEvent) {
@@ -152,6 +157,7 @@ namespace Views {
             this.Tile.gameBoard.Teams[Team].Remove(this);
             this.Tile = null;
             this.gameObject.transform.position -= new Vector3(0, 0, 10);
+            this.gameObject.transform.GetChild(0).gameObject.transform.position -= new Vector3(0, 0, 10);
             
         }
 
