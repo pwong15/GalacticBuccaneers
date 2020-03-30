@@ -27,7 +27,7 @@ namespace Utilitys {
             List<Tile> visitedList = new List<Tile>();
             Tile currentTile;
             int neighborCost;
-            tile.Cost = 0;
+            //tile.Cost = 0;
             queue.Enqueue(tile);
             while (queue.Count > 0) {
                 currentTile = queue.Dequeue();

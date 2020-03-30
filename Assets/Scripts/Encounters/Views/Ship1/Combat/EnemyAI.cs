@@ -36,21 +36,15 @@ public class EnemyAI : MonoBehaviour {
 
     public List<Tile> PathToClosestPlayerUnit() {
         List<Unit> playerUnits = getPlayerUnits();
-        foreach (Unit unit in playerUnits) {
-            Debug.Log(unit);
-        }
+      
         int currentLength = 100;
         Tile aITile = gameObject.GetComponent<Unit>().Tile;
         List<Tile> path = null;
         foreach (Unit player in playerUnits) {
-            Debug.Log(aITile);
-            Debug.Log(player.Tile);
+            
             List<Tile> newPath = EncounterUtils.PathFinding(aITile, player.Tile);
             if (newPath == null) {
-                Debug.Log("Wft");
-            }
-            foreach (Tile tile in newPath) {
-                Debug.Log(tile);
+                Debug.Log("No Path");
             }
             if (newPath != null && newPath.Count < currentLength) {
                 path = newPath;
@@ -113,8 +107,7 @@ public class EnemyAI : MonoBehaviour {
             }
         }
         if (dest != null) {
-            Debug.Log("Trying to move to " + dest);
-            Debug.Log(unit.HasMoved);
+            
             unit.MoveTo(dest);
         }
 

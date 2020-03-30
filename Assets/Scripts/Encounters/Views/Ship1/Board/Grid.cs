@@ -115,7 +115,7 @@ namespace Views {
         private void StartTurn() {
             int team = TurnCounter % 2;
             Debug.Log("Team " + team + " Turn " + TurnCounter / 2);
-            if (TurnCounter > 0) {
+            if (TurnCounter == 1) {
                 OnTurnStart += ExecuteAI;
             }
             OnTurnStart?.Invoke(this, new TurnEventArgs { Team = team });
@@ -209,6 +209,8 @@ namespace Views {
                     Debug.Log("Executing AI");
                     enemy.gameObject.GetComponent<EnemyAI>().Act();
                 }
+                EndTurn();
+                StartTurn();
             }
         }
 
