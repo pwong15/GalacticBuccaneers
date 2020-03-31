@@ -2,6 +2,7 @@
 using Encounter;
 using Models;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 namespace Views {
 
@@ -72,8 +73,13 @@ namespace Views {
             TurnEndEffects = new List<Effect>();
             healthBar = gameObject.GetComponentInChildren<BarController>();
             healthBar.SetMaxValue(character.MaxHealth);
-            healthBar.SetValue(100);
             healthBar.SetMinValue(0);
+            healthBar.SetValue(character.MaxHealth);
+            if (Team == 0) {
+                Image health = gameObject.transform.Find("HealthBarCanvas/healthBar/healthFill").gameObject.GetComponent<Image>();
+                health.color = Color.green;
+            }
+
         }
 
         public void MoveTo(Tile targetLocation) {

@@ -39,14 +39,6 @@ namespace Views {
                 SpawnUnit();
             }
 
-            /*if (gameBoard!=null && !gameBoard.highlighting && cursorIsOnTile && gameBoard.selectedPiece != null && !gameBoard.selectedPiece.GetComponent<Unit>().HasMoved && Input.GetKeyDown(KeyCode.M)) {
-                gameBoard.Highlight(gameBoard.selectedPieceMoveRange, Color.blue);
-                gameBoard.SelectedPieceState = SelectedPieceState.Moving;
-            }
-            if (gameBoard!=null && !gameBoard.highlighting && cursorIsOnTile && gameBoard.selectedPiece != null && !gameBoard.selectedPiece.GetComponent<Unit>().HasActed && Input.GetKeyDown(KeyCode.A)) {
-                gameBoard.Highlight(gameBoard.selectedPieceAttackRange, Color.red);
-                gameBoard.SelectedPieceState = SelectedPieceState.Attacking;
-            }*/
         }
 
         private void SpawnUnit() {
