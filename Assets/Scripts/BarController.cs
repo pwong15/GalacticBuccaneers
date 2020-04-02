@@ -11,13 +11,13 @@ public class BarController : MonoBehaviour
     {
         
         slider.maxValue = x;
-        slider.value = x;
+        
        
     }
     public void SetMinValue(int x)
     {
         slider.minValue = x;
-        slider.value = x;
+       
     }
     public void SetValue(int y)
     {

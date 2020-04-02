@@ -6,7 +6,9 @@ public class TestPlayerScript : MonoBehaviour
 {
     public int maxHealth = 100;
     public int currentHealth;
+    public int amt;
     public BarController healthBar;
+    public coinController coin;
     //public coinController coin;
     //public int currentAmt = 0;
     // Start is called before the first frame update
@@ -23,11 +25,15 @@ public class TestPlayerScript : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            TakeDamage(20);   
+            TakeDamage(20);
+            amt -= 10;
+            coin.setCoinAmt(amt);
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
             IncreaseHealth(10);
+            amt += 10;
+            coin.setCoinAmt(amt);
         }
         /*if (Input.GetKeyDown(KeyCode.X))
         {

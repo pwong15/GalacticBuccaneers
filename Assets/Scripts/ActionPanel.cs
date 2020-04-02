@@ -6,7 +6,10 @@ public class ActionPanel : MonoBehaviour
 {
     public GameObject actPanel;
     // Start is called before the first frame update
-
+    public void Start()
+    {
+        actPanel.SetActive(false);
+    }
     public void OnMouseOver()
     {
         actPanel.SetActive(true);
