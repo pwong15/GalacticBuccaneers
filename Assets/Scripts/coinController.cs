@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class coinController : MonoBehaviour
 {
-    public int coinAmt = 0;
+    public static int coinAmt = 0;
     Text coin;
     
     public void Start()
@@ -14,6 +14,10 @@ public class coinController : MonoBehaviour
     }
     public void Update()
     {
-        coin.text = coinAmt.ToString();
+        coin.text = " " + coinAmt;
+    }
+    public void setCoinAmt(int c)
+    {
+        coinAmt = c;
     }
 }
