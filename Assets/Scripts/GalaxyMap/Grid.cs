@@ -17,7 +17,7 @@ namespace GalaxyMap
             CreateGrid();
             EnableFog();
             RemoveFog('1');
-            ShowPaths('1');
+            //ShowPaths('1');
         }
 
         public override void CreateGrid() {
@@ -134,7 +134,7 @@ namespace GalaxyMap
             pathAssociations.Add('7', new List<string>() {"path7to8", "path7to10", "path6to7", "path0to7", "path7toRedPlanet"});
             pathAssociations.Add('8', new List<string>() {"path8toEarth", "path7to8"});
             pathAssociations.Add('9', new List<string>() {"path9to10", "path6to9"});
-            pathAssociations.Add('!', new List<string>() {"path10toEarth", "path9to10"});
+            pathAssociations.Add('!', new List<string>() {"path7to10", "path10toEarth", "path9to10"});
         }
 
         public override void ShowPaths(char ship) {
@@ -142,7 +142,9 @@ namespace GalaxyMap
             Debug.Log("here" + pathsToShow);
 
             foreach (var path in pathsToShow) {
-                GameObject.Find(path).SetActive(true);
+                Vector3 curPos = GameObject.Find(path).transform.position;
+                curPos.z = -2f;
+                GameObject.Find(path).transform.position = curPos;
             }
         }
 
