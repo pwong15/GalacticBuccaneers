@@ -23,6 +23,7 @@ namespace Views {
         public event EventHandler<TurnEventArgs> OnTurnStart;
         public event EventHandler<TurnEventArgs> OnTurnEnd;
         public event EventHandler<MapEventArgs> OnMapOver;
+        public Dictionary<int, List<Unit>> Teams;
         public class TurnEventArgs : EventArgs {
             public int Team;
         }
@@ -65,29 +66,29 @@ namespace Views {
             if (selectedPiece != null && SelectedPieceState == SelectedPieceState.None) {
                 Unit unit = selectedPiece.GetComponent<Unit>();
                 if (Input.GetKeyDown(KeyCode.M) && !unit.HasMoved) {
-                    Highlight(SelectedPieceMoveRange, Color.blue);
+                    EncounterUtils.Highlight(SelectedPieceMoveRange, Color.blue);
                     SelectedPieceState = SelectedPieceState.Moving;
                 }
                 if (Input.GetKeyDown(KeyCode.A) && !unit.HasActed) {
-                    Highlight(SelectedPieceAttackRange, Color.red);
+                    EncounterUtils.Highlight(SelectedPieceAttackRange, Color.red);
                     SelectedPieceState = SelectedPieceState.Attacking;
                 }
                 if (Input.GetKeyDown(KeyCode.K) && !unit.HasActed) {
                     DeathEffect dE = new DeathEffect();
                     SelectedAbility = dE;
-                    Debug.Log(dE.Range);
-                    SelectedAbilityRange = FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
+                    //Debug.Log(dE.Range);
+                    SelectedAbilityRange = EncounterUtils.FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
 
-                    Highlight(SelectedAbilityRange, Color.green);
+                    EncounterUtils.Highlight(SelectedAbilityRange, Color.green);
                     SelectedPieceState = SelectedPieceState.Casting;
                 }
                 if (Input.GetKeyDown(KeyCode.P) && !unit.HasActed) {
                     PoisonEffect pE = new PoisonEffect(3);
                     SelectedAbility = pE;
-                    Debug.Log(pE.Range);
-                    SelectedAbilityRange = FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
+                    //Debug.Log(pE.Range);
+                    SelectedAbilityRange = EncounterUtils.FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
 
-                    Highlight(SelectedAbilityRange, Color.green);
+                    EncounterUtils.Highlight(SelectedAbilityRange, Color.green);
                     SelectedPieceState = SelectedPieceState.Casting;
                 }
             }
@@ -113,6 +114,9 @@ namespace Views {
         private void StartTurn() {
             int team = TurnCounter % 2;
             Debug.Log("Team " + team + " Turn " + TurnCounter / 2);
+            if (TurnCounter == 1) {
+                OnTurnStart += ExecuteAI;
+            }
             OnTurnStart?.Invoke(this, new TurnEventArgs { Team = team });
         }
 
@@ -133,6 +137,7 @@ namespace Views {
             numOfTeam = 2;
             Debug.Log("Made teams");
             TurnCounter = 0;
+            Teams = new Dictionary<int, List<Unit>>();
             for (int row = 0; row < GRID_HEIGHT; row++) {
                 for (int column = 0; column < GRID_WIDTH; column++) {
                     
@@ -147,6 +152,7 @@ namespace Views {
                     wallLayoutArray[column, row] = ".";
                 }
             }
+            
             Debug.Log("Press NumberPad Enter to change turns");
             Debug.Log("All initially spawned units can't move at first and units can only move on their turn and can only move and act once");
             
@@ -158,13 +164,12 @@ namespace Views {
             }
             set {
                 _selectedPiece = value;
-                unHighlight(SelectedPieceAttackRange);
-                unHighlight(SelectedPieceMoveRange);
-                unHighlight(SelectedAbilityRange);
-                unHighlight(_selectedAbilityZone);
+                EncounterUtils.unHighlight(SelectedPieceMoveRange);
+                EncounterUtils.unHighlight(SelectedAbilityRange);
+                EncounterUtils.unHighlight(_selectedAbilityZone);
                 if (_selectedPiece != null) {
-                    SelectedPieceMoveRange = FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, selectedPiece.GetComponent<Unit>().MoveSpeed, (Tile) => Tile.Terrain.Cost);
-                    SelectedPieceAttackRange = FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, 1, (Tile) => 1);
+                    SelectedPieceMoveRange = EncounterUtils.FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, selectedPiece.GetComponent<Unit>().MoveSpeed, (Tile) => Tile.Terrain.Cost);
+                    SelectedPieceAttackRange = EncounterUtils.FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, 1, (Tile) => 1);
                 }
                 else {
                     SelectedPieceMoveRange = default(List<Tile>);
@@ -188,75 +193,23 @@ namespace Views {
             } 
             set {
                 if (_selectedAbilityZone != null) {
-                    unHighlight(_selectedAbilityZone);
-                    Highlight(SelectedAbilityRange, Color.green);
+                    EncounterUtils.unHighlight(_selectedAbilityZone);
+                    EncounterUtils.Highlight(SelectedAbilityRange, Color.green);
                 }
                 
                 _selectedAbilityZone = value;
             } 
         }
 
-        public void Highlight(List<Tile> tiles, Color color) {
-            ApplyTileEffects(tiles, (Tile) => ToggleHighlightEffect(Tile, true, color));
-            highlighting = true;
-        }
-
-        public void unHighlight(List<Tile> tiles) {
-            ApplyTileEffects(tiles, (Tile) => ToggleHighlightEffect(Tile, false, Color.white));
-            highlighting = false;
-        }
-
-        public void SetTileCost(Tile tile, int cost) {
-            tile.Cost = cost;
-        }
-
-        // Used to find tiles that a board piece can reach with their movespeed. So far uses manhatten distance but must change in order to account for obstacles such as walls.
-        public List<Tile> FindTilesInRange(Tile tile, int range, Func<Tile, int> getTileCost) {
-            List<Tile> tilesInRange = new List<Tile>();
-            Queue<Tile> queue = new Queue<Tile>();
-            List<Tile> visitedList = new List<Tile>();
-            Tile currentTile;
-            int neighborCost;
-            tile.Cost = 0;
-            queue.Enqueue(tile);
-            while (queue.Count > 0) {
-                currentTile = queue.Dequeue();
-                foreach (Tile neighbor in currentTile.GetNeighbors()) {
-                    if (!visitedList.Contains(neighbor)) {
-                        visitedList.Add(neighbor);
-                        neighborCost = getTileCost(neighbor) + currentTile.Cost;
-                        if (neighbor.Terrain.IsWalkable && neighborCost <= range) {
-                            neighbor.Cost = neighborCost;
-                            neighbor.Parent = currentTile;
-                            tilesInRange.Add(neighbor);
-                            queue.Enqueue(neighbor);
-                        }
-                    }
+        public void ExecuteAI(object sender, Grid.TurnEventArgs turnEvent) {
+            if (turnEvent.Team == 1) {
+                foreach (Unit enemy in Teams[1]) {
+                    Debug.Log("Executing AI");
+                    enemy.gameObject.GetComponent<EnemyAI>().Act();
                 }
+                EndTurn();
+                StartTurn();
             }
-            foreach (Tile inRangeTile in tilesInRange) {
-                inRangeTile.Cost = 0;
-            }
-            return tilesInRange;
-        }
-
-        public void ApplyTileEffects(List<Tile> tileZone, Action<Tile> applyEffect) {
-            if (tileZone == null) {
-                return;
-            }
-            foreach (Tile tile in tileZone) {
-                applyEffect(tile);
-                tile.Parent = null;
-            }
-        }
-
-        // Used to highlight a list of tiles (Tile Zone). As of now used to highlight/unhighlight the tiles in range of the selected board piece
-        private void ToggleHighlightEffect(Tile tile, bool toggle, Color color) {
-            GameObject tileObject = tile.gameObject.transform.GetChild(0).gameObject;
-            if (toggle) {
-                tileObject.GetComponent<SpriteRenderer>().color = color;
-            }
-            tileObject.GetComponent<Renderer>().enabled = toggle;
         }
 
         public Vector3 GetWorldPosition(int x, int y) {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Utilitys;
 
 namespace Views {
 
@@ -10,7 +11,8 @@ namespace Views {
         private int column, row, zCoord;
         public Renderer rend;
         bool highlight;
-        Grid gameBoard;
+        public Grid gameBoard;
+        public Grid grid { get; set; }
         List<Tile> _neighbors;
         bool canMoveUp = true, canMoveDown = true, canMoveRght = true, canMoveLft = true, isWall = false;
         public int xCoord { get; }
@@ -37,18 +39,10 @@ namespace Views {
                 SpawnUnit();
             }
 
-            /*if (gameBoard!=null && !gameBoard.highlighting && cursorIsOnTile && gameBoard.selectedPiece != null && !gameBoard.selectedPiece.GetComponent<Unit>().HasMoved && Input.GetKeyDown(KeyCode.M)) {
-                gameBoard.Highlight(gameBoard.selectedPieceMoveRange, Color.blue);
-                gameBoard.SelectedPieceState = SelectedPieceState.Moving;
-            }
-            if (gameBoard!=null && !gameBoard.highlighting && cursorIsOnTile && gameBoard.selectedPiece != null && !gameBoard.selectedPiece.GetComponent<Unit>().HasActed && Input.GetKeyDown(KeyCode.A)) {
-                gameBoard.Highlight(gameBoard.selectedPieceAttackRange, Color.red);
-                gameBoard.SelectedPieceState = SelectedPieceState.Attacking;
-            }*/
         }
 
         private void SpawnUnit() {
-            BoardPiece = Instantiate(Resources.Load("Prefabs/cyborgman2") as GameObject);
+            BoardPiece = Instantiate(Resources.Load("Prefabs/cyborgman2H") as GameObject);
             //Vector3 scaleChange = new Vector3(-0.94f, -0.94f, -0.94f);
             //BoardPiece.transform.localScale += scaleChange;
             //Vector3 center = this.transform.position = new Vector3(xCoordf, yCoordf - .7f, zCoordf);
@@ -59,6 +53,14 @@ namespace Views {
             BoardPiece.name = unit.ToString();
             gameBoard.OnTurnStart += unit.StartOfTurnEffects;
             gameBoard.OnTurnEnd += unit.EndOfTurnEffects;
+            if (!gameBoard.Teams.ContainsKey(unit.Team)) {
+                gameBoard.Teams[unit.Team] = new List<Unit>();
+            }
+            gameBoard.Teams[unit.Team].Add(unit);
+            if (unit.Team != 0) {
+                unit.gameObject.AddComponent<EnemyAI>();
+                Debug.Log("Added AI");
+            }
             Debug.Log("Spawned unit on " + column + " " + row);
             Debug.Log(BoardPiece.name);
         }
@@ -96,7 +98,7 @@ namespace Views {
                 case SelectedPieceState.Casting : {
                         if (gameBoard.SelectedAbilityRange.Contains(this)) {
                             
-                            gameBoard.ApplyTileEffects(gameBoard.SelectedAbilityZone, (Tile tile) => {
+                            EncounterUtils.ApplyTileEffects(gameBoard.SelectedAbilityZone, (Tile tile) => {
                                 
                                 Unit unit = null;
                                 if (tile.BoardPiece != null) {
@@ -150,10 +152,10 @@ namespace Views {
                 GetComponent<Renderer>().enabled = true;
                 if (gameBoard.SelectedPieceState == SelectedPieceState.Casting && gameBoard.SelectedAbilityRange.Contains(this)) {
                     
-                    gameBoard.SelectedAbilityZone = gameBoard.FindTilesInRange(this, gameBoard.SelectedAbility.ZoneRange, (Tile t) => { return 1; });
-                    Debug.Log(gameBoard.SelectedAbility.ZoneRange);
+                    gameBoard.SelectedAbilityZone = EncounterUtils.FindTilesInRange(this, gameBoard.SelectedAbility.ZoneRange, (Tile t) => { return 1; });
+                   
                     
-                    gameBoard.Highlight(gameBoard.SelectedAbilityZone, Color.red);
+                    EncounterUtils.Highlight(gameBoard.SelectedAbilityZone, Color.red);
                 }
             }
             else {
@@ -232,7 +234,6 @@ namespace Views {
 
             return _neighbors;
         }
-        public Grid grid { get; }
 
         public int Cost { get; set; }
 
