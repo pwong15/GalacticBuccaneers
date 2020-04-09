@@ -17,9 +17,9 @@ namespace Views {
     }
 
     public class Grid : MonoBehaviour {
-        private readonly int GRID_HEIGHT = 32;
-        private readonly int GRID_WIDTH = 24;
-        private readonly string MAP_NAME = "Layout2";
+        public int GRID_HEIGHT;
+        public int GRID_WIDTH;
+        public string MAP_NAME;
         public event EventHandler<TurnEventArgs> OnTurnStart;
         public event EventHandler<TurnEventArgs> OnTurnEnd;
         public event EventHandler<MapEventArgs> OnMapOver;
@@ -56,7 +56,6 @@ namespace Views {
 
         void Start() {
             CreateGrid();
-
         }
 
         void Update() {
@@ -131,7 +130,6 @@ namespace Views {
         private void CreateGrid() {
             wallLayoutArray = new string[GRID_WIDTH, GRID_HEIGHT];
             tiles = new Tile[GRID_WIDTH, GRID_HEIGHT];
-            string MAP_NAME = "Layout2";
             
             string wallLayoutFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\" + MAP_NAME + ".txt";
             string wallLayout = string.Join("", File.ReadAllLines(wallLayoutFile));
