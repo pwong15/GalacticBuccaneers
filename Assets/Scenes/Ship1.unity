@@ -513,6 +513,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8576d293bd091e64aa057b3e951af0fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GRID_HEIGHT: 32
+  GRID_WIDTH: 24
+  MAP_NAME: Layout1
   originPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &1311441331
 GameObject:

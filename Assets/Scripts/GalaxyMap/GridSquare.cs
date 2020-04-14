@@ -10,6 +10,7 @@ namespace GalaxyMap
         public Texture2D skull;
         public GameObject target;
         public string LinkedScene { set {linkedScene = value; } }
+        public char shipChar; 
 
         public void Start()
         {
@@ -25,11 +26,11 @@ namespace GalaxyMap
             if (!cursorIsOnTile) 
                 rend.material.color = Color.white;
 
-            if (linkedScene == "" && cursorIsOnTile)
+            if (!IsValidChoice() && cursorIsOnTile)
             {
                 Cursor.SetCursor(null, cursorLocation, CursorMode.Auto);
             }
-            if(linkedScene != "" && !cursorIsOnTile && target!= null)
+            if(IsValidChoice() && !cursorIsOnTile && target!= null)
             {
                 target.SetActive(false);
             }
@@ -37,38 +38,55 @@ namespace GalaxyMap
 
         private void OnMouseOver()
         {
-
-            if (linkedScene != "")
+            // Show clickable ships
+            if (IsValidChoice())
             {
                 Vector3 cursorLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 cursorLocation.x += 25;
                 cursorLocation.y += 25;
                 Cursor.SetCursor(skull, cursorLocation, CursorMode.ForceSoftware);
 
+                // Create red targetting square if it doesnt exist
                 if (target is null)
                 {
                     target = Instantiate(Resources.Load("Prefabs/targetRed") as GameObject);
                     target.transform.position = this.transform.position;
                 }
+
+                // else just how red targetting square
                 else
                 {
                     target.SetActive(true);
                 }
-                
-
+                rend.material.color = Color.gray;
             }
 
-            rend.material.color = Color.gray;
-            //Cursor.SetCursor(skull, cursorLocation, CursorMode.ForceSoftware);
-            // Left click
-            if (Input.GetMouseButtonDown(0) && linkedScene != "")
+            // Launch Encounter on left click
+            if (Input.GetMouseButtonDown(0) && IsValidChoice())
             {
                 Vector3 cursorLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                SceneController.LoadScene(linkedScene);
+                grid.currentLocation = shipChar;
+
+                // Move Green place marker
+                GameObject greenPlaceMarker = GameObject.Find("PlaceMarker");
+                Vector3 newPosition = new Vector3(xCoordf-11, yCoordf-23, 0);
+                greenPlaceMarker.transform.position = newPosition;
+
+                target.SetActive(false);
+                grid.RemoveFog(shipChar);
+                grid.ShowPaths(shipChar);
+                //SceneController.LoadScene(linkedScene);
                 Cursor.SetCursor(null, cursorLocation, CursorMode.Auto);
             }
         }
 
+        // Indicates is ship encounter can currently be played
+        public bool IsValidChoice() {
+            if(grid.validSelections[grid.currentLocation].Contains(shipChar)) {
+                return true;
+            }
+            return false;
+        }
 
         // Returns a bool indicating if the cursor is hover on tile
         private bool CursorIsOnTile(float mouseXLocation, float mouseYLocation)
