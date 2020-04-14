@@ -18,6 +18,7 @@ namespace Views {
         public Character Character { get; set; }
         private Vector3 destination;
         private BarController healthBar;
+        public PanelScript actionMenu;
         public Team Team { get; set; }
         public bool moving = false;
         public Tile destinationTile;
@@ -66,15 +67,23 @@ namespace Views {
             Debug.Log("Mouseover");
         }
         void OnMouseDown() {
-            Unit unit = Tile.gameBoard.SelectedDeploymentUnit;
-            Debug.Log("Clicked Unit");
-            Debug.Log("Deployed Unit is " + unit);
-            if (unit != null) {
-                Debug.Log("Swap");
-                EncounterUtils.SwapUnits(this, unit);
-                Tile.gameBoard.SelectedDeploymentUnit = null;
-            } else {
-                Tile.gameBoard.SelectedDeploymentUnit = this;
+            if (Tile.gameBoard.TurnCounter == 0) {
+                Unit unit = Tile.gameBoard.SelectedDeploymentUnit;
+                Debug.Log("Clicked " + this);
+                Debug.Log("Deployed Unit is " + unit);
+                if (unit != null) {
+                    Debug.Log("Swap");
+                    EncounterUtils.SwapUnits(this, unit);
+                    Tile.gameBoard.SelectedDeploymentUnit = null;
+                } else {
+                    Tile.gameBoard.SelectedDeploymentUnit = this;
+                }
+            } else if (!HasActed) {
+                GameObject selectedPiece = Tile.gameBoard.selectedPiece;
+                if (selectedPiece == null) {
+                    actionMenu.DisplayPanel();
+                    Tile.gameBoard.selectedPiece = this.gameObject;
+                }
             }
         }
 
@@ -104,11 +113,14 @@ namespace Views {
             healthBar.SetMaxValue(character.MaxHealth);
             healthBar.SetMinValue(0);
             healthBar.SetValue(character.MaxHealth);
+            actionMenu = gameObject.GetComponentInChildren<PanelScript>();
+            actionMenu.unit = this;
+            actionMenu.grid = Tile.gameBoard;
             if (Team == 0) {
                 Image health = gameObject.transform.Find("HealthBarCanvas/healthBar/healthFill").gameObject.GetComponent<Image>();
                 health.color = Color.blue;
             }
-
+            actionMenu.HidePanel();
         }
 
         public void MoveTo(Tile targetLocation) {

@@ -59,13 +59,23 @@ namespace Views {
 
         void Start() {
             CreateGrid();
+            spawnArea = new List<Tile>();
+            spawnArea.Add(tiles[15, 1]);
+            spawnArea.Add(tiles[14, 2]);
+            spawnArea.Add(tiles[16, 2]);
+            spawnArea.Add(tiles[13, 1]);
+            foreach (Tile tile in spawnArea) {
+                tile.SpawnUnit(Team.Player);
+            }
         }
 
         void Update() {
+
             if (Input.GetKeyDown("enter")) {
                 EndTurn();
                 StartTurn();
             }
+            EncounterUtils.Highlight(spawnArea, Color.yellow);
             if (selectedPiece != null && SelectedPieceState == SelectedPieceState.None) {
                 Unit unit = selectedPiece.GetComponent<Unit>();
                 if (Input.GetKeyDown(KeyCode.M) && !unit.HasMoved) {
@@ -144,7 +154,7 @@ namespace Views {
             Teams = new Dictionary<Team, List<Unit>>();
             for (int row = 0; row < GRID_HEIGHT; row++) {
                 for (int column = 0; column < GRID_WIDTH; column++) {
-                    
+
                     GameObject gridSquare = Instantiate(Resources.Load("Prefabs/target") as GameObject);
                     Tile tile = gridSquare.AddComponent<Tile>();
                     gridSquare.name = "Tile[" + column + "," + row + "]";
@@ -156,16 +166,8 @@ namespace Views {
                     wallLayoutArray[column, row] = ".";
                 }
             }
-            spawnArea = new List<Tile>();
-            spawnArea.Add(tiles[15, 1]);
-            spawnArea.Add(tiles[14, 2]);
-            spawnArea.Add(tiles[16, 2]);
-            spawnArea.Add(tiles[13, 1]);
-            EncounterUtils.Highlight(spawnArea, Color.yellow);
-            foreach (Tile tile in spawnArea) {
-                tile.SpawnUnit(Team.Player);    
-            }
             
+
             Debug.Log("Press NumberPad Enter to change turns");
             Debug.Log("All initially spawned units can't move at first and units can only move on their turn and can only move and act once");
             
@@ -178,13 +180,20 @@ namespace Views {
                 return _selectedPiece;
             }
             set {
+                Unit unit = null;
+                if (_selectedPiece != null) {
+                    unit = _selectedPiece.GetComponent<Unit>();
+                    unit.actionMenu.HidePanel();
+                }
                 _selectedPiece = value;
                 EncounterUtils.unHighlight(SelectedPieceMoveRange);
                 EncounterUtils.unHighlight(SelectedAbilityRange);
                 EncounterUtils.unHighlight(_selectedAbilityZone);
                 if (_selectedPiece != null) {
-                    SelectedPieceMoveRange = EncounterUtils.FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, selectedPiece.GetComponent<Unit>().MoveSpeed, (Tile) => Tile.Terrain.Cost);
-                    SelectedPieceAttackRange = EncounterUtils.FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, 1, (Tile) => 1);
+                    unit = _selectedPiece.GetComponent<Unit>();
+                    SelectedPieceMoveRange = EncounterUtils.FindTilesInRange(unit.Tile, unit.MoveSpeed, (Tile) => Tile.Terrain.Cost);
+                    SelectedPieceAttackRange = EncounterUtils.FindTilesInRange(unit.Tile, 1, (Tile) => 1);
+                    unit.actionMenu.DisplayPanel();
                 }
                 else {
                     SelectedPieceMoveRange = default(List<Tile>);
