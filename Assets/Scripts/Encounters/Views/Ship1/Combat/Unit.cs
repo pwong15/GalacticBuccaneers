@@ -3,16 +3,24 @@ using Encounter;
 using Models;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using Utilitys;
 
 namespace Views {
 
+    public enum Team {
+        Player,
+        Enemy
+    }
+
     public class Unit : MonoBehaviour, Effectable {
+
+        
         public Character Character { get; set; }
         private Vector3 destination;
         private BarController healthBar;
-        public int Team { get; set; }
-        bool moving = false;
-        Tile destinationTile;
+        public Team Team { get; set; }
+        public bool moving = false;
+        public Tile destinationTile;
         List<Effect> TurnStartEffects;
         List<Effect> TurnEndEffects;
         private void Update()
@@ -50,6 +58,27 @@ namespace Views {
 
         private bool _hasActed;
 
+        private Vector3 screenPoint;
+        private Vector3 offset;
+        private Vector3 scanPos;
+
+        void OnMouseHover() {
+            Debug.Log("Mouseover");
+        }
+        void OnMouseDown() {
+            Unit unit = Tile.gameBoard.SelectedDeploymentUnit;
+            Debug.Log("Clicked Unit");
+            Debug.Log("Deployed Unit is " + unit);
+            if (unit != null) {
+                Debug.Log("Swap");
+                EncounterUtils.SwapUnits(this, unit);
+                Tile.gameBoard.SelectedDeploymentUnit = null;
+            } else {
+                Tile.gameBoard.SelectedDeploymentUnit = this;
+            }
+        }
+
+       
         public bool HasActed {
             get { return _hasActed; }
             set {
@@ -77,7 +106,7 @@ namespace Views {
             healthBar.SetValue(character.MaxHealth);
             if (Team == 0) {
                 Image health = gameObject.transform.Find("HealthBarCanvas/healthBar/healthFill").gameObject.GetComponent<Image>();
-                health.color = Color.green;
+                health.color = Color.blue;
             }
 
         }
@@ -90,14 +119,15 @@ namespace Views {
                 targetLocation.BoardPiece = this.gameObject;
                 destinationTile = targetLocation;
                 HasMoved = true;
+                //Tile = targetLocation;
             }
         }
 
         public void AttackUnit(Unit otherUnit) {
             if (otherUnit.Team != Team) {
                 otherUnit.TakeDamage(10 * Character.Attack - otherUnit.Character.Defense);
+                HasActed = true;
             }
-            HasActed = true;
         }
 
         public void TakeDamage(int damageAmount) {

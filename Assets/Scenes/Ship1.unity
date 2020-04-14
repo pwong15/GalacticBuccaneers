@@ -977,6 +977,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: cyborgman
       objectReference: {fileID: 0}
+    - target: {fileID: 7286730786194304137, guid: f60dd65263865d9419630fd9c4c0c8d3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7796197896725801747, guid: f60dd65263865d9419630fd9c4c0c8d3,
         type: 3}
       propertyPath: m_LocalRotation.z

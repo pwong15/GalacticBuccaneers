@@ -50,6 +50,14 @@ namespace Utilitys {
             return tilesInRange;
         }
 
+        public static void SwapUnits(Unit a, Unit b) {
+            Tile tileA = a.Tile;
+            Tile tileB = b.Tile;
+            a.Tile = tileB;
+            b.Tile = tileA;
+            tileA.BoardPiece = a.gameObject;
+            tileB.BoardPiece = b.gameObject;
+        }
         public static List<Tile> PathFinding(Tile start, Tile dest) {
             List<Tile> path = new List<Tile>();
             List<Tile> visited = new List<Tile>();

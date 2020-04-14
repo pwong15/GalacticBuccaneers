@@ -20,12 +20,13 @@ namespace Views {
         private readonly int GRID_HEIGHT = 32;
         private readonly int GRID_WIDTH = 24;
         private readonly string MAP_NAME = "Layout2";
+        public Unit SelectedDeploymentUnit {get; set;}
         public event EventHandler<TurnEventArgs> OnTurnStart;
         public event EventHandler<TurnEventArgs> OnTurnEnd;
         public event EventHandler<MapEventArgs> OnMapOver;
-        public Dictionary<int, List<Unit>> Teams;
+        public Dictionary<Team, List<Unit>> Teams;
         public class TurnEventArgs : EventArgs {
-            public int Team;
+            public Team Team;
         }
 
         public class MapEventArgs : EventArgs {
@@ -99,7 +100,7 @@ namespace Views {
 
         private int id = 0;
         private Character RetrieveCharacter() {
-            return new Character("Unit " + id, id++ % numOfTeam, 100, 100, 10, 5, 2, 3);
+            return new Character("Unit " + id, (Team)(id++ % numOfTeam), 100, 100, 10, 5, 2, 3);
         }
 
         public void SpawnUnit(int x, int y) {
@@ -113,7 +114,7 @@ namespace Views {
         }
 
         private void StartTurn() {
-            int team = TurnCounter % 2;
+            Team team = TurnCounter % 2 == 1 ? Team.Player: Team.Enemy;
             Debug.Log("Team " + team + " Turn " + TurnCounter / 2);
             if (TurnCounter == 1) {
                 OnTurnStart += ExecuteAI;
@@ -122,12 +123,13 @@ namespace Views {
         }
 
         private void EndTurn() {
-            int team = TurnCounter % 2;
+            Team team = TurnCounter % 2 == 1 ? Team.Player : Team.Enemy;
             Debug.Log("Ending Turn");
             TurnCounter += 1;
             OnTurnEnd?.Invoke(this, new TurnEventArgs { Team = team });
         }
 
+        private List<Tile> spawnArea; 
         private void CreateGrid() {
             wallLayoutArray = new string[GRID_WIDTH, GRID_HEIGHT];
             tiles = new Tile[GRID_WIDTH, GRID_HEIGHT];
@@ -139,7 +141,7 @@ namespace Views {
             numOfTeam = 2;
             Debug.Log("Made teams");
             TurnCounter = 0;
-            Teams = new Dictionary<int, List<Unit>>();
+            Teams = new Dictionary<Team, List<Unit>>();
             for (int row = 0; row < GRID_HEIGHT; row++) {
                 for (int column = 0; column < GRID_WIDTH; column++) {
                     
@@ -154,12 +156,23 @@ namespace Views {
                     wallLayoutArray[column, row] = ".";
                 }
             }
+            spawnArea = new List<Tile>();
+            spawnArea.Add(tiles[15, 1]);
+            spawnArea.Add(tiles[14, 2]);
+            spawnArea.Add(tiles[16, 2]);
+            spawnArea.Add(tiles[13, 1]);
+            EncounterUtils.Highlight(spawnArea, Color.yellow);
+            foreach (Tile tile in spawnArea) {
+                tile.SpawnUnit(Team.Player);    
+            }
             
             Debug.Log("Press NumberPad Enter to change turns");
             Debug.Log("All initially spawned units can't move at first and units can only move on their turn and can only move and act once");
             
 
         }
+
+
         public GameObject selectedPiece {
             get {
                 return _selectedPiece;
@@ -204,8 +217,8 @@ namespace Views {
         }
 
         public void ExecuteAI(object sender, Grid.TurnEventArgs turnEvent) {
-            if (turnEvent.Team == 1) {
-                foreach (Unit enemy in Teams[1]) {
+            if (turnEvent.Team == Team.Enemy) {
+                foreach (Unit enemy in Teams[Team.Enemy]) {
                     Debug.Log("Executing AI");
                     enemy.gameObject.GetComponent<EnemyAI>().Act();
                 }

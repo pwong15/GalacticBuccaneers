@@ -3,13 +3,18 @@
 using Views;
 using System.Collections.Generic;
 using Utilitys;
+using System.Collections;
 
 public class EnemyAI : MonoBehaviour {
 
     Unit unit;
     List<Tile> AttackRange {
         get {
-            return EncounterUtils.FindTilesInRange(gameObject.GetComponent<Unit>().Tile, attackRange, (Tile) => { return 1; });
+            Tile dest = unit.destinationTile;
+            if (dest == null) {
+                dest = unit.Tile;
+            }
+            return EncounterUtils.FindTilesInRange(dest, attackRange, (Tile) => { return 1; });
         }
     }
     int attackRange;
@@ -31,7 +36,7 @@ public class EnemyAI : MonoBehaviour {
     }
 
     public List<Unit> getPlayerUnits() {
-        return gameObject.GetComponent<Unit>().Tile.gameBoard.Teams[(unit.Character.Team + 1) % 2];
+        return gameObject.GetComponent<Unit>().Tile.gameBoard.Teams[Team.Player];
     }
 
     public List<Tile> PathToClosestPlayerUnit() {
@@ -67,7 +72,7 @@ public class EnemyAI : MonoBehaviour {
             if (tile.BoardPiece != null) {
                 playerUnit = tile.BoardPiece.GetComponent<Unit>();
             }
-            if (playerUnit!= null && playerUnit.Team == 0) {
+            if (playerUnit!= null && playerUnit.Team == Team.Player) {
                 unitsInRange.Add(playerUnit);
             }
         }
@@ -76,12 +81,23 @@ public class EnemyAI : MonoBehaviour {
 
     public void Act() {
         List<Unit> playerUnitsInRange = getUnitsInRange();
-        bool hasAttacked = false;
+        Debug.Log(unit.Tile);
         if (playerUnitsInRange.Count > 0) {
-            hasAttacked = true;
             unit.AttackUnit(playerUnitsInRange[0]);
         } else {
             Move();
+            Debug.Log("Executing Movement");
+            /*while (unit.moving) {
+                float delta = 1 * Time.deltaTime;
+            }*/
+           
+            playerUnitsInRange = getUnitsInRange();
+            foreach (Unit player in playerUnitsInRange) {
+                Debug.Log(player);
+            }
+            if (playerUnitsInRange.Count > 0) {
+                unit.AttackUnit(playerUnitsInRange[0]);
+            }
         }
     
     }
@@ -110,7 +126,6 @@ public class EnemyAI : MonoBehaviour {
             }
         }
         if (dest != null) {
-            
             unit.MoveTo(dest);
         }
 
