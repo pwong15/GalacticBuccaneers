@@ -1,20 +1,30 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
+
 namespace GalaxyMap
 {
-    public class ButtonListener : MonoBehaviour
-    {
-        public void ChangeVisibility(string objectName)
-        {
-            CanvasGroup crewGroup = GameObject.Find("CrewPopout").GetComponent<CanvasGroup>();
-            CanvasGroup invGroup = GameObject.Find("InventoryPopout").GetComponent<CanvasGroup>();
+    public class ButtonListener : MonoBehaviour {
+        public void ShowInventory(string objectName) {
+            CanvasGroup inventory = GameObject.Find(objectName).GetComponent<CanvasGroup>();
 
-            CanvasGroup group = GameObject.Find(objectName).GetComponent<CanvasGroup>();
-            group.alpha = group.alpha == 0 ? group.alpha = 1 : group.alpha = 0;
+            inventory.alpha = inventory.alpha == 0 ? inventory.alpha = 1 : inventory.alpha = 0;
+        }
 
-            if (objectName == "InventoryPopout")
-                crewGroup.alpha = 0;
-            else if (objectName == "CrewPopout")
-                invGroup.alpha = 0;
+
+        public void ShowGear(string gear) {
+            CanvasGroup gearGroup = GameObject.Find(gear).GetComponent<CanvasGroup>();
+            gearGroup.alpha = gearGroup.alpha == 0 ? gearGroup.alpha = 1 : gearGroup.alpha = 0;
+        }
+
+        public void Glow(string buttonName) {
+            Button button = GameObject.Find(buttonName).GetComponent<Button>();
+            ColorBlock colors = button.colors;
+            colors.normalColor = Color.red;
+        }
+
+        public void CloseWindow(string window) {
+            CanvasGroup windowGroup = GameObject.Find(window).GetComponent<CanvasGroup>();
+            windowGroup.alpha = 0;
         }
     }
 }
