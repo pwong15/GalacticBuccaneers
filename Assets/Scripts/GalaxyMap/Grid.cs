@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 namespace GalaxyMap
 {
@@ -16,8 +17,8 @@ namespace GalaxyMap
 
             CreateGrid();
             EnableFog();
+            RemoveFog('E');
             RemoveFog('1');
-            //ShowPaths('1');
         }
 
         public override void CreateGrid() {
@@ -152,6 +153,17 @@ namespace GalaxyMap
             string loadFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\Fog" + removalKey + ".txt";
             string unfogValues = string.Join("", File.ReadAllLines(loadFile));
             int gridIndex = 0;
+
+            // Hide end indicator after first turn
+            if(removalKey == '2' | removalKey == '4' | removalKey == '5') {
+                try {
+                    GameObject.Find("EndGame").SetActive(false);
+                }catch(Exception e) {
+                    Debug.Log("Already hid endgame");
+                }
+            }
+
+            // Remove fog squares
             for (int row = 0; row < GRID_HEIGHT; row++) {
                 for (int column = 0; column < GRID_WIDTH; column++) {
                     char unfogValue = unfogValues[gridIndex];

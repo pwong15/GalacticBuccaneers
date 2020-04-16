@@ -53,7 +53,7 @@ namespace GalaxyMap
                     target.transform.position = this.transform.position;
                 }
 
-                // else just how red targetting square
+                // else just show red targetting square
                 else
                 {
                     target.SetActive(true);
