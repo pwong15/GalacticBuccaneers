@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using Utilitys;
 
 public class TestPlayerScript : MonoBehaviour
 {
@@ -9,15 +11,15 @@ public class TestPlayerScript : MonoBehaviour
     public int amt;
     public BarController healthBar;
     public coinController coin;
-    //public coinController coin;
-    //public int currentAmt = 0;
-    // Start is called before the first frame update
+    public PanelScript panel;
+  
     void Start()
     {
         currentHealth = maxHealth;
         healthBar.SetMaxValue(maxHealth);
-       // coin.Update(currentAmt);
-        
+        panel.HidePanel();
+        // coin.Update(currentAmt);
+
     }
 
     // Update is called once per frame
@@ -35,11 +37,6 @@ public class TestPlayerScript : MonoBehaviour
             amt += 10;
             coin.setCoinAmt(amt);
         }
-        /*if (Input.GetKeyDown(KeyCode.X))
-        {
-            IncreaseCoinAmt(10);
-        }*/
-
 
     }
     void TakeDamage(int damage)
@@ -51,6 +48,11 @@ public class TestPlayerScript : MonoBehaviour
     {
         currentHealth += hel;
         healthBar.SetValue(currentHealth);
+    }
+    void OnMouseDown()
+    {
+        Debug.Log("Player Clicked");
+        panel.DisplayPanel();
     }
     /*void IncreaseCoinAmt(int x)
     {

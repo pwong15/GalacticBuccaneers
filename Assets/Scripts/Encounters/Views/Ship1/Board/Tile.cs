@@ -25,10 +25,10 @@ namespace Views {
         }
 
         private static int id = 0;
-        private Character RetrieveCharacter() {
+        private Character RetrieveCharacter(Team charTeam) {
             id++;
-            int team = id % 2;
-            return new Character("Unit " + id, team, 100, 100, 10, 5, 2, 3);
+            Team team = charTeam;
+            return new Character("Unit " + id, team, 100, 100, 10, 5, 1, 3);
         }
         void Update() {
 
@@ -36,19 +36,22 @@ namespace Views {
             Vector3 cursorLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             bool cursorIsOnTile = CursorIsOnTile(cursorLocation.x - xCoordf, cursorLocation.y - yCoordf);
             if (!isWall && cursorIsOnTile && Input.GetKeyDown(KeyCode.S) && BoardPiece == null) {
-                SpawnUnit();
+                SpawnUnit(Team.Player);
+            }
+            if (!isWall && cursorIsOnTile && Input.GetKeyDown(KeyCode.D) && BoardPiece == null) {
+                SpawnUnit(Team.Enemy);
             }
 
         }
 
-        private void SpawnUnit() {
+        public void SpawnUnit(Team charTeam) {
             BoardPiece = Instantiate(Resources.Load("Prefabs/cyborgman2H") as GameObject);
             //Vector3 scaleChange = new Vector3(-0.94f, -0.94f, -0.94f);
             //BoardPiece.transform.localScale += scaleChange;
             //Vector3 center = this.transform.position = new Vector3(xCoordf, yCoordf - .7f, zCoordf);
 
             Unit unit = BoardPiece.AddComponent<Unit>();
-            Character character = RetrieveCharacter();
+            Character character = RetrieveCharacter(charTeam);
             unit.Initialize(character, this);
             BoardPiece.name = unit.ToString();
             gameBoard.OnTurnStart += unit.StartOfTurnEffects;

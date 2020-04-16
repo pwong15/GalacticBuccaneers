@@ -17,15 +17,18 @@ namespace Views {
     }
 
     public class Grid : MonoBehaviour {
+
         public int GRID_HEIGHT;
         public int GRID_WIDTH;
         public string MAP_NAME;
+        public Unit SelectedDeploymentUnit {get; set;}
+
         public event EventHandler<TurnEventArgs> OnTurnStart;
         public event EventHandler<TurnEventArgs> OnTurnEnd;
         public event EventHandler<MapEventArgs> OnMapOver;
-        public Dictionary<int, List<Unit>> Teams;
+        public Dictionary<Team, List<Unit>> Teams;
         public class TurnEventArgs : EventArgs {
-            public int Team;
+            public Team Team;
         }
 
         public class MapEventArgs : EventArgs {
@@ -56,13 +59,23 @@ namespace Views {
 
         void Start() {
             CreateGrid();
+            spawnArea = new List<Tile>();
+            spawnArea.Add(tiles[15, 1]);
+            spawnArea.Add(tiles[14, 2]);
+            spawnArea.Add(tiles[16, 2]);
+            spawnArea.Add(tiles[13, 1]);
+            foreach (Tile tile in spawnArea) {
+                tile.SpawnUnit(Team.Player);
+            }
         }
 
         void Update() {
+
             if (Input.GetKeyDown("enter")) {
                 EndTurn();
                 StartTurn();
             }
+            EncounterUtils.Highlight(spawnArea, Color.yellow);
             if (selectedPiece != null && SelectedPieceState == SelectedPieceState.None) {
                 Unit unit = selectedPiece.GetComponent<Unit>();
                 if (Input.GetKeyDown(KeyCode.M) && !unit.HasMoved) {
@@ -98,7 +111,7 @@ namespace Views {
 
         private int id = 0;
         private Character RetrieveCharacter() {
-            return new Character("Unit " + id, id++ % numOfTeam, 100, 100, 10, 5, 2, 3);
+            return new Character("Unit " + id, (Team)(id++ % numOfTeam), 100, 100, 10, 5, 2, 3);
         }
 
         public void SpawnUnit(int x, int y) {
@@ -112,7 +125,7 @@ namespace Views {
         }
 
         private void StartTurn() {
-            int team = TurnCounter % 2;
+            Team team = TurnCounter % 2 == 1 ? Team.Player: Team.Enemy;
             Debug.Log("Team " + team + " Turn " + TurnCounter / 2);
             if (TurnCounter == 1) {
                 OnTurnStart += ExecuteAI;
@@ -121,12 +134,13 @@ namespace Views {
         }
 
         private void EndTurn() {
-            int team = TurnCounter % 2;
+            Team team = TurnCounter % 2 == 1 ? Team.Player : Team.Enemy;
             Debug.Log("Ending Turn");
             TurnCounter += 1;
             OnTurnEnd?.Invoke(this, new TurnEventArgs { Team = team });
         }
 
+        private List<Tile> spawnArea; 
         private void CreateGrid() {
             wallLayoutArray = new string[GRID_WIDTH, GRID_HEIGHT];
             tiles = new Tile[GRID_WIDTH, GRID_HEIGHT];
@@ -137,10 +151,10 @@ namespace Views {
             numOfTeam = 2;
             Debug.Log("Made teams");
             TurnCounter = 0;
-            Teams = new Dictionary<int, List<Unit>>();
+            Teams = new Dictionary<Team, List<Unit>>();
             for (int row = 0; row < GRID_HEIGHT; row++) {
                 for (int column = 0; column < GRID_WIDTH; column++) {
-                    
+
                     GameObject gridSquare = Instantiate(Resources.Load("Prefabs/target") as GameObject);
                     Tile tile = gridSquare.AddComponent<Tile>();
                     gridSquare.name = "Tile[" + column + "," + row + "]";
@@ -153,23 +167,33 @@ namespace Views {
                 }
             }
             
+
             Debug.Log("Press NumberPad Enter to change turns");
             Debug.Log("All initially spawned units can't move at first and units can only move on their turn and can only move and act once");
             
 
         }
+
+
         public GameObject selectedPiece {
             get {
                 return _selectedPiece;
             }
             set {
+                Unit unit = null;
+                if (_selectedPiece != null) {
+                    unit = _selectedPiece.GetComponent<Unit>();
+                    unit.actionMenu.HidePanel();
+                }
                 _selectedPiece = value;
                 EncounterUtils.unHighlight(SelectedPieceMoveRange);
                 EncounterUtils.unHighlight(SelectedAbilityRange);
                 EncounterUtils.unHighlight(_selectedAbilityZone);
                 if (_selectedPiece != null) {
-                    SelectedPieceMoveRange = EncounterUtils.FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, selectedPiece.GetComponent<Unit>().MoveSpeed, (Tile) => Tile.Terrain.Cost);
-                    SelectedPieceAttackRange = EncounterUtils.FindTilesInRange(selectedPiece.GetComponent<Unit>().Tile, 1, (Tile) => 1);
+                    unit = _selectedPiece.GetComponent<Unit>();
+                    SelectedPieceMoveRange = EncounterUtils.FindTilesInRange(unit.Tile, unit.MoveSpeed, (Tile) => Tile.Terrain.Cost);
+                    SelectedPieceAttackRange = EncounterUtils.FindTilesInRange(unit.Tile, 1, (Tile) => 1);
+                    unit.actionMenu.DisplayPanel();
                 }
                 else {
                     SelectedPieceMoveRange = default(List<Tile>);
@@ -202,8 +226,8 @@ namespace Views {
         }
 
         public void ExecuteAI(object sender, Grid.TurnEventArgs turnEvent) {
-            if (turnEvent.Team == 1) {
-                foreach (Unit enemy in Teams[1]) {
+            if (turnEvent.Team == Team.Enemy) {
+                foreach (Unit enemy in Teams[Team.Enemy]) {
                     Debug.Log("Executing AI");
                     enemy.gameObject.GetComponent<EnemyAI>().Act();
                 }

@@ -3,16 +3,25 @@ using Encounter;
 using Models;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using Utilitys;
 
 namespace Views {
 
+    public enum Team {
+        Player,
+        Enemy
+    }
+
     public class Unit : MonoBehaviour, Effectable {
+
+        
         public Character Character { get; set; }
         private Vector3 destination;
         private BarController healthBar;
-        public int Team { get; set; }
-        bool moving = false;
-        Tile destinationTile;
+        public PanelScript actionMenu;
+        public Team Team { get; set; }
+        public bool moving = false;
+        public Tile destinationTile;
         List<Effect> TurnStartEffects;
         List<Effect> TurnEndEffects;
         private void Update()
@@ -50,6 +59,35 @@ namespace Views {
 
         private bool _hasActed;
 
+        private Vector3 screenPoint;
+        private Vector3 offset;
+        private Vector3 scanPos;
+
+        void OnMouseHover() {
+            Debug.Log("Mouseover");
+        }
+        void OnMouseDown() {
+            if (Tile.gameBoard.TurnCounter == 0) {
+                Unit unit = Tile.gameBoard.SelectedDeploymentUnit;
+                Debug.Log("Clicked " + this);
+                Debug.Log("Deployed Unit is " + unit);
+                if (unit != null) {
+                    Debug.Log("Swap");
+                    EncounterUtils.SwapUnits(this, unit);
+                    Tile.gameBoard.SelectedDeploymentUnit = null;
+                } else {
+                    Tile.gameBoard.SelectedDeploymentUnit = this;
+                }
+            } else if (!HasActed) {
+                GameObject selectedPiece = Tile.gameBoard.selectedPiece;
+                if (selectedPiece == null) {
+                    actionMenu.DisplayPanel();
+                    Tile.gameBoard.selectedPiece = this.gameObject;
+                }
+            }
+        }
+
+       
         public bool HasActed {
             get { return _hasActed; }
             set {
@@ -75,11 +113,14 @@ namespace Views {
             healthBar.SetMaxValue(character.MaxHealth);
             healthBar.SetMinValue(0);
             healthBar.SetValue(character.MaxHealth);
+            actionMenu = gameObject.GetComponentInChildren<PanelScript>();
+            actionMenu.unit = this;
+            actionMenu.grid = Tile.gameBoard;
             if (Team == 0) {
                 Image health = gameObject.transform.Find("HealthBarCanvas/healthBar/healthFill").gameObject.GetComponent<Image>();
-                health.color = Color.green;
+                health.color = Color.blue;
             }
-
+            actionMenu.HidePanel();
         }
 
         public void MoveTo(Tile targetLocation) {
@@ -90,14 +131,15 @@ namespace Views {
                 targetLocation.BoardPiece = this.gameObject;
                 destinationTile = targetLocation;
                 HasMoved = true;
+                //Tile = targetLocation;
             }
         }
 
         public void AttackUnit(Unit otherUnit) {
             if (otherUnit.Team != Team) {
                 otherUnit.TakeDamage(10 * Character.Attack - otherUnit.Character.Defense);
+                HasActed = true;
             }
-            HasActed = true;
         }
 
         public void TakeDamage(int damageAmount) {
