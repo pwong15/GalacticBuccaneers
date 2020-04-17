@@ -75,10 +75,6 @@ namespace Views {
                 EndTurn();
                 StartTurn();
             }
-            if (Input.GetKeyDown("q")) {
-                SceneController.LoadScene("GalaxyMap");
-            }
-
             EncounterUtils.Highlight(spawnArea, Color.yellow);
             if (selectedPiece != null && SelectedPieceState == SelectedPieceState.None) {
                 Unit unit = selectedPiece.GetComponent<Unit>();
