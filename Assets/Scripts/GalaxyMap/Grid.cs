@@ -140,7 +140,6 @@ namespace GalaxyMap
 
         public override void ShowPaths(char ship) {
             List<string> pathsToShow = pathAssociations[ship];
-            Debug.Log("here" + pathsToShow);
 
             foreach (var path in pathsToShow) {
                 Vector3 curPos = GameObject.Find(path).transform.position;
@@ -167,6 +166,12 @@ namespace GalaxyMap
             // Remove fog squares
             for (int row = 0; row < GRID_HEIGHT; row++) {
                 for (int column = 0; column < GRID_WIDTH; column++) {
+
+                    // Avoid index outofbounds
+                    if(gridIndex >= (GRID_WIDTH * GRID_HEIGHT -1)) {
+                        return;
+                    }
+
                     char unfogValue = unfogValues[gridIndex];
                     if (unfogValue == 'w') {
                         fog[column, row].gameObject.SetActive(false);
