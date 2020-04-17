@@ -158,7 +158,8 @@ namespace GalaxyMap
             if(removalKey == '2' | removalKey == '4' | removalKey == '5') {
                 try {
                     GameObject.Find("EndGame").SetActive(false);
-                }catch(Exception e) {
+                }
+                catch(Exception e) {
                     Debug.Log("Already hid endgame");
                 }
             }

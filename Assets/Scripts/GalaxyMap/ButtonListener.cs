@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEditor;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace GalaxyMap
@@ -25,6 +27,28 @@ namespace GalaxyMap
         public void CloseWindow(string window) {
             CanvasGroup windowGroup = GameObject.Find(window).GetComponent<CanvasGroup>();
             windowGroup.alpha = 0;
+        }
+
+        public void LevelUp(string char_skill_amnt) {
+            var args = char_skill_amnt.Split(' ');
+            var character = args[0];
+            var skill = args[1];
+            int upgradeAmnt = System.Int32.Parse(args[2]);
+
+            string creditText = GameObject.Find("NumCredits").GetComponent<TextMeshProUGUI>().text;
+            int availableCredits = System.Int32.Parse(creditText);
+
+            if(availableCredits >= upgradeAmnt) {
+                availableCredits -= upgradeAmnt;
+                GameObject.Find("NumCredits").GetComponent<TextMeshProUGUI>().text = availableCredits.ToString();
+                //@TODO upgrade here
+            }
+
+        }
+
+        public void Quit() {
+            EditorApplication.isPlaying = false;
+            Application.Quit();
         }
     }
 }
