@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 namespace GalaxyMap
 {
@@ -16,8 +17,8 @@ namespace GalaxyMap
 
             CreateGrid();
             EnableFog();
+            RemoveFog('E');
             RemoveFog('1');
-            //ShowPaths('1');
         }
 
         public override void CreateGrid() {
@@ -37,7 +38,7 @@ namespace GalaxyMap
                     switch (gridValue) {
                         case '1':
                             gridVisual = Instantiate(Resources.Load("Prefabs/ship1") as GameObject);
-                            //sceneLink = "Ship1";
+                            sceneLink = "Ship3";
                             break;
                         case '2':
                             gridVisual = Instantiate(Resources.Load("Prefabs/ship2") as GameObject);
@@ -45,7 +46,7 @@ namespace GalaxyMap
                             break;
                         case '3':
                             gridVisual = Instantiate(Resources.Load("Prefabs/ship3") as GameObject);
-                            sceneLink = "Ship1";
+                            sceneLink = "Ship2";
                             break;
                         case '4':
                             gridVisual = Instantiate(Resources.Load("Prefabs/ship4") as GameObject);
@@ -61,7 +62,7 @@ namespace GalaxyMap
                             break;
                         case '7':
                             gridVisual = Instantiate(Resources.Load("Prefabs/ship7") as GameObject);
-                            sceneLink = "Ship1";
+                            sceneLink = "Ship3";
                             break;
                         case '8':
                             gridVisual = Instantiate(Resources.Load("Prefabs/ship8") as GameObject);
@@ -73,7 +74,7 @@ namespace GalaxyMap
                             break;
                         case '0':
                             gridVisual = Instantiate(Resources.Load("Prefabs/ship0") as GameObject);
-                            sceneLink = "Ship1";
+                            sceneLink = "Ship2";
                             break;
                         case '!':
                             gridVisual = Instantiate(Resources.Load("Prefabs/ship10") as GameObject);
@@ -152,6 +153,18 @@ namespace GalaxyMap
             string loadFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\Fog" + removalKey + ".txt";
             string unfogValues = string.Join("", File.ReadAllLines(loadFile));
             int gridIndex = 0;
+
+            // Hide end indicator after first turn
+            if(removalKey == '2' | removalKey == '4' | removalKey == '5') {
+                try {
+                    GameObject.Find("EndGame").SetActive(false);
+                }
+                catch(Exception e) {
+                    Debug.Log("Already hid endgame");
+                }
+            }
+
+            // Remove fog squares
             for (int row = 0; row < GRID_HEIGHT; row++) {
                 for (int column = 0; column < GRID_WIDTH; column++) {
                     char unfogValue = unfogValues[gridIndex];
