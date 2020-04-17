@@ -14,7 +14,9 @@ namespace Views {
 
     public class Unit : MonoBehaviour, Effectable {
 
-        
+
+        private int DamageDealtModifier;
+        private int DamageTakenModifier;
         public Character Character { get; set; }
         private Vector3 destination;
         private BarController healthBar;
@@ -58,6 +60,8 @@ namespace Views {
         public bool HasMoved { get; set; }
 
         private bool _hasActed;
+
+        public bool HasDied { get; set; }
 
         private Vector3 screenPoint;
         private Vector3 offset;
@@ -105,6 +109,7 @@ namespace Views {
             this.MoveSpeed = character.MoveSpeed;
             this.Tile = tile;
             this.Team = Character.Team;
+            HasDied = false;
             _hasActed = true;
             HasMoved = true;
             TurnStartEffects = new List<Effect>();
@@ -137,13 +142,13 @@ namespace Views {
 
         public void AttackUnit(Unit otherUnit) {
             if (otherUnit.Team != Team) {
-                otherUnit.TakeDamage(10 * Character.Attack - otherUnit.Character.Defense);
+                otherUnit.TakeDamage(DamageDealtModifier * (Character.Attack - otherUnit.Character.Defense));
                 HasActed = true;
             }
         }
 
         public void TakeDamage(int damageAmount) {
-            Character.Health -= damageAmount;
+            Character.Health -= DamageTakenModifier * damageAmount;
             Debug.Log(Character.Name + " took " + damageAmount + " dmg");
             if (Character.Health <= 0) {
                 Debug.Log(Character.Name + " has Died");
@@ -204,6 +209,7 @@ namespace Views {
             Tile.BoardPiece = null;
             this.Tile.gameBoard.Teams[Team].Remove(this);
             this.Tile = null;
+            HasDied = true;
             this.gameObject.transform.position -= new Vector3(0, 0, 10);
             this.gameObject.transform.GetChild(0).gameObject.transform.position -= new Vector3(0, 0, 10);
             

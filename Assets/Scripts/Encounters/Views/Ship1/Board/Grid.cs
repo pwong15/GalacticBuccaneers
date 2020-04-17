@@ -21,7 +21,7 @@ namespace Views {
         public int GRID_HEIGHT;
         public int GRID_WIDTH;
         public string MAP_NAME;
-        public Unit SelectedDeploymentUnit {get; set;}
+        public Unit SelectedDeploymentUnit { get; set; }
 
         public event EventHandler<TurnEventArgs> OnTurnStart;
         public event EventHandler<TurnEventArgs> OnTurnEnd;
@@ -50,12 +50,12 @@ namespace Views {
 
         public SelectedPieceState SelectedPieceState { get; set; }
         private Tile[,] gridArray;
-       
-        
+
+
         string[,] wallLayoutArray;
-        
+
         public Tile[,] tiles;
-        
+
 
         void Start() {
             CreateGrid();
@@ -70,7 +70,7 @@ namespace Views {
         }
 
         void Update() {
-
+            CheckMapEndConditions();
             if (Input.GetKeyDown("enter")) {
                 EndTurn();
                 StartTurn();
@@ -120,6 +120,53 @@ namespace Views {
             unit.Initialize(RetrieveCharacter(), tiles[x, y]);
         }
 
+        private void CheckMapEndConditions() {
+            if (TurnCounter > 0 && WinCondition()) {
+                OnMapOver?.Invoke(this, new MapEventArgs { gameOver = false });
+                OnMapOver -= MapOverHandler;
+            } else if (TurnCounter > 0 && LoseCondition()) {
+                OnMapOver?.Invoke(this, new MapEventArgs { gameOver = true });
+                OnMapOver -= MapOverHandler;
+            }
+        }
+
+        private bool WinCondition() {
+            if (TurnCounter > 0 && HasBeenEliminated(Team.Enemy)) {
+                return true;
+            }
+            return false;
+
+
+        }
+
+        private bool HasBeenEliminated(Team side) {
+            List<Unit> team = Teams[side];
+            bool allEliminated = true;
+            foreach (Unit unit in team) {
+                if (unit.HasDied == false) {
+                    allEliminated = false;
+                }
+            }
+            return allEliminated;
+        }
+
+        private bool LoseCondition() {
+            if (TurnCounter > 0 && HasBeenEliminated(Team.Player)) {
+                return true;
+            }
+            return false;
+        }
+
+        public void MapOverHandler(object sender, MapEventArgs e) {
+            if (e.gameOver) {
+                Debug.Log("Game Over");
+            } else {
+                Debug.Log("Victory");
+            }
+        }
+
+         
+
         public void SpawnUnit(Tile tile) {
             SpawnUnit(tile.xCoord, tile.yCoord);
         }
@@ -166,7 +213,7 @@ namespace Views {
                     wallLayoutArray[column, row] = ".";
                 }
             }
-            
+            OnMapOver += MapOverHandler;
 
             Debug.Log("Press NumberPad Enter to change turns");
             Debug.Log("All initially spawned units can't move at first and units can only move on their turn and can only move and act once");

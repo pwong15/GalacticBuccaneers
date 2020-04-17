@@ -45,6 +45,7 @@ namespace Models {
         }
     }
 
+
     public class HealthEffect: Effect {
         public override int Range { get { return 3; } }
 
