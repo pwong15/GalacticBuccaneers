@@ -16,9 +16,14 @@ namespace GalaxyMap
             IntializeValidMoves();
 
             CreateGrid();
-            EnableFog();
-            RemoveFog('E');
-            RemoveFog('1');
+            string writeFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\FogS.txt";
+            string readText = File.ReadAllText(writeFile);
+
+            if (readText.Length == 0)
+                CreateFog('E', '1');
+            else
+                CreateFog('S', ' ');
+                
         }
 
         public override void CreateGrid() {
@@ -98,7 +103,7 @@ namespace GalaxyMap
             }
         }
 
-        public void EnableFog() {
+        public void CreateFog(char first, char second) {
             fog = new FogSquare[GRID_HEIGHT, GRID_WIDTH];
 
             for (int row = 0; row < GRID_HEIGHT; row++) {
@@ -108,6 +113,14 @@ namespace GalaxyMap
                     fogSquare.Initialize(this, column, -row, -7);
                     fog[column, row] = fogSquare;
                 }
+            }
+
+            if(second == ' ') {
+                RemoveFog(first);
+            }
+            else {
+                RemoveFog(first);
+                RemoveFog(second);
             }
         }
 
@@ -154,13 +167,11 @@ namespace GalaxyMap
             int gridIndex = 0;
 
             // Hide end indicator after first turn
-            if(removalKey == '2' | removalKey == '4' | removalKey == '5') {
+            if(removalKey == '2' | removalKey == '4' | removalKey == '5' | removalKey == 'S') {
                 try {
                     GameObject.Find("EndGame").SetActive(false);
                 }
-                catch(Exception e) {
-                    Debug.Log("Already hid endgame");
-                }
+                catch(Exception e) {}
             }
 
             // Remove fog squares
@@ -179,6 +190,47 @@ namespace GalaxyMap
                     gridIndex++;
                 }
             }
+            SaveFog();
         }
+
+        public override void SaveFog() {
+            string writeFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\FogS.txt";
+            string stringToWrite = "";
+
+            for (int row = 0; row < GRID_HEIGHT; row++) {
+                stringToWrite += "\n";
+                for (int column = 0; column < GRID_WIDTH; column++) {
+                    FogSquare square = fog[column, row];
+                    if (square.isActiveAndEnabled) {
+                        stringToWrite += '.';
+                    }
+                    else {
+                        stringToWrite += 'w';
+                    }
+                }
+            }
+            File.WriteAllText(writeFile, string.Empty);
+            File.WriteAllText(writeFile, stringToWrite);
+        }
+
+        //public void LoadSavedFog() {
+        //    string writeFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\FogS.txt";
+        //    string readText = File.ReadAllText(writeFile);
+        //    int index = 0;
+        //    fog = new FogSquare[GRID_HEIGHT, GRID_WIDTH];
+
+        //    for (int row = 0; row < GRID_HEIGHT; row++) {
+        //        for (int column = 0; column < GRID_WIDTH; column++) {
+        //            GameObject fogGameObject = Instantiate(Resources.Load("Prefabs/fog") as GameObject);
+        //            FogSquare fogSquare = fogGameObject.AddComponent<FogSquare>();
+        //            fogSquare.Initialize(this, column, -row, -7);
+        //            fog[column, row] = fogSquare;
+
+        //            if (readText[index] == 'w')
+        //                fog[column, row].gameObject.SetActive(false);
+        //            index++;
+        //        }
+        //    }
+        //}
     }
 }

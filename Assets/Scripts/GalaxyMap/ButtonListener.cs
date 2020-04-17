@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System.IO;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -47,6 +48,9 @@ namespace GalaxyMap
         }
 
         public void Quit() {
+            string writeFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\FogS.txt";
+            File.WriteAllText(writeFile, string.Empty);
+
             EditorApplication.isPlaying = false;
             Application.Quit();
         }
