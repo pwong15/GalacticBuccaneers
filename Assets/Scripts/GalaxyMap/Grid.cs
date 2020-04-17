@@ -7,6 +7,7 @@ namespace GalaxyMap
 {
     public class Grid : global::Grid {
         public FogSquare[,] fog;
+        public string paths = "";
 
         public void Start() {
             this.GRID_HEIGHT = 22;
@@ -16,13 +17,8 @@ namespace GalaxyMap
             IntializeValidMoves();
 
             CreateGrid();
-            string writeFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\FogS.txt";
-            string readText = File.ReadAllText(writeFile);
-
-            if (readText.Length == 0)
-                CreateFog('E', '1');
-            else
-                CreateFog('S', ' ');
+            ShowSavedPaths();
+            LoadFog();
                 
         }
 
@@ -103,6 +99,16 @@ namespace GalaxyMap
             }
         }
 
+        public void LoadFog() {
+            string writeFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\FogS.txt";
+            string readText = File.ReadAllText(writeFile);
+
+            if (readText.Length == 0)
+                CreateFog('E', '1');
+            else
+                CreateFog('S', ' ');
+        }
+
         public void CreateFog(char first, char second) {
             fog = new FogSquare[GRID_HEIGHT, GRID_WIDTH];
 
@@ -151,7 +157,19 @@ namespace GalaxyMap
             pathAssociations.Add('!', new List<string>() {"path7to10", "path10toEarth", "path9to10"});
         }
 
+        public void ShowSavedPaths() {
+            string readFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\Paths.txt";
+            paths = string.Join("", File.ReadAllLines(readFile));
+
+            // Show saved paths
+            if(paths.Length != 0) {
+                foreach (char c in paths)
+                    ShowPaths(c);
+            }
+        }
+
         public override void ShowPaths(char ship) {
+            string writeFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\Paths.txt";
             List<string> pathsToShow = pathAssociations[ship];
 
             foreach (var path in pathsToShow) {
@@ -159,6 +177,13 @@ namespace GalaxyMap
                 curPos.z = -2f;
                 GameObject.Find(path).transform.position = curPos;
             }
+
+            if (!paths.Contains(ship + "")) {
+                paths += ship;
+            }
+
+            File.WriteAllText(writeFile, string.Empty);
+            File.WriteAllText(writeFile, paths);
         }
 
         public override void RemoveFog(char removalKey) {
@@ -212,25 +237,5 @@ namespace GalaxyMap
             File.WriteAllText(writeFile, string.Empty);
             File.WriteAllText(writeFile, stringToWrite);
         }
-
-        //public void LoadSavedFog() {
-        //    string writeFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\FogS.txt";
-        //    string readText = File.ReadAllText(writeFile);
-        //    int index = 0;
-        //    fog = new FogSquare[GRID_HEIGHT, GRID_WIDTH];
-
-        //    for (int row = 0; row < GRID_HEIGHT; row++) {
-        //        for (int column = 0; column < GRID_WIDTH; column++) {
-        //            GameObject fogGameObject = Instantiate(Resources.Load("Prefabs/fog") as GameObject);
-        //            FogSquare fogSquare = fogGameObject.AddComponent<FogSquare>();
-        //            fogSquare.Initialize(this, column, -row, -7);
-        //            fog[column, row] = fogSquare;
-
-        //            if (readText[index] == 'w')
-        //                fog[column, row].gameObject.SetActive(false);
-        //            index++;
-        //        }
-        //    }
-        //}
     }
 }

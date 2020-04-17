@@ -48,8 +48,10 @@ namespace GalaxyMap
         }
 
         public void Quit() {
-            string writeFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\FogS.txt";
-            File.WriteAllText(writeFile, string.Empty);
+            string fogFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\FogS.txt";
+            string pathsFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\Paths.txt";
+            File.WriteAllText(fogFile, string.Empty);
+            File.WriteAllText(pathsFile, string.Empty);
 
             EditorApplication.isPlaying = false;
             Application.Quit();
