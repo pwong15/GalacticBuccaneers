@@ -75,7 +75,7 @@ namespace GalaxyMap
                 target.SetActive(false);
                 grid.RemoveFog(shipChar);
                 grid.ShowPaths(shipChar);
-                //SceneController.LoadScene(linkedScene);
+                LoadScene();
                 Cursor.SetCursor(null, cursorLocation, CursorMode.Auto);
             }
         }
@@ -96,6 +96,10 @@ namespace GalaxyMap
                 return true;
             }
             return false;
+        }
+
+        private void LoadScene() {
+            SceneController.LoadScene(linkedScene);
         }
     }
 }
