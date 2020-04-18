@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using TMPro;
 
 namespace GalaxyMap
 {
@@ -19,7 +20,7 @@ namespace GalaxyMap
             CreateGrid();
             ShowSavedPaths();
             LoadFog();
-                
+            LoadLocation();
         }
 
         public override void CreateGrid() {
@@ -236,6 +237,54 @@ namespace GalaxyMap
             }
             File.WriteAllText(writeFile, string.Empty);
             File.WriteAllText(writeFile, stringToWrite);
+        }
+
+        public void LoadLocation() {
+            string readFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\Location.txt";
+            GameObject greenPlaceMarker = GameObject.Find("PlaceMarker");
+            string[] saveData = File.ReadAllText(readFile).Split(' ');
+
+            // Set location if not null
+            if (saveData.Length != 0) {
+                float x = float.Parse(saveData[0]);
+                float y = float.Parse(saveData[1]);
+                currentLocation = char.Parse(saveData[2]);
+                float cameraDepth = float.Parse(saveData[3]);
+                float camerax = float.Parse(saveData[4]);
+                float cameray = float.Parse(saveData[5]);
+                GameObject.Find("NumCredits").GetComponent<TextMeshProUGUI>().text = saveData[6];
+
+                Vector3 newLocation = new Vector3(x, y, -1.0f);
+                Vector3 cameraLocation = new Vector3(camerax, cameray, -10.0f);
+
+                greenPlaceMarker.transform.position = newLocation;
+                Camera.main.transform.position = cameraLocation;
+                Camera.main.orthographicSize = cameraDepth;
+            }
+        }
+
+        public override void SaveLocation() {
+            string writeFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\Location.txt";
+            int availableCredits = Int32.Parse(GameObject.Find("NumCredits").GetComponent<TextMeshProUGUI>().text);
+            GameObject greenPlaceMarker = GameObject.Find("PlaceMarker");
+            float x = greenPlaceMarker.transform.position.x;
+            float y = greenPlaceMarker.transform.position.y;
+            float cameraDepth = Camera.main.orthographicSize;
+            float camerax = Camera.main.transform.position.x;
+            float cameray = Camera.main.transform.position.y;
+
+
+            string textToWrite =
+                x.ToString() + " " +
+                y.ToString() + " " +
+                currentLocation + " " +
+                cameraDepth.ToString() + " " +
+                camerax.ToString() + " " +
+                cameray.ToString() + " " +
+                availableCredits;
+
+            File.WriteAllText(writeFile, string.Empty);
+            File.WriteAllText(writeFile, textToWrite);
         }
     }
 }

@@ -100,6 +100,7 @@ namespace GalaxyMap
 
         private void LoadScene() {
             grid.SaveFog();
+            grid.SaveLocation();
             SceneController.LoadScene(linkedScene);
         }
     }

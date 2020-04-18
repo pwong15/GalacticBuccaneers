@@ -8,7 +8,9 @@ public static class AvailableScenes
         GalaxyMap = "GalaxyMap",
         MainMenu = "MainMenu",
         PauseMenu = "PauseMenu",
-        Ship1 = "Ship1";
+        Ship1 = "Ship1",
+        Ship2 = "Ship2",
+        Ship3 = "Ship3";
 }
 
 public class SceneController : MonoBehaviour

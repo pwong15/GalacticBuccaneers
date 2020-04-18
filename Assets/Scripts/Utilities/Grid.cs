@@ -17,6 +17,7 @@ public class Grid : MonoBehaviour
     public virtual void RemoveFog(char removalKey) { }
     public virtual void ShowPaths(char ship) { }
     public virtual void SaveFog() { }
+    public virtual void SaveLocation() { }
 }
 
 

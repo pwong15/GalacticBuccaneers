@@ -1,5 +1,6 @@
 ﻿namespace Views {
 
+    [System.Serializable]
     public class Character {
         public string Name { get; }
         public Team Team { get; set; }
