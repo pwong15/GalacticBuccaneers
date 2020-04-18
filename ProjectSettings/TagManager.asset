@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - button
+  - crew1
+  - crew2
+  - crew3
+  - crew4
+  - crew5
   layers:
   - Default
   - TransparentFX

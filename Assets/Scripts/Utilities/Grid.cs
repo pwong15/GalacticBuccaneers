@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using Views;
 
 public class Grid : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class Grid : MonoBehaviour
     public Dictionary<char, List<char>> validSelections = new Dictionary<char, List<char>>();
     public Dictionary<char, List<string>> pathAssociations = new Dictionary<char, List<string>>();
     public char currentLocation = '1';
+    public List<Character> characters;
 
 
     public virtual void CreateGrid() { }
@@ -18,6 +20,7 @@ public class Grid : MonoBehaviour
     public virtual void ShowPaths(char ship) { }
     public virtual void SaveFog() { }
     public virtual void SaveLocation() { }
+    public virtual void LoadEncounterInfo() { }
 }
 
 

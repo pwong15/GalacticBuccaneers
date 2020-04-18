@@ -25,7 +25,7 @@ public class EndGameLauncher : MonoBehaviour
 
         // Register Earth was clicked
         if (cursorIsOnTile && Input.GetMouseButtonDown(0) && EarthIsValid()) {
-            SceneController.LoadScene("Ship2");
+            SceneController.LoadScene("Ship3");
         }
     }
 

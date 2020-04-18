@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using Views;
 
 namespace GalaxyMap
 {
@@ -99,8 +102,11 @@ namespace GalaxyMap
         }
 
         private void LoadScene() {
+            int credits = Int32.Parse(GameObject.Find("NumCredits").GetComponent<TextMeshProUGUI>().text);
+
             grid.SaveFog();
             grid.SaveLocation();
+            Storage.SaveEncounterInfo(credits, 0, Character.GetCurrentCharacters());
             SceneController.LoadScene(linkedScene);
         }
     }

@@ -3,12 +3,14 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using TMPro;
+using Views;
 
 namespace GalaxyMap
 {
     public class Grid : global::Grid {
         public FogSquare[,] fog;
         public string paths = "";
+        int lastLevelCompleted = -1;
 
         public void Start() {
             this.GRID_HEIGHT = 22;
@@ -16,11 +18,11 @@ namespace GalaxyMap
             this.FILE_NAME = "GalaxyMap";
 
             IntializeValidMoves();
-
             CreateGrid();
             ShowSavedPaths();
             LoadFog();
             LoadLocation();
+            LoadEncounterInfo();
         }
 
         public override void CreateGrid() {
@@ -40,7 +42,7 @@ namespace GalaxyMap
                     switch (gridValue) {
                         case '1':
                             gridVisual = Instantiate(Resources.Load("Prefabs/ship1") as GameObject);
-                            sceneLink = "Ship3";
+                            sceneLink = "Ship2";
                             break;
                         case '2':
                             gridVisual = Instantiate(Resources.Load("Prefabs/ship2") as GameObject);
@@ -64,7 +66,7 @@ namespace GalaxyMap
                             break;
                         case '7':
                             gridVisual = Instantiate(Resources.Load("Prefabs/ship7") as GameObject);
-                            sceneLink = "Ship3";
+                            sceneLink = "Ship2";
                             break;
                         case '8':
                             gridVisual = Instantiate(Resources.Load("Prefabs/ship8") as GameObject);
@@ -252,7 +254,6 @@ namespace GalaxyMap
                 float cameraDepth = float.Parse(saveData[3]);
                 float camerax = float.Parse(saveData[4]);
                 float cameray = float.Parse(saveData[5]);
-                GameObject.Find("NumCredits").GetComponent<TextMeshProUGUI>().text = saveData[6];
 
                 Vector3 newLocation = new Vector3(x, y, -1.0f);
                 Vector3 cameraLocation = new Vector3(camerax, cameray, -10.0f);
@@ -265,7 +266,6 @@ namespace GalaxyMap
 
         public override void SaveLocation() {
             string writeFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\Location.txt";
-            int availableCredits = Int32.Parse(GameObject.Find("NumCredits").GetComponent<TextMeshProUGUI>().text);
             GameObject greenPlaceMarker = GameObject.Find("PlaceMarker");
             float x = greenPlaceMarker.transform.position.x;
             float y = greenPlaceMarker.transform.position.y;
@@ -280,11 +280,25 @@ namespace GalaxyMap
                 currentLocation + " " +
                 cameraDepth.ToString() + " " +
                 camerax.ToString() + " " +
-                cameray.ToString() + " " +
-                availableCredits;
+                cameray.ToString();
 
             File.WriteAllText(writeFile, string.Empty);
             File.WriteAllText(writeFile, textToWrite);
         }
+        
+        public override void LoadEncounterInfo() {
+            Dictionary<string, string> data = Storage.LoadEncounterInfo();
+            List<Character> characters = new List<Character>();
+
+            characters.Add(Character.Deserialize(data["char1"]));
+            characters.Add(Character.Deserialize(data["char2"]));
+            characters.Add(Character.Deserialize(data["char3"]));
+            characters.Add(Character.Deserialize(data["char4"]));
+
+            GameObject.Find("NumCredits").GetComponent<TextMeshProUGUI>().text = data["credits"];
+            lastLevelCompleted = Int32.Parse(data["levelCompleted"]);
+        }
+
+       
     }
 }
