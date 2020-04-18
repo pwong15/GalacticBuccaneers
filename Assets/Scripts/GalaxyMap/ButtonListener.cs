@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -15,8 +16,25 @@ namespace GalaxyMap
 
 
         public void ShowGear(string gear) {
+            GameObject obj = GameObject.Find(gear);
             CanvasGroup gearGroup = GameObject.Find(gear).GetComponent<CanvasGroup>();
             gearGroup.alpha = gearGroup.alpha == 0 ? gearGroup.alpha = 1 : gearGroup.alpha = 0;
+
+            List<Button> buttons = new List<Button>();
+
+            var objs = GameObject.FindGameObjectsWithTag(gear);
+            foreach(GameObject temp in objs) {
+                buttons.Add(temp.GetComponent<Button>());
+            }
+
+            foreach (Button button in buttons) {
+                if (gearGroup.alpha == 1) {
+                    button.interactable = true;
+                }
+                else {
+                    button.interactable = false;
+                }
+            }
         }
 
         public void Glow(string buttonName) {
