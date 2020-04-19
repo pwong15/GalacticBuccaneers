@@ -41,4 +41,17 @@ public class Storage {
 
         return data;
     }
+
+    public static int GetCurrentCredits() {
+        Dictionary<string, string> data = new Dictionary<string, string>();
+        string readFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\Encounter.txt";
+        List<string> lines = new List<string>();
+
+        // Read in all lines
+        foreach (string line in File.ReadLines(readFile)) {
+            lines.Add(line);
+        }
+
+        return Int32.Parse(lines[0]);
+    }
 }

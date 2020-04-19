@@ -10,7 +10,7 @@ namespace GalaxyMap
     public class Grid : global::Grid {
         public FogSquare[,] fog;
         public string paths = "";
-        int lastLevelCompleted = -1;
+        int lastLevelCompleted = 0;
 
         public void Start() {
             this.GRID_HEIGHT = 22;
@@ -21,8 +21,8 @@ namespace GalaxyMap
             CreateGrid();
             ShowSavedPaths();
             LoadFog();
-            LoadLocation();
             LoadEncounterInfo();
+            LoadLocation();
         }
 
         public override void CreateGrid() {
@@ -250,37 +250,55 @@ namespace GalaxyMap
             if (saveData.Length != 0) {
                 float x = float.Parse(saveData[0]);
                 float y = float.Parse(saveData[1]);
-                currentLocation = char.Parse(saveData[2]);
+                char lastLocation = char.Parse(saveData[2]);
                 float cameraDepth = float.Parse(saveData[3]);
                 float camerax = float.Parse(saveData[4]);
                 float cameray = float.Parse(saveData[5]);
+                float nextLocationX = float.Parse(saveData[6]);
+                float nextLocationY = float.Parse(saveData[7]);
+                char nextLocation = char.Parse(saveData[8]);
+                Vector3 newLocation;
+                    
+                // Don't move marker if lvl was failed
+                if (lastLevelCompleted != 1) {
+                    currentLocation = lastLocation;
+                    newLocation = new Vector3(x, y, -1.0f);
+                    greenPlaceMarker.transform.position = newLocation;
+                }
+                else {
+                    currentLocation = nextLocation;
+                    newLocation = new Vector3(nextLocationX, nextLocationY, -1.0f);
+                    greenPlaceMarker.transform.position = newLocation;
+                }
 
-                Vector3 newLocation = new Vector3(x, y, -1.0f);
                 Vector3 cameraLocation = new Vector3(camerax, cameray, -10.0f);
 
-                greenPlaceMarker.transform.position = newLocation;
                 Camera.main.transform.position = cameraLocation;
                 Camera.main.orthographicSize = cameraDepth;
+                SaveLocation(newLocation, currentLocation);
             }
         }
 
-        public override void SaveLocation() {
+        public override void SaveLocation(Vector3 nextLocation, char nextShip) {
             string writeFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\Location.txt";
             GameObject greenPlaceMarker = GameObject.Find("PlaceMarker");
-            float x = greenPlaceMarker.transform.position.x;
-            float y = greenPlaceMarker.transform.position.y;
+            float currentX = greenPlaceMarker.transform.position.x;
+            float currentY = greenPlaceMarker.transform.position.y;
             float cameraDepth = Camera.main.orthographicSize;
             float camerax = Camera.main.transform.position.x;
             float cameray = Camera.main.transform.position.y;
 
 
             string textToWrite =
-                x.ToString() + " " +
-                y.ToString() + " " +
+                currentX.ToString() + " " +
+                currentY.ToString() + " " +
                 currentLocation + " " +
                 cameraDepth.ToString() + " " +
                 camerax.ToString() + " " +
-                cameray.ToString();
+                cameray.ToString() + " " +
+                nextLocation.x.ToString() + " " +
+                nextLocation.y.ToString() + " " +
+                nextShip;
 
             File.WriteAllText(writeFile, string.Empty);
             File.WriteAllText(writeFile, textToWrite);

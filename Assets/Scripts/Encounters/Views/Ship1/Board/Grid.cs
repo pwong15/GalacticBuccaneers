@@ -76,6 +76,7 @@ namespace Views {
                 StartTurn();
             }
             if (Input.GetKeyDown("q")) {
+                Storage.SaveEncounterInfo(Storage.GetCurrentCredits(), -1, Character.GetCurrentCharacters()); // -1 if lvl is failed, 1 if completed successfully
                 SceneController.LoadScene("GalaxyMap");
             }
 

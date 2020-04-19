@@ -92,7 +92,7 @@ namespace GalaxyMap
 
                 File.WriteAllText(fogFile, string.Empty);
                 File.WriteAllText(pathsFile, string.Empty);
-                File.WriteAllText(locationFile, "0 -25 1 10 10.81 -6");
+                File.WriteAllText(locationFile, "0 -25 1 10 10.81 -6 0 -25, 1");
             }
 
             File.WriteAllLines(encounterFile, encounterData);
