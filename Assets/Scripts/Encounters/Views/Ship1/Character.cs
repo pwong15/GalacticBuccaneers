@@ -70,15 +70,11 @@ namespace Views {
 
         public static List<Character> GetDefaultCharacters() {
             List<Character> characters = new List<Character>();
-            Character char1 = new Character("Bane", Team.Player, 100, 100, 80, 150, 1, 4);
-            Character char2 = new Character("Chon-Ka", Team.Player, 120, 120, 80, 150, 1, 4);
-            Character char3 = new Character("Korvid-19", Team.Player, 80, 80, 80, 140, 1, 5);
-            Character char4 = new Character("Tasador", Team.Player, 80, 80, 80, 140, 1, 4);
 
-            characters.Add(char1);
-            characters.Add(char2);
-            characters.Add(char3);
-            characters.Add(char4);
+            characters.Add(new Character("Bane", Team.Player, 100, 100, 80, 150, 1, 4));
+            characters.Add(new Character("Chon-Ka", Team.Player, 120, 120, 80, 150, 1, 4));
+            characters.Add(new Character("Korvid-19", Team.Player, 80, 80, 80, 140, 1, 5));
+            characters.Add(new Character("Tasador", Team.Player, 80, 80, 80, 140, 1, 4));
 
             return characters;
         }
