@@ -56,17 +56,23 @@ namespace Views {
 
         public Tile[,] tiles;
 
-
+        private List<Tile> pointsToTiles(List<EncounterUtils.Point> points) {
+            List<Tile> mapTiles = new List<Tile>();
+            foreach (EncounterUtils.Point point in points) {
+                mapTiles.Add(tiles[point.x, point.y]);
+            }
+            return mapTiles;
+        }
         void Start() {
             CreateGrid();
-            spawnArea = new List<Tile>();
-            spawnArea.Add(tiles[15, 1]);
-            spawnArea.Add(tiles[14, 2]);
-            spawnArea.Add(tiles[16, 2]);
-            spawnArea.Add(tiles[13, 1]);
-            foreach (Tile tile in spawnArea) {
+            List<EncounterUtils.Point> playerSpawnPoints = EncounterUtils.GetSpawnPoints(Team.Player, MAP_NAME, EncounterUtils.Difficulty.Easy);
+            List<EncounterUtils.Point> enemySpawnPoints = EncounterUtils.GetSpawnPoints(Team.Player, MAP_NAME, EncounterUtils.Difficulty.Easy);
+            playerSpawnArea = pointsToTiles(playerSpawnPoints);
+            enemySpawnArea = pointsToTiles(enemySpawnPoints);
+            foreach (Tile tile in playerSpawnArea) {
                 tile.SpawnUnit(Team.Player);
             }
+            EncounterUtils.Highlight(enemySpawnArea, Color.red);
         }
 
         void Update() {
@@ -79,7 +85,7 @@ namespace Views {
                 SceneController.LoadScene("GalaxyMap");
             }
 
-            EncounterUtils.Highlight(spawnArea, Color.yellow);
+            EncounterUtils.Highlight(playerSpawnArea, Color.yellow);
             if (selectedPiece != null && SelectedPieceState == SelectedPieceState.None) {
                 Unit unit = selectedPiece.GetComponent<Unit>();
                 if (Input.GetKeyDown(KeyCode.M) && !unit.HasMoved) {
@@ -179,6 +185,7 @@ namespace Views {
             Team team = TurnCounter % 2 == 1 ? Team.Player: Team.Enemy;
             Debug.Log("Team " + team + " Turn " + TurnCounter / 2);
             if (TurnCounter == 1) {
+                selectedPiece = null;
                 OnTurnStart += ExecuteAI;
             }
             OnTurnStart?.Invoke(this, new TurnEventArgs { Team = team });
@@ -191,16 +198,18 @@ namespace Views {
             OnTurnEnd?.Invoke(this, new TurnEventArgs { Team = team });
         }
 
-        private List<Tile> spawnArea; 
+        private List<Tile> playerSpawnArea;
+        private List<Tile> enemySpawnArea;
         private void CreateGrid() {
             wallLayoutArray = new string[GRID_WIDTH, GRID_HEIGHT];
             tiles = new Tile[GRID_WIDTH, GRID_HEIGHT];
-            
+            Debug.Log(MAP_NAME);
             string wallLayoutFile = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\" + MAP_NAME + ".txt";
             string wallLayout = string.Join("", File.ReadAllLines(wallLayoutFile));
             int wallIndex = 0;
             numOfTeam = 2;
             Debug.Log("Made teams");
+            
             TurnCounter = 0;
             Teams = new Dictionary<Team, List<Unit>>();
             for (int row = 0; row < GRID_HEIGHT; row++) {
@@ -244,7 +253,9 @@ namespace Views {
                     unit = _selectedPiece.GetComponent<Unit>();
                     SelectedPieceMoveRange = EncounterUtils.FindTilesInRange(unit.Tile, unit.MoveSpeed, (Tile) => Tile.Terrain.Cost);
                     SelectedPieceAttackRange = EncounterUtils.FindTilesInRange(unit.Tile, 1, (Tile) => 1);
-                    unit.actionMenu.DisplayPanel();
+                    if (TurnCounter != 0) {
+                        unit.actionMenu.DisplayPanel();
+                    }
                 }
                 else {
                     SelectedPieceMoveRange = default(List<Tile>);

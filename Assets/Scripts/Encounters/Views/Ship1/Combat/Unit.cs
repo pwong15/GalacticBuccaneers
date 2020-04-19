@@ -85,8 +85,9 @@ namespace Views {
             } else if (!HasActed) {
                 GameObject selectedPiece = Tile.gameBoard.selectedPiece;
                 if (selectedPiece == null) {
-                    actionMenu.DisplayPanel();
+                    
                     Tile.gameBoard.selectedPiece = this.gameObject;
+                    actionMenu.DisplayPanel();
                 }
             }
         }

@@ -1,19 +1,34 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Views;
 
 namespace Utilitys {
+
     public static class EncounterUtils {
+
+        public struct Point {
+            public int x;
+            public int y;
+
+            public Point(int x, int y) {
+                this.x = x;
+                this.y = y;
+            }
+        }
+
+        public enum Difficulty {
+            Easy,
+            Medium,
+            Hard
+        }
+
         public static void Highlight(List<Tile> tiles, Color color) {
             ApplyTileEffects(tiles, (Tile) => ToggleHighlightEffect(Tile, true, color));
-            
         }
 
         public static void unHighlight(List<Tile> tiles) {
             ApplyTileEffects(tiles, (Tile) => ToggleHighlightEffect(Tile, false, Color.white));
-           
         }
 
         public static void SetTileCost(Tile tile, int cost) {
@@ -58,6 +73,7 @@ namespace Utilitys {
             tileA.BoardPiece = a.gameObject;
             tileB.BoardPiece = b.gameObject;
         }
+
         public static List<Tile> PathFinding(Tile start, Tile dest) {
             List<Tile> path = new List<Tile>();
             List<Tile> visited = new List<Tile>();
@@ -71,14 +87,14 @@ namespace Utilitys {
                     break;
                 }
                 foreach (Tile neighbor in currentTile.GetNeighbors()) {
-                    if (!visited.Contains(neighbor)) {       
+                    if (!visited.Contains(neighbor)) {
                         neighbor.Parent = currentTile;
                         visited.Add(neighbor);
                         queue.Enqueue(neighbor);
                     }
                 }
             }
-          
+
             while (currentTile != start) {
                 path.Insert(0, currentTile);
                 currentTile = currentTile.Parent;
@@ -107,6 +123,48 @@ namespace Utilitys {
             tileObject.GetComponent<Renderer>().enabled = toggle;
         }
 
+        private static List<Point> playerSpawn = new List<Point>() {
+            new Point(15, 1),
+            new Point(14, 1),
+            new Point(16, 2),
+            new Point(13, 2)
+        };
 
+        private static List<Point> enemySpawn = new List<Point>() {
+            new Point(10, 14),
+            new Point(14, 14),
+            new Point(17, 14),
+            new Point(10, 17),
+            new Point(14, 17),
+            new Point(9, 22),
+            new Point(12, 22)
+        };
+
+        public static List<Point> GetSpawnPoints(Team team, String mapName, Difficulty difficulty) {
+            if (team == Team.Player) {
+                switch (mapName) {
+                    case "Ship1":
+                        if (difficulty == Difficulty.Easy) {
+                            return playerSpawn;
+                        } else if (difficulty == Difficulty.Medium) {
+                            return playerSpawn;
+                        } else {
+                            return playerSpawn;
+                        }
+                }
+            } else {
+                switch (mapName) {
+                    case "Ship1":
+                        if (difficulty == Difficulty.Easy) {
+                            return enemySpawn;
+                        } else if (difficulty == Difficulty.Medium) {
+                            return enemySpawn;
+                        } else {
+                            return enemySpawn;
+                        }
+                }
+            }
+            return null;
+        }
     }
 }
