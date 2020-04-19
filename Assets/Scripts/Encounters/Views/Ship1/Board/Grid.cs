@@ -66,10 +66,10 @@ namespace Views {
         void Start() {
             CreateGrid();
             List<EncounterUtils.Point> playerSpawnPoints = EncounterUtils.GetSpawnPoints(Team.Player, MAP_NAME, EncounterUtils.Difficulty.Easy);
-            List<EncounterUtils.Point> enemySpawnPoints = EncounterUtils.GetSpawnPoints(Team.Player, MAP_NAME, EncounterUtils.Difficulty.Easy);
+            List<EncounterUtils.Point> enemySpawnPoints = EncounterUtils.GetSpawnPoints(Team.Enemy, MAP_NAME, EncounterUtils.Difficulty.Easy);
             playerSpawnArea = pointsToTiles(playerSpawnPoints);
             enemySpawnArea = pointsToTiles(enemySpawnPoints);
-            List<Character> playerCharacters = Character.GetDefaultCharacters();
+            List<Character> playerCharacters = Character.GetCurrentCharacters();
             for (int i = 0; i < playerSpawnArea.Count; i++ ) {
                 playerSpawnArea[i].SpawnUnit(playerCharacters[i]);
             }
@@ -101,7 +101,6 @@ namespace Views {
                 if (Input.GetKeyDown(KeyCode.K) && !unit.HasActed) {
                     DeathEffect dE = new DeathEffect();
                     SelectedAbility = dE;
-                    //Debug.Log(dE.Range);
                     SelectedAbilityRange = EncounterUtils.FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
 
                     EncounterUtils.Highlight(SelectedAbilityRange, Color.green);
@@ -121,17 +120,7 @@ namespace Views {
 
         public Effect SelectedAbility { get; set; }
 
-        private int id = 0;
-        private Character RetrieveCharacter() {
-            return new Character("Unit " + id, (Team)(id++ % numOfTeam), 100, 100, 10, 5, 2, 3);
-        }
-
-        public void SpawnUnit(int x, int y) {
-            GameObject unitObject = Instantiate(Resources.Load("Prefabs/target") as GameObject);
-            Unit unit = unitObject.AddComponent<Unit>();
-            unit.Initialize(RetrieveCharacter(), tiles[x, y]);
-        }
-
+        
         private void CheckMapEndConditions() {
             if (TurnCounter > 0 && WinCondition()) {
                 OnMapOver?.Invoke(this, new MapEventArgs { gameOver = false });
@@ -177,11 +166,6 @@ namespace Views {
             }
         }
 
-         
-
-        public void SpawnUnit(Tile tile) {
-            SpawnUnit(tile.xCoord, tile.yCoord);
-        }
 
         private void StartTurn() {
             Team team = TurnCounter % 2 == 1 ? Team.Player: Team.Enemy;

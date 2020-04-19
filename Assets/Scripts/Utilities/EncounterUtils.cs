@@ -133,8 +133,9 @@ namespace Utilitys {
         private static List<Point> enemySpawn = new List<Point>() {
             new Point(10, 14),
             new Point(14, 14),
-            new Point(17, 14),
+            new Point(18, 14),
             new Point(10, 17),
+            new Point(18, 17),
             new Point(14, 17),
             new Point(9, 22),
             new Point(12, 22)
@@ -153,8 +154,10 @@ namespace Utilitys {
                         }
                 }
             } else {
+                Debug.Log("Creating enemy spawn points");
                 switch (mapName) {
-                    case "Ship1":
+                    
+                    case "Layout1":
                         if (difficulty == Difficulty.Easy) {
                             return enemySpawn;
                         } else if (difficulty == Difficulty.Medium) {
