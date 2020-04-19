@@ -9,6 +9,7 @@ namespace Views {
     public class Character {
 
         // Serializor must have instances to serialize can not just use property methods, hence the explicit get+set methods
+
         [SerializeField] private string name;
         public string Name { get { return name; } }
 
@@ -33,6 +34,14 @@ namespace Views {
         [SerializeField] private int moveSpeed;
         public int MoveSpeed { get { return moveSpeed; } set { moveSpeed = value; } }
 
+        [SerializeField] private float injuryMultiplier;
+
+        public float InjuryMultiplier { get { return injuryMultiplier; } set { injuryMultiplier = value;  } }
+
+        [SerializeField] private float hitMultiplier;
+
+        public float HitMultiplier { get { return HitMultiplier; } set { injuryMultiplier = value; } }
+
         public Character(string name, Team team, int maxHealth, int health, int attack, int defense, int attackRange, int movespeed) {
             this.name = name;
             this.team = team;
@@ -42,6 +51,8 @@ namespace Views {
             this.attack = attack;
             this.defense = defense;
             this.moveSpeed = movespeed;
+            this.injuryMultiplier = 1.0f;
+            this.hitMultiplier = 1.0f;
         }
 
         public string Serialize() {

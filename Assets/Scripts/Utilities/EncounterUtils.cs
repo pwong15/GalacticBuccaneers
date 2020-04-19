@@ -143,7 +143,7 @@ namespace Utilitys {
         public static List<Point> GetSpawnPoints(Team team, String mapName, Difficulty difficulty) {
             if (team == Team.Player) {
                 switch (mapName) {
-                    case "Ship1":
+                    case "Layout1":
                         if (difficulty == Difficulty.Easy) {
                             return playerSpawn;
                         } else if (difficulty == Difficulty.Medium) {

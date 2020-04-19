@@ -69,8 +69,9 @@ namespace Views {
             List<EncounterUtils.Point> enemySpawnPoints = EncounterUtils.GetSpawnPoints(Team.Player, MAP_NAME, EncounterUtils.Difficulty.Easy);
             playerSpawnArea = pointsToTiles(playerSpawnPoints);
             enemySpawnArea = pointsToTiles(enemySpawnPoints);
-            foreach (Tile tile in playerSpawnArea) {
-                tile.SpawnUnit(Team.Player);
+            List<Character> playerCharacters = Character.GetDefaultCharacters();
+            for (int i = 0; i < playerSpawnArea.Count; i++ ) {
+                playerSpawnArea[i].SpawnUnit(playerCharacters[i]);
             }
             EncounterUtils.Highlight(enemySpawnArea, Color.red);
         }

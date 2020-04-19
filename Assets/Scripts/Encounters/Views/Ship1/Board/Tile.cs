@@ -33,25 +33,15 @@ namespace Views {
         void Update() {
 
             CheckForCursorHover();
-            Vector3 cursorLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            bool cursorIsOnTile = CursorIsOnTile(cursorLocation.x - xCoordf, cursorLocation.y - yCoordf);
-            if (!isWall && cursorIsOnTile && Input.GetKeyDown(KeyCode.S) && BoardPiece == null) {
-                SpawnUnit(Team.Player);
-            }
-            if (!isWall && cursorIsOnTile && Input.GetKeyDown(KeyCode.D) && BoardPiece == null) {
-                SpawnUnit(Team.Enemy);
-            }
-
         }
 
-        public void SpawnUnit(Team charTeam) {
+        public void SpawnUnit(Character character) {
             BoardPiece = Instantiate(Resources.Load("Prefabs/cyborgman2H") as GameObject);
             //Vector3 scaleChange = new Vector3(-0.94f, -0.94f, -0.94f);
             //BoardPiece.transform.localScale += scaleChange;
             //Vector3 center = this.transform.position = new Vector3(xCoordf, yCoordf - .7f, zCoordf);
 
             Unit unit = BoardPiece.AddComponent<Unit>();
-            Character character = RetrieveCharacter(charTeam);
             unit.Initialize(character, this);
             BoardPiece.name = unit.ToString();
             gameBoard.OnTurnStart += unit.StartOfTurnEffects;
