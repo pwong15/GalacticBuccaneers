@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using Views;
 
 namespace GalaxyMap
 {
@@ -65,17 +68,15 @@ namespace GalaxyMap
             if (Input.GetMouseButtonDown(0) && IsValidChoice())
             {
                 Vector3 cursorLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                grid.currentLocation = shipChar;
 
                 // Move Green place marker
                 GameObject greenPlaceMarker = GameObject.Find("PlaceMarker");
                 Vector3 newPosition = new Vector3(xCoordf-11, yCoordf-23, 0);
-                greenPlaceMarker.transform.position = newPosition;
 
                 target.SetActive(false);
                 grid.RemoveFog(shipChar);
                 grid.ShowPaths(shipChar);
-                LoadScene();
+                LoadScene(newPosition, shipChar);
                 Cursor.SetCursor(null, cursorLocation, CursorMode.Auto);
             }
         }
@@ -98,7 +99,12 @@ namespace GalaxyMap
             return false;
         }
 
-        private void LoadScene() {
+        private void LoadScene(Vector3 nextLocation, char nextShip) {
+            int credits = Int32.Parse(GameObject.Find("NumCredits").GetComponent<TextMeshProUGUI>().text);
+
+            grid.SaveFog();
+            grid.SaveLocation(nextLocation, nextShip);
+            Storage.SaveEncounterInfo(credits, 0, Character.GetCurrentCharacters());
             SceneController.LoadScene(linkedScene);
         }
     }
