@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Views;
@@ -35,6 +36,21 @@ namespace Utilitys {
             tile.Cost = cost;
         }
 
+        public static List<Unit> GetUnitsInArea(List<Tile> area, Team team) {
+            List<Unit> units = new List<Unit>();
+            foreach (Tile tile in area) {
+                GameObject bp = tile.BoardPiece;
+                Unit unit = null;
+                if (bp != null) {
+                    unit = tile.BoardPiece.GetComponent<Unit>();
+                }
+                if (unit != null && unit.Team == team) {
+                    units.Add(unit);
+                }
+            }
+            return units;
+        }
+
         // Used to find tiles that a board piece can reach with their movespeed. So far uses manhatten distance but must change in order to account for obstacles such as walls.
         public static List<Tile> FindTilesInRange(Tile tile, int range, Func<Tile, int> getTileCost) {
             List<Tile> tilesInRange = new List<Tile>();
@@ -44,6 +60,7 @@ namespace Utilitys {
             int neighborCost;
             //tile.Cost = 0;
             queue.Enqueue(tile);
+            tilesInRange.Add(tile);
             while (queue.Count > 0) {
                 currentTile = queue.Dequeue();
                 foreach (Tile neighbor in currentTile.GetNeighbors()) {
@@ -115,7 +132,7 @@ namespace Utilitys {
         }
 
         // Used to highlight a list of tiles (Tile Zone). As of now used to highlight/unhighlight the tiles in range of the selected board piece
-        private static void ToggleHighlightEffect(Tile tile, bool toggle, Color color) {
+        public static void ToggleHighlightEffect(Tile tile, bool toggle, Color color) {
             GameObject tileObject = tile.gameObject.transform.GetChild(0).gameObject;
             if (toggle) {
                 tileObject.GetComponent<SpriteRenderer>().color = color;
@@ -169,5 +186,6 @@ namespace Utilitys {
             }
             return null;
         }
+
     }
 }

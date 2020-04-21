@@ -40,7 +40,15 @@ namespace Views {
 
         [SerializeField] private float hitMultiplier;
 
-        public float HitMultiplier { get { return HitMultiplier; } set { injuryMultiplier = value; } }
+        public float HitMultiplier { get { return hitMultiplier; } set { injuryMultiplier = value; } }
+
+        [SerializeField] private List<String> abilities;
+
+        public List<String> Abilities { get { return abilities; } set { abilities = value; } }
+
+        [SerializeField] private bool isDead;
+
+        public bool IsDead { get { return isDead; } set { isDead = value; } }
 
         public Character(string name, Team team, int maxHealth, int health, int attack, int defense, int attackRange, int movespeed) {
             this.name = name;
@@ -51,8 +59,8 @@ namespace Views {
             this.attack = attack;
             this.defense = defense;
             this.moveSpeed = movespeed;
-            this.injuryMultiplier = 1.0f;
-            this.hitMultiplier = 1.0f;
+            this.InjuryMultiplier = 1.0f;
+            this.HitMultiplier = 1.0f;
         }
 
         public string Serialize() {

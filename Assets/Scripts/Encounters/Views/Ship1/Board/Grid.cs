@@ -5,6 +5,7 @@ using UnityEngine;
 using Utilitys;
 using Models;
 using Encounter;
+using Random = UnityEngine.Random;
 
 namespace Views {
 
@@ -33,7 +34,7 @@ namespace Views {
 
         public class MapEventArgs : EventArgs {
             public bool gameOver;
-
+            public bool success;
         }
 
         private GameObject _selectedPiece;
@@ -48,8 +49,10 @@ namespace Views {
         public int numOfTeam { get; set; }
         public bool highlighting { get; set; }
 
+        public Objective objective { get; set; }
         public SelectedPieceState SelectedPieceState { get; set; }
-        private Tile[,] gridArray;
+
+        public bool turnOnAI = false;
 
 
         string[,] wallLayoutArray;
@@ -63,6 +66,7 @@ namespace Views {
             }
             return mapTiles;
         }
+
         void Start() {
             CreateGrid();
             List<EncounterUtils.Point> playerSpawnPoints = EncounterUtils.GetSpawnPoints(Team.Player, MAP_NAME, EncounterUtils.Difficulty.Easy);
@@ -70,10 +74,27 @@ namespace Views {
             playerSpawnArea = pointsToTiles(playerSpawnPoints);
             enemySpawnArea = pointsToTiles(enemySpawnPoints);
             List<Character> playerCharacters = Character.GetCurrentCharacters();
+            List<Character> enemyCharacters = EnemyCharacters.GetEnemies();
             for (int i = 0; i < playerSpawnArea.Count; i++ ) {
                 playerSpawnArea[i].SpawnUnit(playerCharacters[i]);
             }
+            for (int i = 0; i < playerSpawnArea.Count; i++) {
+                enemySpawnArea[i].SpawnUnit(enemyCharacters[i]);
+            }
+
             EncounterUtils.Highlight(enemySpawnArea, Color.red);
+            turnOnAI = false;
+            SetupRandomObjective();
+            
+        }
+
+        private void SetupRandomObjective() {
+            if (Random.value >= 0.50) {
+               objective = new ReachDestination(tiles[10, 23]);
+            } else {
+                objective = new KillTarget(Teams[Team.Enemy][0]);
+            }
+            Debug.Log(objective);
         }
 
         void Update() {
@@ -87,6 +108,14 @@ namespace Views {
                 SceneController.LoadScene("GalaxyMap");
             }
 
+            if (TurnCounter > 5 && EncounterUtils.GetUnitsInArea(playerSpawnArea, Team.Player).Count > 0) {
+                // Display Button That allows for letting player leave
+            }
+
+            if (objective is ReachDestination && !objective.Success) {
+                ReachDestination rd = objective as ReachDestination;
+                EncounterUtils.ToggleHighlightEffect(rd.Destination, true, Color.yellow);
+            }
             EncounterUtils.Highlight(playerSpawnArea, Color.yellow);
             if (selectedPiece != null && SelectedPieceState == SelectedPieceState.None) {
                 Unit unit = selectedPiece.GetComponent<Unit>();
@@ -99,14 +128,14 @@ namespace Views {
                     SelectedPieceState = SelectedPieceState.Attacking;
                 }
                 if (Input.GetKeyDown(KeyCode.K) && !unit.HasActed) {
-                    DeathEffect dE = new DeathEffect();
-                    SelectedAbility = dE;
-                    SelectedAbilityRange = EncounterUtils.FindTilesInRange(unit.Tile, 4, (Tile t) => { return 1; });
+                    Ability ability = new SunderingBlast(unit);
+                    SelectedAbility = ability;
+                    SelectedAbilityRange = EncounterUtils.FindTilesInRange(unit.Tile, 10, (Tile t) => { return 1; });
 
                     EncounterUtils.Highlight(SelectedAbilityRange, Color.green);
                     SelectedPieceState = SelectedPieceState.Casting;
                 }
-                if (Input.GetKeyDown(KeyCode.P) && !unit.HasActed) {
+                /*if (Input.GetKeyDown(KeyCode.P) && !unit.HasActed) {
                     PoisonEffect pE = new PoisonEffect(3);
                     SelectedAbility = pE;
                     //Debug.Log(pE.Range);
@@ -114,11 +143,11 @@ namespace Views {
 
                     EncounterUtils.Highlight(SelectedAbilityRange, Color.green);
                     SelectedPieceState = SelectedPieceState.Casting;
-                }
+                }*/
             }
         }
 
-        public Effect SelectedAbility { get; set; }
+        public Ability SelectedAbility { get; set; }
 
         
         private void CheckMapEndConditions() {
@@ -128,7 +157,7 @@ namespace Views {
             } else if (TurnCounter > 0 && LoseCondition()) {
                 OnMapOver?.Invoke(this, new MapEventArgs { gameOver = true });
                 OnMapOver -= MapOverHandler;
-            }
+            } 
         }
 
         private bool WinCondition() {
@@ -159,11 +188,16 @@ namespace Views {
         }
 
         public void MapOverHandler(object sender, MapEventArgs e) {
+            int success = -1;
             if (e.gameOver) {
                 Debug.Log("Game Over");
-            } else {
-                Debug.Log("Victory");
+            } else if (objective != null && objective.Success) {
+                success = 1;
             }
+            string info = success == 1 ? "Objective Achieved" : "Objective Failed";
+            Debug.Log(info);
+            Storage.SaveEncounterInfo(Storage.GetCurrentCredits(), success, Character.GetCurrentCharacters()); // -1 if lvl is failed, 1 if completed successfully
+            SceneController.LoadScene("GalaxyMap");
         }
 
 
@@ -172,7 +206,10 @@ namespace Views {
             Debug.Log("Team " + team + " Turn " + TurnCounter / 2);
             if (TurnCounter == 1) {
                 selectedPiece = null;
+                
+                Debug.Log("TEst");
                 OnTurnStart += ExecuteAI;
+              
             }
             OnTurnStart?.Invoke(this, new TurnEventArgs { Team = team });
         }
@@ -214,8 +251,8 @@ namespace Views {
             }
             OnMapOver += MapOverHandler;
 
-            Debug.Log("Press NumberPad Enter to change turns");
-            Debug.Log("All initially spawned units can't move at first and units can only move on their turn and can only move and act once");
+            //Debug.Log("Press NumberPad Enter to change turns");
+            //Debug.Log("All initially spawned units can't move at first and units can only move on their turn and can only move and act once");
             
 
         }
@@ -274,9 +311,9 @@ namespace Views {
         }
 
         public void ExecuteAI(object sender, Grid.TurnEventArgs turnEvent) {
-            if (turnEvent.Team == Team.Enemy) {
+            if (turnEvent.Team == Team.Enemy && turnOnAI) {
                 foreach (Unit enemy in Teams[Team.Enemy]) {
-                    Debug.Log("Executing AI");
+                    //Debug.Log("Executing AI");
                     enemy.gameObject.GetComponent<EnemyAI>().Act();
                 }
                 EndTurn();

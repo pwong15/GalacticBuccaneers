@@ -82,11 +82,13 @@ public class EnemyAI : MonoBehaviour {
     public void Act() {
         List<Unit> playerUnitsInRange = getUnitsInRange();
         Debug.Log(unit.Tile);
+        
         if (playerUnitsInRange.Count > 0) {
+            //Debug.Log("Checking Attack");
             unit.AttackUnit(playerUnitsInRange[0]);
         } else {
             Move();
-            Debug.Log("Executing Movement");
+            //Debug.Log("Executing Movement");
             /*while (unit.moving) {
                 float delta = 1 * Time.deltaTime;
             }*/
