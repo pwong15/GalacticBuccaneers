@@ -93,7 +93,7 @@ namespace Views {
             characters.Add(new Character("Bane", Team.Player, 100, 100, 80, 150, 1, 4));
             characters.Add(new Character("Chon-Ka", Team.Player, 120, 120, 80, 150, 1, 4));
             characters.Add(new Character("Korvid-19", Team.Player, 80, 80, 80, 140, 1, 5));
-            characters.Add(new Character("Tasador", Team.Player, 80, 80, 80, 140, 1, 4));
+            characters.Add(new Character("Tasadar", Team.Player, 80, 80, 80, 140, 1, 4));
 
             return characters;
         }
