@@ -39,18 +39,8 @@ namespace TxtCreator
 
         void OnApplicationQuit()
         {
-            string boardAsAString = "";
-            for (int row = 0; row < GRID_HEIGHT; row++)
-            {
-                boardAsAString += "\n";
-                for (int column = 0; column < GRID_WIDTH; column++)
-                {
-                    boardAsAString += gridAsTextSymbols[column, row];
-                }
-            }
-
             string fileLocation = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\BoardTxtFiles\\" + FILE_NAME + ".txt";
-            File.WriteAllText(fileLocation, boardAsAString);
+            File.WriteAllText(fileLocation, string.Empty);
         }
 
         public void MarkSquare(int column, int row, string symbol)

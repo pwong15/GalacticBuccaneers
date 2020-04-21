@@ -23,16 +23,18 @@ namespace Utilitys {
         }
 
         public void Move() {
-            Debug.Log("Move Button Clicked");
+            
             if (!unit.HasMoved) {
+                Debug.Log("Move Button Clicked");
                 EncounterUtils.Highlight(grid.SelectedPieceMoveRange, Color.blue);
                 grid.SelectedPieceState = SelectedPieceState.Moving;
             }
             HidePanel();
         }
         public void Attack() {
-            Debug.Log("Attck Button Clicked");
+            
             if (!unit.HasActed) {
+                Debug.Log("Attck Button Clicked");
                 EncounterUtils.Highlight(grid.SelectedPieceAttackRange, Color.red);
                 grid.SelectedPieceState = SelectedPieceState.Attacking;
             }

@@ -1,23 +1,54 @@
-﻿using System;
-using System.Collections;
+﻿using Models;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Views;
 
 namespace Utilitys {
+
     public static class EncounterUtils {
+
+        public struct Point {
+            public int x;
+            public int y;
+
+            public Point(int x, int y) {
+                this.x = x;
+                this.y = y;
+            }
+        }
+
+        public enum Difficulty {
+            Easy,
+            Medium,
+            Hard
+        }
+
         public static void Highlight(List<Tile> tiles, Color color) {
             ApplyTileEffects(tiles, (Tile) => ToggleHighlightEffect(Tile, true, color));
-            
         }
 
         public static void unHighlight(List<Tile> tiles) {
             ApplyTileEffects(tiles, (Tile) => ToggleHighlightEffect(Tile, false, Color.white));
-           
         }
 
         public static void SetTileCost(Tile tile, int cost) {
             tile.Cost = cost;
+        }
+
+        public static List<Unit> GetUnitsInArea(List<Tile> area, Team team) {
+            List<Unit> units = new List<Unit>();
+            foreach (Tile tile in area) {
+                GameObject bp = tile.BoardPiece;
+                Unit unit = null;
+                if (bp != null) {
+                    unit = tile.BoardPiece.GetComponent<Unit>();
+                }
+                if (unit != null && unit.Team == team) {
+                    units.Add(unit);
+                }
+            }
+            return units;
         }
 
         // Used to find tiles that a board piece can reach with their movespeed. So far uses manhatten distance but must change in order to account for obstacles such as walls.
@@ -29,6 +60,7 @@ namespace Utilitys {
             int neighborCost;
             //tile.Cost = 0;
             queue.Enqueue(tile);
+            tilesInRange.Add(tile);
             while (queue.Count > 0) {
                 currentTile = queue.Dequeue();
                 foreach (Tile neighbor in currentTile.GetNeighbors()) {
@@ -58,6 +90,7 @@ namespace Utilitys {
             tileA.BoardPiece = a.gameObject;
             tileB.BoardPiece = b.gameObject;
         }
+
         public static List<Tile> PathFinding(Tile start, Tile dest) {
             List<Tile> path = new List<Tile>();
             List<Tile> visited = new List<Tile>();
@@ -71,14 +104,14 @@ namespace Utilitys {
                     break;
                 }
                 foreach (Tile neighbor in currentTile.GetNeighbors()) {
-                    if (!visited.Contains(neighbor)) {       
+                    if (!visited.Contains(neighbor)) {
                         neighbor.Parent = currentTile;
                         visited.Add(neighbor);
                         queue.Enqueue(neighbor);
                     }
                 }
             }
-          
+
             while (currentTile != start) {
                 path.Insert(0, currentTile);
                 currentTile = currentTile.Parent;
@@ -99,7 +132,7 @@ namespace Utilitys {
         }
 
         // Used to highlight a list of tiles (Tile Zone). As of now used to highlight/unhighlight the tiles in range of the selected board piece
-        private static void ToggleHighlightEffect(Tile tile, bool toggle, Color color) {
+        public static void ToggleHighlightEffect(Tile tile, bool toggle, Color color) {
             GameObject tileObject = tile.gameObject.transform.GetChild(0).gameObject;
             if (toggle) {
                 tileObject.GetComponent<SpriteRenderer>().color = color;
@@ -107,6 +140,52 @@ namespace Utilitys {
             tileObject.GetComponent<Renderer>().enabled = toggle;
         }
 
+        private static List<Point> playerSpawn = new List<Point>() {
+            new Point(15, 1),
+            new Point(14, 1),
+            new Point(16, 2),
+            new Point(13, 2)
+        };
+
+        private static List<Point> enemySpawn = new List<Point>() {
+            new Point(10, 14),
+            new Point(14, 14),
+            new Point(18, 14),
+            new Point(10, 17),
+            new Point(18, 17),
+            new Point(14, 17),
+            new Point(9, 22),
+            new Point(12, 22)
+        };
+
+        public static List<Point> GetSpawnPoints(Team team, String mapName, Difficulty difficulty) {
+            if (team == Team.Player) {
+                switch (mapName) {
+                    case "Layout1":
+                        if (difficulty == Difficulty.Easy) {
+                            return playerSpawn;
+                        } else if (difficulty == Difficulty.Medium) {
+                            return playerSpawn;
+                        } else {
+                            return playerSpawn;
+                        }
+                }
+            } else {
+                Debug.Log("Creating enemy spawn points");
+                switch (mapName) {
+                    
+                    case "Layout1":
+                        if (difficulty == Difficulty.Easy) {
+                            return enemySpawn;
+                        } else if (difficulty == Difficulty.Medium) {
+                            return enemySpawn;
+                        } else {
+                            return enemySpawn;
+                        }
+                }
+            }
+            return null;
+        }
 
     }
 }

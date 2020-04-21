@@ -14,7 +14,19 @@ namespace Views {
 
     public class Unit : MonoBehaviour, Effectable {
 
-        
+
+        public float InjuryMultiplier { get; set; }
+        public float HitMultiplier { get; set; }
+
+        public int MaxHealth { get; set; }
+
+        public int Health { get; set; }
+
+        public int Attack { get; set; }
+
+        public int Defense { get; set; }
+
+        public int Speed { get; set; }
         public Character Character { get; set; }
         private Vector3 destination;
         private BarController healthBar;
@@ -59,13 +71,13 @@ namespace Views {
 
         private bool _hasActed;
 
+        public bool HasDied { get; set; }
+
         private Vector3 screenPoint;
         private Vector3 offset;
         private Vector3 scanPos;
 
-        void OnMouseHover() {
-            Debug.Log("Mouseover");
-        }
+        
         void OnMouseDown() {
             if (Tile.gameBoard.TurnCounter == 0) {
                 Unit unit = Tile.gameBoard.SelectedDeploymentUnit;
@@ -81,8 +93,9 @@ namespace Views {
             } else if (!HasActed) {
                 GameObject selectedPiece = Tile.gameBoard.selectedPiece;
                 if (selectedPiece == null) {
-                    actionMenu.DisplayPanel();
+                    
                     Tile.gameBoard.selectedPiece = this.gameObject;
+                    actionMenu.DisplayPanel();
                 }
             }
         }
@@ -105,6 +118,12 @@ namespace Views {
             this.MoveSpeed = character.MoveSpeed;
             this.Tile = tile;
             this.Team = Character.Team;
+            this.Attack = Character.Attack;
+            this.Defense = Character.Defense;
+            this.Speed = Character.MoveSpeed;
+            this.MaxHealth = Character.MaxHealth;
+            this.Health = Character.MaxHealth;
+            HasDied = false;
             _hasActed = true;
             HasMoved = true;
             TurnStartEffects = new List<Effect>();
@@ -116,6 +135,8 @@ namespace Views {
             actionMenu = gameObject.GetComponentInChildren<PanelScript>();
             actionMenu.unit = this;
             actionMenu.grid = Tile.gameBoard;
+            this.InjuryMultiplier = character.InjuryMultiplier;
+            this.HitMultiplier = character.HitMultiplier;
             if (Team == 0) {
                 Image health = gameObject.transform.Find("HealthBarCanvas/healthBar/healthFill").gameObject.GetComponent<Image>();
                 health.color = Color.blue;
@@ -137,28 +158,28 @@ namespace Views {
 
         public void AttackUnit(Unit otherUnit) {
             if (otherUnit.Team != Team) {
-                otherUnit.TakeDamage(10 * Character.Attack - otherUnit.Character.Defense);
+                otherUnit.TakeDamage(this.Attack - otherUnit.Defense);
                 HasActed = true;
             }
         }
 
         public void TakeDamage(int damageAmount) {
-            Character.Health -= damageAmount;
+            this.Health -= damageAmount;
             Debug.Log(Character.Name + " took " + damageAmount + " dmg");
-            if (Character.Health <= 0) {
+            if (this.Health <= 0) {
                 Debug.Log(Character.Name + " has Died");
                 Die();
             }
-            healthBar.SetValue(Character.Health);
+            healthBar.SetValue(this.Health);
 
         }
 
         public void Heal(int healAmount) {
-            Character.Health += healAmount;
-            if (Character.Health > Character.MaxHealth) {
-                Character.Health = Character.MaxHealth;
+            this.Health += healAmount;
+            if (this.Health > this.MaxHealth) {
+                this.Health = this.MaxHealth;
             }
-            healthBar.SetValue(Character.Health);
+            healthBar.SetValue(this.Health);
         }
 
         public void StartOfTurnEffects(object sender, Grid.TurnEventArgs turnEvent) {
@@ -166,7 +187,12 @@ namespace Views {
                 HasActed = false;
                 foreach (Effect effect in TurnStartEffects) {
                     if (effect.Duration > 0) {
-                        effect.Execute(this);
+                        if (effect.PointOfAction != Effect.Frequency.Immediate) {
+                            effect.Execute(this);
+                        }
+                        effect.Duration -= 1;
+                    } else {
+                        effect.Remove(this);
                     }
                 }
             }
@@ -177,7 +203,12 @@ namespace Views {
             if (turnEvent.Team == Team) {
                 HasActed = true;
                 foreach (Effect effect in TurnEndEffects) {
-                    effect.Execute(this);
+                    if (effect.Duration > 0) {
+                        effect.Execute(this);
+                        effect.Duration -= 1;
+                    } else {
+                        effect.Remove(this);
+                    }
                 }
             }
             
@@ -189,7 +220,6 @@ namespace Views {
 
         public void AddEffect(Effect effect) {
             if (effect.PointOfAction == Effect.Frequency.Immediate) {
-                Debug.Log("Added Immediate");
                 effect.Execute(this);
                 TurnStartEffects.Add(effect);
             } else if (effect.PointOfAction == Effect.Frequency.StartOfTurn) {
@@ -204,8 +234,10 @@ namespace Views {
             Tile.BoardPiece = null;
             this.Tile.gameBoard.Teams[Team].Remove(this);
             this.Tile = null;
+            HasDied = true;
             this.gameObject.transform.position -= new Vector3(0, 0, 10);
             this.gameObject.transform.GetChild(0).gameObject.transform.position -= new Vector3(0, 0, 10);
+            this.Character.IsDead = true;
             
         }
 

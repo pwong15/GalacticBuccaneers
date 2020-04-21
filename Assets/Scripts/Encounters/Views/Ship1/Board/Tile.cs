@@ -24,34 +24,19 @@ namespace Views {
             rend = GetComponent<Renderer>();
         }
 
-        private static int id = 0;
-        private Character RetrieveCharacter(Team charTeam) {
-            id++;
-            Team team = charTeam;
-            return new Character("Unit " + id, team, 100, 100, 10, 5, 1, 3);
-        }
+        
         void Update() {
 
             CheckForCursorHover();
-            Vector3 cursorLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            bool cursorIsOnTile = CursorIsOnTile(cursorLocation.x - xCoordf, cursorLocation.y - yCoordf);
-            if (!isWall && cursorIsOnTile && Input.GetKeyDown(KeyCode.S) && BoardPiece == null) {
-                SpawnUnit(Team.Player);
-            }
-            if (!isWall && cursorIsOnTile && Input.GetKeyDown(KeyCode.D) && BoardPiece == null) {
-                SpawnUnit(Team.Enemy);
-            }
-
         }
 
-        public void SpawnUnit(Team charTeam) {
+        public Unit SpawnUnit(Character character) {
             BoardPiece = Instantiate(Resources.Load("Prefabs/cyborgman2H") as GameObject);
             //Vector3 scaleChange = new Vector3(-0.94f, -0.94f, -0.94f);
             //BoardPiece.transform.localScale += scaleChange;
             //Vector3 center = this.transform.position = new Vector3(xCoordf, yCoordf - .7f, zCoordf);
 
             Unit unit = BoardPiece.AddComponent<Unit>();
-            Character character = RetrieveCharacter(charTeam);
             unit.Initialize(character, this);
             BoardPiece.name = unit.ToString();
             gameBoard.OnTurnStart += unit.StartOfTurnEffects;
@@ -60,20 +45,18 @@ namespace Views {
                 gameBoard.Teams[unit.Team] = new List<Unit>();
             }
             gameBoard.Teams[unit.Team].Add(unit);
-            if (unit.Team != 0) {
+            if (unit.Team != 0 && gameBoard.turnOnAI) {
                 unit.gameObject.AddComponent<EnemyAI>();
                 Debug.Log("Added AI");
             }
-            Debug.Log("Spawned unit on " + column + " " + row);
+            //Debug.Log("Spawned unit on " + column + " " + row);
             Debug.Log(BoardPiece.name);
+            return unit;
         }
 
         public void OnMouseDown() {
             List<Tile> adjacencies = GetNeighbors();
-            Debug.Log("Clicked: " + this.ToString());
-            /*foreach (Tile g in adjacencies) {
-                Debug.Log("adjacency: " + g.ToString());
-            }*/
+            //Debug.Log("Clicked: " + this.ToString());
             switch(gameBoard.SelectedPieceState) {
                 case SelectedPieceState.None : {
                         gameBoard.selectedPiece = this.BoardPiece;
@@ -108,7 +91,7 @@ namespace Views {
                                     unit = tile.BoardPiece.GetComponent<Unit>();
                                 }
                                 if (unit != null) {
-                                    unit.AddEffect(gameBoard.SelectedAbility);
+                                    gameBoard.SelectedAbility.Apply(unit);
                                 }
                             }
                             );

@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - button
+  - crew1
+  - crew2
+  - crew3
+  - crew4
+  - crew5
   layers:
   - Default
   - TransparentFX
@@ -43,4 +49,7 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Top
+    uniqueID: 665747853
     locked: 0
