@@ -1,6 +1,6 @@
-600
+2020
 0
-{"name":"Bane","team":0,"maxHealth":1520,"health":100,"attack":80,"defense":150,"attackRange":1,"moveSpeed":4,"injuryMultiplier":1.0,"hitMultiplier":0.0,"abilities":[],"isDead":false}
-{"name":"Chon-Ka","team":0,"maxHealth":120,"health":120,"attack":80,"defense":150,"attackRange":1,"moveSpeed":4,"injuryMultiplier":1.0,"hitMultiplier":0.0,"abilities":[],"isDead":false}
-{"name":"Korvid-19","team":0,"maxHealth":80,"health":80,"attack":80,"defense":140,"attackRange":1,"moveSpeed":5,"injuryMultiplier":1.0,"hitMultiplier":0.0,"abilities":[],"isDead":false}
-{"name":"Tasador","team":0,"maxHealth":80,"health":80,"attack":80,"defense":140,"attackRange":1,"moveSpeed":4,"injuryMultiplier":1.0,"hitMultiplier":0.0,"abilities":[],"isDead":false}
+{"name":"Bane","team":0,"maxHealth":100,"health":100,"attack":80,"defense":150,"attackRange":1,"moveSpeed":4,"injuryMultiplier":1.0,"hitMultiplier":0.0,"abilities":[],"isDead":false,"healthXp":0,"speedXp":0,"defenseXp":0,"healthLvl":1,"speedLvl":1,"defenseLvl":1}
+{"name":"Chon-Ka","team":0,"maxHealth":120,"health":120,"attack":80,"defense":150,"attackRange":1,"moveSpeed":4,"injuryMultiplier":1.0,"hitMultiplier":0.0,"abilities":[],"isDead":false,"healthXp":0,"speedXp":0,"defenseXp":0,"healthLvl":1,"speedLvl":1,"defenseLvl":1}
+{"name":"Korvid-19","team":0,"maxHealth":80,"health":80,"attack":80,"defense":140,"attackRange":1,"moveSpeed":5,"injuryMultiplier":1.0,"hitMultiplier":0.0,"abilities":[],"isDead":false,"healthXp":0,"speedXp":0,"defenseXp":0,"healthLvl":1,"speedLvl":1,"defenseLvl":1}
+{"name":"Tasadar","team":0,"maxHealth":80,"health":80,"attack":80,"defense":140,"attackRange":1,"moveSpeed":4,"injuryMultiplier":1.0,"hitMultiplier":0.0,"abilities":[],"isDead":false,"healthXp":0,"speedXp":0,"defenseXp":0,"healthLvl":1,"speedLvl":1,"defenseLvl":1}

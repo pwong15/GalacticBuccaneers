@@ -23,6 +23,7 @@ namespace GalaxyMap
             LoadFog();
             LoadEncounterInfo();
             LoadLocation();
+            LoadUpgradeStats();
         }
 
         public override void CreateGrid() {
@@ -317,6 +318,15 @@ namespace GalaxyMap
             lastLevelCompleted = Int32.Parse(data["levelCompleted"]);
         }
 
-       
+       public void LoadUpgradeStats() {
+            string[] crew = { "1", "2", "3", "4" };
+            string[] stats = { "health", "defense", "speed" };
+            ButtonListener listener = new ButtonListener();
+            foreach(var num in crew) {
+                foreach(var skill in stats) {
+                    listener.LevelUp(num + " " + skill + " " + 0);
+                }
+            }
+        }
     }
 }

@@ -42,7 +42,6 @@ public class TestPlayerScript : MonoBehaviour
             IncreaseHealth(10);
             amt += 10;
             coin.setCoinAmt(amt);
-           
         }
 
     }
@@ -56,6 +55,7 @@ public class TestPlayerScript : MonoBehaviour
     {
         currentHealth += hel;
         healthBar.SetValue(currentHealth);
+        AbilityPopup.Create(GameObject.Find("cyborgman").transform.position, "Rifle Blast");
     }
     void OnMouseDown()
     {

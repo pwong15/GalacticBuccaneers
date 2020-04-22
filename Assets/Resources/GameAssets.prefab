@@ -45,3 +45,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pfDamagePopup: {fileID: 8282194730936813157, guid: 84ef17b1e4840014ebda5c3023f61521,
     type: 3}
+  pfAbilityPopup: {fileID: 3701521169142825350, guid: 7965e15d7ef55044185a9f4a0383db3a,
+    type: 3}
