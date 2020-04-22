@@ -50,6 +50,26 @@ namespace Views {
 
         public bool IsDead { get { return isDead; } set { isDead = value; } }
 
+        [SerializeField] private int healthXp;
+        public int HealthXp { get { return healthXp; } set { healthXp = value; } }
+
+        [SerializeField] private int speedXp;
+        public int SpeedXp { get { return speedXp; } set { speedXp = value; } }
+
+        [SerializeField] private int defenseXp;
+        public int DefenseXp { get { return defenseXp; } set { defenseXp = value; } }
+
+        [SerializeField] private int healthLvl;
+        public int HealthLvl { get { return healthLvl; } set { healthLvl = value; } }
+
+        [SerializeField] private int speedLvl;
+        public int SpeedLvl { get { return speedLvl; } set { speedLvl = value; } }
+
+        [SerializeField] private int defenseLvl;
+        public int DefenseLvl { get { return defenseLvl; } set { defenseLvl = value; } }
+
+
+
         public Character(string name, Team team, int maxHealth, int health, int attack, int defense, int attackRange, int movespeed) {
             this.name = name;
             this.team = team;
@@ -61,6 +81,12 @@ namespace Views {
             this.moveSpeed = movespeed;
             this.InjuryMultiplier = 1.0f;
             this.HitMultiplier = 1.0f;
+            this.healthXp = 0;
+            this.defenseXp = 0;
+            this.speedXp = 0;
+            this.healthLvl = 1;
+            this.defenseLvl = 1;
+            this.speedLvl = 1;
         }
 
         public string Serialize() {
@@ -72,19 +98,56 @@ namespace Views {
         }
 
         // Overworld calls upgrades with amount == 10 | 100 | 1000
-        public void UpgradeAttribute(string attribute, int amount) {
+        public string UpgradeAttribute(string attribute, int amount) {
 
             switch (attribute) {
                 case "health":
-                    maxHealth += amount; // or however the conversion from credits to levels is implemented
-                    break;
+                    healthXp += amount; 
+                    if(healthXp > 1500 && healthLvl < 4) { LevelUp("health"); }
+                    return "HEALTH LVL: " + healthLvl + "/4 \nXP: " + healthXp + "/1500";
+
                 case "speed":
-                    moveSpeed += amount; // or however the conversion from credits to levels is implemented
-                    break;
+                    speedXp += amount;
+                    if (speedXp > 1500 && speedLvl < 4) { LevelUp("speed"); }
+                    return "SPEED LVL: " + speedLvl + "/4 \nXP: " + speedXp + "/1500";
+
                 case "defense":
-                    defense += amount; // or however the conversion from credits to levels is implemented
+                    defenseXp += amount;
+                    if (defenseXp > 1500 && defenseLvl < 4) { LevelUp("defense"); }
+                    return "DEFENSE LVL: " + defenseLvl + "/4 \nXP: " + defenseXp + "/1500";
+
+                default: return "";
+            }
+        }
+
+        private void LevelUp(string skill) {
+            Dictionary<string, int> characterIncrements = new Dictionary<string, int>() 
+            {   {"Banehealth", 60 }, {"Banespeed", 1 }, {"Banedefense", 2 },
+                {"Chon-Kahealth", 70 }, {"Chon-Kaspeed", 1 }, {"Chon-Kadefense", 1 },
+                {"Korvid-19health", 50 }, {"Korvid-19speed", 2 }, {"Korvid-19defense", 1 },
+                {"Tasadarhealth", 50 }, {"Tasadarspeed", 1 }, {"Tasadardefense", 2 },
+            };
+
+            switch (skill) {
+                case "health":
+                    healthLvl++;
+                    health += characterIncrements[name + skill];
+                    healthXp -= 1500;
+                    break;
+
+                case "speed":
+                    speedLvl++;
+                    moveSpeed += characterIncrements[name + skill];
+                    speedXp -= 1500;
+                    break;
+
+                case "defense":
+                    defenseLvl++;
+                    defense += characterIncrements[name + skill];
+                    defenseXp -= 1500;
                     break;
             }
+
         }
 
         public static List<Character> GetDefaultCharacters() {
