@@ -1594,6 +1594,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pfDamagePopup: {fileID: 8282194730936813157, guid: 84ef17b1e4840014ebda5c3023f61521,
     type: 3}
+  pfAbilityPopup: {fileID: 4830068613008049168, guid: f75b8fc22fbc27c43b7ddc65d6697a43,
+    type: 3}
 --- !u!1 &1151845383
 GameObject:
   m_ObjectHideFlags: 0
