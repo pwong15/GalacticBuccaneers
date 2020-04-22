@@ -68,7 +68,9 @@ namespace GalaxyMap
             if(availableCredits >= upgradeAmnt) {
                 availableCredits -= upgradeAmnt;
                 GameObject.Find("NumCredits").GetComponent<TextMeshProUGUI>().text = availableCredits.ToString();
-                characters[characterIndex].UpgradeAttribute(skill, upgradeAmnt);
+                string newText = characters[characterIndex].UpgradeAttribute(skill, upgradeAmnt);
+                string textFieldName = args[0] + " " + args[1];
+                GameObject.Find(textFieldName).GetComponent <TextMeshProUGUI>().text = newText;
             }
             Storage.SaveEncounterInfo(availableCredits, 0, characters);
         }
