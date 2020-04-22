@@ -132,7 +132,7 @@ namespace Views {
                 case "health":
                     healthLvl++;
                     health += characterIncrements[name + skill];
-                    healthXp -= 1500;
+                    healthXp -= 1500; 
                     break;
 
                 case "speed":
